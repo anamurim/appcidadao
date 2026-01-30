@@ -21,7 +21,7 @@ class _NotificacoesPanelState extends State<NotificacoesPanel> {
       body: ListView.separated(
         padding: const EdgeInsets.all(16),
         itemCount: DadosHome.notifications.length,
-        separatorBuilder: (_, _) => const SizedBox(height: 12),
+        separatorBuilder: (_, __) => const SizedBox(height: 12),
         itemBuilder: (context, index) {
           final notificacao = DadosHome.notifications[index];
           final bool isRead = notificacao['read'];
