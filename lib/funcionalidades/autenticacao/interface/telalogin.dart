@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/linhaconexao.dart';
-import '../../../../core/widgets/particulas.dart';
+//import '../../../funcionalidades/home/interface/telahome.dart';
+//import '../../../funcionalidades/autenticacao/interface/telarecuperacaosenha.dart';
+//import '../../../funcionalidades/autenticacao/interface/telacadastro.dart';
+//import '../../../../core/widgets/particulas.dart';
 
 class TechLoginScreen extends StatefulWidget {
   const TechLoginScreen({super.key});
@@ -23,7 +26,12 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
       setState(() => _isLoading = true);
       // Simulação de processo de login
       await Future.delayed(const Duration(seconds: 2));
-      setState(() => _isLoading = false);
+
+      setState(() {
+        _isLoading = false;
+      });
+
+      // Navegar para a tela inicial após login bem-sucedido
       if (mounted) Navigator.pushReplacementNamed(context, '/home');
     }
   }
@@ -38,21 +46,37 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final double screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      backgroundColor: AppCores.techGray,
+      backgroundColor: AppCores.deepBlue,
+
       body: Stack(
         children: [
+          //O fundo tecnológico (fica atrás de tudo)
           _buildTechBackground(),
-          SingleChildScrollView(
-            child: SizedBox(
-              height: screenHeight,
-              child: Column(
-                children: [
-                  _buildHeader(screenHeight),
-                  Expanded(child: _buildLoginForm()),
-                ],
+
+          //O conteúdo real dentro do SafeArea
+          SafeArea(
+            child: GestureDetector(
+              // Isso faz com que o teclado feche ao clicar fora dos campos
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  //Espaço entre os elementos e a borda da tela?
+                  padding: const EdgeInsets.symmetric(horizontal: 0),
+                  child: Form(
+                    //key: _formKey,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _buildHeader(context),
+                        const SizedBox(height: 40),
+                        _buildLoginForm(),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
           ),
@@ -70,6 +94,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
               center: Alignment.topLeft,
               radius: 1.5,
               colors: [
+                //Cores do plano de fundo que formam um degradê
                 AppCores.deepBlue.withValues(alpha: 0.8),
                 AppCores.techGray,
               ],
@@ -78,9 +103,10 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
           ),
         ),
         // Partículas movidas para widget separado conforme solicitado na estrutura
-        const ParticulasWidget(),
+        ..._buildParticles(),
         CustomPaint(
           painter: ConnectionLinesPainter(
+            //Linhas do plano de fundo
             color: AppCores.electricBlue.withValues(alpha: 0.2),
           ),
         ),
@@ -88,13 +114,39 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
     );
   }
 
-  Widget _buildHeader(double height) {
+  List<Widget> _buildParticles() {
+    return [
+      Positioned(top: 100, left: 50, child: _buildParticle(4, 0.6)),
+      Positioned(top: 200, right: 80, child: _buildParticle(3, 0.8, true)),
+      Positioned(top: 300, left: 100, child: _buildParticle(2, 0.4)),
+    ];
+  }
+
+  Widget _buildParticle(double size, double opacity, [bool neon = false]) {
     return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: neon
+            ? AppCores.neonBlue.withValues(alpha: 0.2)
+            : Colors.white.withValues(alpha: 0.2),
+        shape: BoxShape.circle,
+      ),
+    );
+  }
+
+  //Header: Nome com "Raio"
+  Widget _buildHeader(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+
+    return Container(
+      //Tamanho do Header
       height: height * 0.35,
       decoration: BoxDecoration(
         gradient: const LinearGradient(
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
+          //Cores em degradê do Header
           colors: [AppCores.deepBlue, AppCores.electricBlue, AppCores.neonBlue],
           stops: [0.1, 0.5, 0.9],
         ),
@@ -104,81 +156,123 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
         ),
         boxShadow: [
           BoxShadow(
+            //Sombra do Header
             color: AppCores.electricBlue.withValues(alpha: 0.4),
             blurRadius: 30,
             spreadRadius: 5,
           ),
         ],
       ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              width: 100,
-              height: 100,
+      child: Stack(
+        children: [
+          Positioned(
+            bottom: 0,
+            child: Container(
+              height: 40,
+              width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.white,
-                    AppCores.neonBlue.withValues(alpha: 0.8),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(40),
+                  bottomRight: Radius.circular(40),
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppCores.electricBlue.withValues(alpha: 0.6),
+                    //Sombra base do Header
+                    color: AppCores.techGray.withValues(alpha: 0.3),
                     blurRadius: 20,
-                    spreadRadius: 5,
+                    spreadRadius: 2,
                   ),
                 ],
               ),
-              child: Stack(
-                children: [
-                  const Center(
-                    child: Icon(Icons.bolt, size: 50, color: AppCores.deepBlue),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.3),
-                        width: 2,
+            ),
+          ),
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 100,
+                  height: 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [
+                        //Cores do simbolo "raio"
+                        Colors.white,
+                        AppCores.neonBlue.withValues(alpha: 0.8),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        //Sombra contorno do circulo do "raio"
+                        color: AppCores.electricBlue.withValues(alpha: 0.6),
+                        blurRadius: 20,
+                        spreadRadius: 5,
                       ),
+                    ],
+                  ),
+                  child: Stack(
+                    children: [
+                      Center(
+                        child: Icon(
+                          Icons.bolt,
+                          size: 50,
+                          color: AppCores.deepBlue,
+                          shadows: [
+                            Shadow(
+                              //Contorno do símbolo do raio
+                              color: Colors.white.withValues(alpha: 0.8),
+                              blurRadius: 10,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: Colors.white.withValues(alpha: 0.3),
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                ShaderMask(
+                  shaderCallback: (bounds) {
+                    return LinearGradient(
+                      colors: [Colors.white, AppCores.neonBlue, Colors.white],
+                      stops: const [0.0, 0.5, 1.0],
+                    ).createShader(bounds);
+                  },
+                  child: Text(
+                    'EQUATORIAL',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
+                      color: Colors.white,
                     ),
                   ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 20),
-            ShaderMask(
-              shaderCallback: (bounds) => const LinearGradient(
-                colors: [Colors.white, AppCores.neonBlue, Colors.white],
-                stops: [0.0, 0.5, 1.0],
-              ).createShader(bounds),
-              child: const Text(
-                'EQUATORIAL',
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: 2,
-                  color: Colors.white,
                 ),
-              ),
+                const SizedBox(height: 5),
+                Text(
+                  'APP CIDADÃO',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w300,
+                    color: Colors.white.withValues(alpha: 0.8),
+                    letterSpacing: 4,
+                  ),
+                ),
+              ],
             ),
-            Text(
-              'APP CIDADÃO',
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w300,
-                color: Colors.white.withValues(alpha: 0.8),
-                letterSpacing: 4,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -194,7 +288,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
             _buildTextField(
               controller: _emailController,
               label: 'E-MAIL',
-              hint: 'usuário@equatorial.com',
+              hint: 'email cadastrado',
               icon: Icons.person_outline,
             ),
             const SizedBox(height: 25),
@@ -223,12 +317,27 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                   children: [
                     Checkbox(
                       value: _rememberMe,
+                      // Cor do fundo quando selecionado
                       activeColor: AppCores.neonBlue,
+                      // Cor do ícone de "check" interno
+                      checkColor: AppCores.deepBlue,
+                      // Configuração da borda (quando desmarcado e contorno do marcado)
+                      side: BorderSide(
+                        color: AppCores.neonBlue.withValues(alpha: 0.8),
+                        width: 2,
+                      ),
+                      // Arredondamento leve para combinar com o estilo tech
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
                       onChanged: (val) => setState(() => _rememberMe = val!),
                     ),
-                    const Text(
+                    const SizedBox(width: 10),
+                    Text(
                       'Lembrar-me',
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
                     ),
                   ],
                 ),
@@ -236,7 +345,10 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                   onPressed: _handleForgotPassword,
                   child: const Text(
                     'Esqueci a senha',
-                    style: TextStyle(color: AppCores.neonBlue),
+                    style: TextStyle(
+                      color: AppCores.neonBlue,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -272,6 +384,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
         labelStyle: const TextStyle(
           color: AppCores.neonBlue,
           fontWeight: FontWeight.bold,
+          letterSpacing: 1,
         ),
         hintText: hint,
         hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),

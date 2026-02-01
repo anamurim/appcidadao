@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:appcidadao/funcionalidades/autenticacao/interface/telalogin.dart';
+//import 'package:appcidadao/funcionalidades/autenticacao/interface/telalogin.dart';
 import 'funcionalidades/autenticacao/interface/telarecuperacaosenha.dart';
 import 'funcionalidades/autenticacao/interface/telacadastro.dart';
 import 'package:appcidadao/funcionalidades/home/interface/telahome.dart';
@@ -20,7 +20,8 @@ class AppCidadao extends StatelessWidget {
       theme: AppTema.temaEscuro,
       initialRoute: '/',
       routes: {
-        '/': (context) => const TechLoginScreen(),
+        //'/': (context) => const TechLoginScreen(), //Tela inicial verdadeira
+        '/': (context) => const HomeScreen(), //Apagar após corrigir telahome
         '/home': (context) => const HomeScreen(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/signup': (context) => const SignupScreen(), // Adicionar quando criado

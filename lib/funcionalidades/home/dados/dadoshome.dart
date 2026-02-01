@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 
 class DadosHome {
+  // Dados do usuário (simulação)
   static final Map<String, dynamic> userData = {
-    'name': 'Flaviane Guimarães',
-    'email': 'eng.flavianeguimaraes@gmail.com',
+    'name': 'Usuário',
+    'email': 'e-mail@gmail.com',
     'account': '12345-6',
+    'avatar':
+        'https://ui-avatars.com/api/?name=Carlos+Silva&background=0066FF&color=fff',
   };
 
   static final List<Map<String, dynamic>> getfeatures = [
@@ -90,7 +93,6 @@ class DadosHome {
   ];
 
   // Lista de notificações
-  //Não corrigir por enquanto. Aguardar o restante para utilizar a variável _notifications
   static final List<Map<String, dynamic>> notifications = [
     {
       'id': 1,
@@ -99,6 +101,7 @@ class DadosHome {
       'time': 'Há 2 dias',
       'read': false,
     },
+
     {
       'id': 2,
       'title': 'Manutenção Programada',

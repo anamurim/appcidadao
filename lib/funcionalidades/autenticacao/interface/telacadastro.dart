@@ -14,92 +14,86 @@ class _SignupScreenState extends State<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _ucController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  // A variável agora será usada para mudar o estado da UI
   bool _isLoading = false;
 
   void _handleSignup() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      // Simulação de cadastro
+      setState(
+        () => _isLoading = true,
+      ); // Uso da variável (remove o aviso de unused)
+
+      // Simulação de cadastro (API)
       await Future.delayed(const Duration(seconds: 2));
-      setState(() => _isLoading = false);
 
       if (mounted) {
+        setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Conta criada com sucesso!')),
         );
-        Navigator.pop(context); // Volta para o login
+        Navigator.pop(context);
       }
     }
   }
 
   @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppCores.techGray,
       body: Stack(
         children: [
-          _buildBackground(),
+          const ParticulasWidget(),
+          CustomPaint(
+            painter: ConnectionLinesPainter(
+              color: AppCores.electricBlue.withValues(alpha: 0.1),
+            ),
+          ),
           SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.all(25),
               child: Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.arrow_back_ios,
-                        color: Colors.white,
-                      ),
-                      onPressed: () => Navigator.pop(context),
-                    ),
                     const SizedBox(height: 20),
                     const Text(
-                      'Criar Conta',
+                      'CRIAR CONTA',
                       style: TextStyle(
                         color: Colors.white,
-                        fontSize: 32,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
+                        letterSpacing: 3,
                       ),
                     ),
-                    const Text(
-                      'Preencha os dados para acessar o App Cidadão',
-                      style: TextStyle(color: Colors.white70, fontSize: 16),
-                    ),
                     const SizedBox(height: 40),
-
-                    _buildField(
+                    _buildTextField(
                       controller: _nameController,
-                      label: 'NOME COMPLETO',
+                      label: 'Nome Completo',
                       icon: Icons.person_outline,
                     ),
                     const SizedBox(height: 20),
-
-                    _buildField(
+                    _buildTextField(
                       controller: _emailController,
-                      label: 'E-MAIL',
+                      label: 'E-mail',
                       icon: Icons.email_outlined,
-                      keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 20),
-
-                    _buildField(
-                      controller: _ucController,
-                      label: 'UNIDADE CONSUMIDORA (UC)',
-                      icon: Icons.bolt,
-                      hint: '00000-0',
-                    ),
-                    const SizedBox(height: 20),
-
-                    _buildField(
+                    _buildTextField(
                       controller: _passwordController,
-                      label: 'SENHA',
+                      label: 'Senha',
                       icon: Icons.lock_outline,
-                      obscure: true,
+                      isPassword: true,
                     ),
-
                     const SizedBox(height: 40),
                     _buildSubmitButton(),
                   ],
@@ -112,65 +106,26 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  Widget _buildBackground() {
-    return Stack(
-      children: [
-        Container(color: AppCores.techGray),
-        const ParticulasWidget(),
-        CustomPaint(
-          size: Size.infinite,
-          painter: ConnectionLinesPainter(
-            color: AppCores.electricBlue.withValues(alpha: 0.1),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildField({
+  Widget _buildTextField({
     required TextEditingController controller,
     required String label,
     required IconData icon,
-    String? hint,
-    bool obscure = false,
-    TextInputType? keyboardType,
+    bool isPassword = false,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppCores.neonBlue,
-            fontWeight: FontWeight.bold,
-            fontSize: 12,
-            letterSpacing: 1.2,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextFormField(
-          controller: controller,
-          obscureText: obscure,
-          keyboardType: keyboardType,
-          style: const TextStyle(color: Colors.white),
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: AppCores.lightGray.withValues(alpha: 0.5),
-            hintText: hint,
-            hintStyle: const TextStyle(color: Colors.white24),
-            prefixIcon: Icon(icon, color: AppCores.neonBlue, size: 20),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: AppCores.neonBlue, width: 1),
-            ),
-          ),
-          validator: (value) => value!.isEmpty ? 'Campo obrigatório' : null,
-        ),
-      ],
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Colors.white70),
+        prefixIcon: Icon(icon, color: AppCores.neonBlue),
+        filled: true,
+        fillColor: AppCores.lightGray.withValues(alpha: 0.2),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+      ),
+      validator: (value) =>
+          value == null || value.isEmpty ? 'Campo obrigatório' : null,
     );
   }
 
@@ -179,23 +134,28 @@ class _SignupScreenState extends State<SignupScreen> {
       width: double.infinity,
       height: 55,
       child: ElevatedButton(
-        onPressed: _isLoading ? null : _handleSignup,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppCores.electricBlue,
+          backgroundColor: AppCores.neonBlue,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(15),
           ),
-          elevation: 5,
-          shadowColor: AppCores.electricBlue.withValues(alpha: 0.5),
         ),
+        // Se estiver carregando, o botão fica desativado (null)
+        onPressed: _isLoading ? null : _handleSignup,
         child: _isLoading
-            ? const CircularProgressIndicator(color: Colors.white)
+            ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
             : const Text(
                 'FINALIZAR CADASTRO',
                 style: TextStyle(
-                  color: Colors.white,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 1.5,
+                  color: Colors.white,
                 ),
               ),
       ),
