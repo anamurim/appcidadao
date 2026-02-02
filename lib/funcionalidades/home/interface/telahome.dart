@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../dados/dadoshome.dart';
 import '../../../core/constantes/cores.dart';
 import 'componentes/cabecalhohome.dart';
-//import 'componentes/cardservico.dart';
+import '../../../core/utilitarios/funcoesauxiliares.dart';
 import 'componentes/listanotificacoes.dart';
 import 'componentes/listafuncionalidades.dart';
 
@@ -29,35 +29,42 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: AppCores.techGray,
       appBar: AppBar(
         title: _showSearchBar
-            ? _buildSearchField()
+            ? FuncoesAuxiliares.construirCampoBusca(
+                controller: _searchController,
+                onClear: () => setState(() => _showSearchBar = false),
+              )
             : const Text(
                 'APP CIDADÃO',
                 style: TextStyle(
                   color: Colors.white,
-                  fontWeight: FontWeight.w600,
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-
         backgroundColor: AppCores.deepBlue,
         elevation: 0,
-        centerTitle: true,
+        centerTitle: false,
         actions: [
           IconButton(
             icon: Icon(_showSearchBar ? Icons.close : Icons.search),
             onPressed: () => setState(() => _showSearchBar = !_showSearchBar),
           ),
           IconButton(
-            icon: const Icon(Icons.notifications_none),
-            onPressed: () => Navigator.push(
+            icon: const Icon(Icons.notifications),
+            onPressed: () => NotificacoesLista.exibirTodasNotificacoes(context),
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => FuncoesAuxiliares.exibirLogout(context),
+            /*onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const NotificacoesPanel(),
-              ),
-            ),
+                builder: (context) => const Configuracoes(),
+              ),*/
           ),
           IconButton(
             icon: const Icon(Icons.logout),
-            onPressed: () => _logout(context),
+            onPressed: () => FuncoesAuxiliares.exibirLogout(context),
           ),
         ],
       ),
@@ -83,55 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
           const ListaFuncionalidades(),
 
           // Últimas notificações
-          //const ListaNotificacoes(),
+          const NotificacoesLista(),
           const SizedBox(height: 24),
 
           // Informações da conta
           //_buildAccountInfo(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSearchField() {
-    return TextField(
-      controller: _searchController,
-      autofocus: true,
-      style: const TextStyle(color: Colors.white),
-      decoration: const InputDecoration(
-        hintText: 'Buscar serviço...',
-        hintStyle: TextStyle(color: Colors.white54),
-        border: InputBorder.none,
-      ),
-    );
-  }
-
-  void _logout(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppCores.lightGray,
-        title: const Text('Sair do App', style: TextStyle(color: Colors.white)),
-        content: const Text(
-          'Tem certeza que deseja sair?',
-          style: TextStyle(color: Colors.white70),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'CANCELAR',
-              style: TextStyle(color: AppCores.neonBlue),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, '/');
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppCores.neonBlue),
-            child: const Text('SAIR'),
-          ),
         ],
       ),
     );

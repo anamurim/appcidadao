@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/linhaconexao.dart';
 import '../../../../core/widgets/particulas.dart';
+import '/../../../funcionalidades/home/interface/componentes/listanotificacoes.dart';
+import '../../../../core/utilitarios/funcoesauxiliares.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -15,6 +17,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
+  bool _showSearchBar = false;
 
   // A variável agora será usada para mudar o estado da UI
   bool _isLoading = false;
@@ -43,6 +47,7 @@ class _SignupScreenState extends State<SignupScreen> {
     _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
+    _searchController.dispose();
     super.dispose();
   }
 
@@ -50,6 +55,47 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppCores.techGray,
+      appBar: AppBar(
+        title: _showSearchBar
+            ? FuncoesAuxiliares.construirCampoBusca(
+                controller: _searchController,
+                onClear: () => setState(() => _showSearchBar = false),
+              )
+            : const Text(
+                '',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+
+        backgroundColor: AppCores.deepBlue,
+        elevation: 0,
+        centerTitle: false,
+        actions: [
+          IconButton(
+            icon: Icon(_showSearchBar ? Icons.close : Icons.search),
+            onPressed: () => setState(() => _showSearchBar = !_showSearchBar),
+          ),
+          IconButton(
+            icon: const Icon(Icons.notifications_none),
+            onPressed: () => NotificacoesLista.exibirNotificacoes(context),
+          ),
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () => FuncoesAuxiliares.exibirLogout(context),
+            /*onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const Configuracoes(),
+              ),*/
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => FuncoesAuxiliares.exibirLogout(context),
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           const ParticulasWidget(),
@@ -67,7 +113,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   children: [
                     const SizedBox(height: 20),
                     const Text(
-                      'CRIAR CONTA',
+                      'Faça seu cadastro',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 28,

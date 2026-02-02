@@ -9,30 +9,30 @@ class ForgotPasswordScreen extends StatefulWidget {
 }
 
 class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
-  // 1. Campos agora utilizados
+  //Variáveis
   final TextEditingController _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  bool _isLoading = false;
-  bool _emailSent = false;
+  bool _carregando = false;
+  bool _emailEnviado = false;
 
-  // 2. Função agora referenciada no botão
+  //Função referenciada no botão ENVIAR INSTRUÇÕES
   void _handleReset() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
+      setState(() => _carregando = true);
 
-      // Simulação de envio
+      //Simula O envio do email
       await Future.delayed(const Duration(seconds: 2));
 
       setState(() {
-        _isLoading = false;
-        _emailSent = true;
+        _carregando = false;
+        _emailEnviado = true;
       });
     }
   }
 
   @override
   void dispose() {
-    _emailController.dispose(); // Boa prática: liberar memória
+    _emailController.dispose(); //Libera memória: boas práticas
     super.dispose();
   }
 
@@ -48,7 +48,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Form(
-          key: _formKey, // Conectando o GlobalKey
+          key: _formKey, //Conectando o GlobalKey
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -56,7 +56,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               const Icon(Icons.lock_reset, size: 80, color: AppCores.neonBlue),
               const SizedBox(height: 20),
               Text(
-                _emailSent
+                _emailEnviado
                     ? 'Verifique seu e-mail!'
                     : 'Informe seu e-mail para receber as instruções.',
                 textAlign: TextAlign.center,
@@ -64,7 +64,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
               ),
               const SizedBox(height: 30),
 
-              // 3. Conectando o _emailController ao TextFormField
+              //Conecta o _emailController ao TextFormField
               TextFormField(
                 controller: _emailController,
                 style: const TextStyle(color: Colors.white),
@@ -72,7 +72,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   filled: true,
                   fillColor: AppCores.lightGray.withValues(alpha: 0.3),
                   hintText: 'E-mail',
-                  hintStyle: const TextStyle(color: Colors.white38),
+                  hintStyle: const TextStyle(color: Colors.white),
                   prefixIcon: const Icon(Icons.email, color: AppCores.neonBlue),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(15),
@@ -85,25 +85,28 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
               const SizedBox(height: 20),
 
-              // 4. Usando _isLoading e _handleReset
+              //Uso de _carregando e _handleReset
               SizedBox(
                 width: double.infinity,
                 height: 55,
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _handleReset,
+                  onPressed: _carregando ? null : _handleReset,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppCores.electricBlue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  child: _isLoading
+                  child: _carregando
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text('ENVIAR INSTRUÇÕES'),
+                      : const Text(
+                          'ENVIAR INSTRUÇÕES',
+                          style: TextStyle(color: Colors.white),
+                        ),
                 ),
               ),
 
-              if (_emailSent)
+              if (_emailEnviado)
                 TextButton(
                   onPressed: () => Navigator.pop(context),
                   child: const Text(

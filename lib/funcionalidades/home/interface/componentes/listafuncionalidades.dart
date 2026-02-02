@@ -15,7 +15,7 @@ class ListaFuncionalidades extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 25, vertical: 15),
+          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 15),
           child: Text(
             'Funcionalidades principais',
             style: TextStyle(
@@ -32,7 +32,7 @@ class ListaFuncionalidades extends StatelessWidget {
               true, // Importante para funcionar dentro do SingleChildScrollView
           physics:
               const NeverScrollableScrollPhysics(), // Evita conflito de rolagem
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 5),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3, // 3 cards por linha
             crossAxisSpacing: 12, // Espaçamento horizontal
@@ -44,8 +44,9 @@ class ListaFuncionalidades extends StatelessWidget {
             return CardServico(dados: funcionalidades[index]);
           },
         ),
+        const SizedBox(height: 16),
         const Padding(
-          padding: EdgeInsets.fromLTRB(20, 25, 20, 15),
+          padding: EdgeInsets.symmetric(horizontal: 5, vertical: 15),
           child: Text(
             'Problemas Urbanos',
             style: TextStyle(
@@ -56,7 +57,7 @@ class ListaFuncionalidades extends StatelessWidget {
           ),
         ),
         GridView.builder(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(horizontal: 5),
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
