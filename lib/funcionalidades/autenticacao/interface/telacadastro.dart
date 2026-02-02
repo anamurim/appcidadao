@@ -79,7 +79,7 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
           IconButton(
             icon: const Icon(Icons.notifications_none),
-            onPressed: () => NotificacoesLista.exibirNotificacoes(context),
+            onPressed: () => NotificacoesLista.exibirTodasNotificacoes(context),
           ),
           IconButton(
             icon: const Icon(Icons.settings),
