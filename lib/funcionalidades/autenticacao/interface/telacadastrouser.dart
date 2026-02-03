@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/linhaconexao.dart';
 import '../../../../core/widgets/particulas.dart';
-//import '/../../../funcionalidades/home/interface/componentes/listanotificacoes.dart';
 import '../../../../core/utilitarios/funcoesauxiliares.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -18,6 +17,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailController = TextEditingController();
   final _cpfController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _cepController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
@@ -33,6 +33,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _emailFocus = FocusNode();
   final _cpfFocus = FocusNode();
   final _phoneFocus = FocusNode();
+  final _cepFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
 
@@ -166,23 +167,23 @@ class _SignupScreenState extends State<SignupScreen> {
                     // Campo Nome Completo
                     _buildTextField(
                       controller: _nameController,
-                      label: 'NOME COMPLETO',
+                      label: 'Nome completo',
                       icon: Icons.person_outline,
                       focusNode: _nameFocus,
                       nextFocus: _emailFocus,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
                     // Campo E-mail
                     _buildTextField(
                       controller: _emailController,
-                      label: 'E-MAIL',
+                      label: 'E-mail',
                       icon: Icons.email_outlined,
                       focusNode: _emailFocus,
                       nextFocus: _cpfFocus,
                       isEmail: true,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
                     // Campo CPF
                     _buildTextField(
@@ -193,23 +194,34 @@ class _SignupScreenState extends State<SignupScreen> {
                       nextFocus: _phoneFocus,
                       isEmail: true,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
                     // Campo Telefone
                     _buildTextField(
                       controller: _phoneController,
-                      label: 'TELEFONE',
+                      label: 'Telefone',
                       icon: Icons.phone_outlined,
                       focusNode: _phoneFocus,
+                      nextFocus: _cepFocus,
+                      isEmail: true,
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Campo CEP
+                    _buildTextField(
+                      controller: _cepController,
+                      label: 'CEP',
+                      icon: Icons.location_on_outlined,
+                      focusNode: _cepFocus,
                       nextFocus: _passwordFocus,
                       isEmail: true,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
                     // Campo Senha
                     _buildTextField(
                       controller: _passwordController,
-                      label: 'SENHA',
+                      label: 'Senha',
                       icon: Icons.lock_outline,
                       isPassword: true,
                       obscureText: _obscurePassword,
@@ -218,12 +230,12 @@ class _SignupScreenState extends State<SignupScreen> {
                       toggleVisibility: () =>
                           setState(() => _obscurePassword = !_obscurePassword),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
 
                     // Campo Confirmar Senha
                     _buildTextField(
                       controller: _confirmPasswordController,
-                      label: 'CONFIRMAR SENHA',
+                      label: 'Confirmar Senha',
                       icon: Icons.lock_reset_outlined,
                       isPassword: true,
                       obscureText: _obscureConfirmPassword,

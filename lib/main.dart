@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:appcidadao/funcionalidades/autenticacao/interface/telalogin.dart';
 import 'funcionalidades/autenticacao/interface/telarecuperacaosenha.dart';
-import 'funcionalidades/autenticacao/interface/telacadastro.dart';
+import 'funcionalidades/autenticacao/interface/telacadastrouser.dart';
 import 'package:appcidadao/funcionalidades/home/interface/telahome.dart';
 import 'core/tema/apptema.dart';
 
