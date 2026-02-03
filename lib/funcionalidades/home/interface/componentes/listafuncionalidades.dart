@@ -13,11 +13,7 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
   final TextEditingController _searchController = TextEditingController();
 
   List<Map<String, dynamic>> get _filteredFeatures {
-    // 1. Combinamos as duas listas da classe DadosHome em uma só
-    final todasAsFuncionalidades = [
-      ...DadosHome.getfuncionalidades,
-      //...DadosHome.getproblemasurbanos,
-    ];
+    final todasAsFuncionalidades = [...DadosHome.getfuncionalidades];
 
     if (_searchController.text.isEmpty) {
       return todasAsFuncionalidades;

@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/linhaconexao.dart';
-//import '../../../funcionalidades/home/interface/telahome.dart';
-//import '../../../funcionalidades/autenticacao/interface/telarecuperacaosenha.dart';
-//import '../../../funcionalidades/autenticacao/interface/telacadastro.dart';
-//import '../../../../core/widgets/particulas.dart';
 
 class TechLoginScreen extends StatefulWidget {
   const TechLoginScreen({super.key});

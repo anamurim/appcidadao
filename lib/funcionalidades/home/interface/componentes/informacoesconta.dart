@@ -9,7 +9,7 @@ class InformacoesConta extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppCores.lightGray, // Adaptado para sua classe de cores
+        color: AppCores.lightGray,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppCores.neonBlue.withValues(alpha: 0.2)),
       ),
