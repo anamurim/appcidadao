@@ -43,81 +43,274 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: const Text('Recuperar Senha'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: AppCores.neonBlue),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          'Recuperar Senha',
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey, //Conectando o GlobalKey
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(height: 40),
-              const Icon(Icons.lock_reset, size: 80, color: AppCores.neonBlue),
-              const SizedBox(height: 20),
-              Text(
-                _emailEnviado
-                    ? 'Verifique seu e-mail!'
-                    : 'Informe seu e-mail para receber as instruções.',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white70),
+      body: Stack(
+        children: [
+          // Background tecnológico
+          Container(
+            decoration: BoxDecoration(
+              gradient: RadialGradient(
+                center: Alignment.topRight,
+                radius: 1.5,
+                colors: [
+                  AppCores.deepBlue.withValues(alpha: 0.8),
+                  AppCores.techGray,
+                ],
+                stops: const [0.1, 0.8],
               ),
-              const SizedBox(height: 30),
+            ),
+          ),
 
-              //Conecta o _emailController ao TextFormField
-              TextFormField(
-                controller: _emailController,
-                style: const TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: AppCores.lightGray.withValues(alpha: 0.3),
-                  hintText: 'E-mail',
-                  hintStyle: const TextStyle(color: Colors.white),
-                  prefixIcon: const Icon(Icons.email, color: AppCores.neonBlue),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(15),
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+
+                // Ícone de segurança
+                Center(
+                  child: Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [AppCores.deepBlue, AppCores.electricBlue],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppCores.electricBlue.withValues(alpha: 0.6),
+                          blurRadius: 20,
+                          spreadRadius: 5,
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Icon(
+                        Icons.lock_reset,
+                        size: 60,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                 ),
-                validator: (value) => (value == null || !value.contains('@'))
-                    ? 'E-mail inválido'
-                    : null,
-              ),
 
-              const SizedBox(height: 20),
+                const SizedBox(height: 40),
 
-              //Uso de _carregando e _handleReset
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: _carregando ? null : _handleReset,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppCores.electricBlue,
-                    shape: RoundedRectangleBorder(
+                // Título
+                Text(
+                  'Recuperar Senha',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                // Descrição
+                Text(
+                  _emailEnviado
+                      ? 'Enviamos um link de recuperação para o e-mail informado. Verifique sua caixa de entrada e spam.'
+                      : 'Digite seu e-mail cadastrado e enviaremos um link para redefinir sua senha.',
+                  style: TextStyle(
+                    color: Colors.white.withValues(alpha: 0.7),
+                    fontSize: 16,
+                    height: 1.6,
+                  ),
+                ),
+
+                const SizedBox(height: 40),
+
+                //Conecta o _emailController ao TextFormField
+                TextFormField(
+                  controller: _emailController,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: AppCores.lightGray.withValues(alpha: 0.3),
+                    hintText: 'E-mail cadastrado',
+                    hintStyle: const TextStyle(color: AppCores.neonBlue),
+                    prefixIcon: const Icon(
+                      Icons.email,
+                      color: AppCores.neonBlue,
+                    ),
+                    border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
                   ),
-                  child: _carregando
-                      ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text(
-                          'ENVIAR INSTRUÇÕES',
-                          style: TextStyle(color: Colors.white),
-                        ),
+                  validator: (value) => (value == null || !value.contains('@'))
+                      ? 'E-mail inválido'
+                      : null,
                 ),
-              ),
 
-              if (_emailEnviado)
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'Voltar para o Login',
-                    style: TextStyle(color: AppCores.neonBlue),
+                const SizedBox(height: 30),
+
+                // --- BOTÃO ENVIAR COM GRADIENTE ---
+                Container(
+                  width: double.infinity,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [AppCores.electricBlue, AppCores.neonBlue],
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppCores.electricBlue.withValues(alpha: 0.4),
+                        blurRadius: 15,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: _carregando ? null : _handleReset,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.transparent,
+                      shadowColor: Colors.transparent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: _carregando
+                        ? const CircularProgressIndicator(color: Colors.white)
+                        : const Text(
+                            'ENVIAR LINK DE RECUPERAÇÃO',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              letterSpacing: 1,
+                            ),
+                          ),
                   ),
                 ),
-            ],
+
+                const SizedBox(height: 20),
+
+                //BOTÃO VOLTAR PARA LOGIN (INKWELL)
+                Center(
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      onTap: _handleBackToLogin,
+                      borderRadius: BorderRadius.circular(15),
+                      splashColor: AppCores.neonBlue.withValues(alpha: 0.1),
+                      highlightColor: AppCores.neonBlue.withValues(alpha: 0.05),
+                      child: Center(
+                        child: Text(
+                          'VOLTAR PARA LOGIN',
+                          style: TextStyle(
+                            color: AppCores.neonBlue,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 40),
+
+                // Informações de segurança
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppCores.lightGray.withValues(alpha: 0.5),
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
+                      color: AppCores.neonBlue.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.security,
+                            size: 24,
+                            color: AppCores.accentGreen,
+                          ),
+                          const SizedBox(width: 12),
+                          Text(
+                            'Dicas de segurança',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        '• O link de recuperação é válido por 24 horas\n'
+                        '• Não compartilhe o link com outras pessoas\n'
+                        '• Verifique sua caixa de spam se não encontrar o e-mail\n'
+                        '• Mantenha sua senha em local seguro',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.7),
+                          fontSize: 14,
+                          height: 1.8,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: 30),
+
+                // Informações de suporte
+                Center(
+                  child: Column(
+                    children: [
+                      Text(
+                        'Precisa de ajuda?',
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.6),
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'suporte@equatorial.com',
+                        style: TextStyle(
+                          color: AppCores.neonBlue,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
+  }
+
+  void _handleBackToLogin() {
+    Navigator.pushReplacementNamed(context, '/');
   }
 }
