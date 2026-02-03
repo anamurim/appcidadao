@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import '../dados/dadoshome.dart';
-import '../../../core/constantes/cores.dart';
-import 'componentes/cabecalhohome.dart';
 import '../../../core/utilitarios/funcoesauxiliares.dart';
+import '../../../core/constantes/cores.dart';
+import '../dados/dadoshome.dart';
 import 'componentes/listanotificacoes.dart';
 import 'componentes/listafuncionalidades.dart';
+import 'componentes/cabecalhohome.dart';
+import 'componentes/informacoesconta.dart'; // Importe o novo arquivo
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
   bool _showSearchBar = false;
   final TextEditingController _searchController = TextEditingController();
 
@@ -69,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: _buildHomePage(),
-      //bottomNavigationBar: _buildBottomNavigationBar(),
+      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
@@ -94,7 +96,53 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 24),
 
           // Informações da conta
-          //_buildAccountInfo(),
+          const InformacoesConta(),
+          const SizedBox(height: 24),
+        ],
+      ),
+    );
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Widget _buildBottomNavigationBar() {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppCores.deepBlue,
+        border: Border(
+          top: BorderSide(color: AppCores.neonBlue.withValues(alpha: 0.2)),
+        ),
+      ),
+      child: BottomNavigationBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        currentIndex: _selectedIndex,
+        onTap: _onItemTapped,
+        selectedItemColor: AppCores.neonBlue,
+        unselectedItemColor: Colors.white.withValues(alpha: 0.6),
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+        type: BottomNavigationBarType.fixed,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            activeIcon: Icon(Icons.home),
+            label: 'Início',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.insert_chart_outlined),
+            activeIcon: Icon(Icons.insert_chart),
+            label: 'Consumo',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings_outlined),
+            activeIcon: Icon(Icons.settings),
+            label: 'Configurações',
+          ),
         ],
       ),
     );

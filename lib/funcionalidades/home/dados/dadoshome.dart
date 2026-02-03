@@ -48,10 +48,6 @@ class DadosHome {
       'color': Color(0xFF4CAF50),
       'description': 'Dicas para economizar',
     },
-  ];
-
-  // Lista de funcionalidades de problemas urbanos
-  static final List<Map<String, dynamic>> getproblemasurbanos = [
     {
       'title': 'Interferência na Via',
       'icon': Icons.traffic,
