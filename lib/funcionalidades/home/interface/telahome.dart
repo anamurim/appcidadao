@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.notifications),
             onPressed: () => NotificacoesLista.exibirTodasNotificacoes(context),
           ),
-          IconButton(
+          /*IconButton(
             icon: const Icon(Icons.settings),
             onPressed: () => FuncoesAuxiliares.exibirLogout(context),
             /*onPressed: () => Navigator.push(
@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
               MaterialPageRoute(
                 builder: (context) => const Configuracoes(),
               ),*/
-          ),
+          ),*/
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => FuncoesAuxiliares.exibirLogout(context),
@@ -134,9 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Início',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.insert_chart_outlined),
-            activeIcon: Icon(Icons.insert_chart),
-            label: 'Consumo',
+            icon: Icon(Icons.history_outlined),
+            activeIcon: Icon(Icons.history_outlined),
+            label: 'Histórico',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
