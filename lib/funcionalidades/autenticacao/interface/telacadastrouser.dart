@@ -41,7 +41,13 @@ class _SignupScreenState extends State<SignupScreen> {
     if (_formKey.currentState!.validate()) {
       if (!_aceitaTermos) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Por favor, aceite os termos de uso')),
+          const SnackBar(
+            content: Text(
+              'Por favor, aceite os termos de uso',
+              style: TextStyle(color: Colors.white),
+            ),
+            backgroundColor: Colors.red,
+          ),
         );
         return;
       }
@@ -49,23 +55,53 @@ class _SignupScreenState extends State<SignupScreen> {
       setState(() => _isLoading = true);
 
       try {
-        // Simulação de cadastro (substituir pela chamada real da API)
+        // Simulação de cadastro
+        // Exibe o diálogo de carregamento
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            backgroundColor: AppCores.lightGray,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppCores.neonBlue,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                const Text(
+                  'Criando sua conta...',
+                  style: TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        );
+
         await Future.delayed(const Duration(seconds: 2));
+
+        if (!mounted) return;
+        Navigator.pop(context);
 
         // Simulação de possíveis erros
         if (_emailController.text.contains('exemplo@teste.com')) {
           throw 'E-mail já cadastrado';
         }
 
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Conta criada com sucesso!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-          Navigator.pop(context);
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Conta criada com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -80,7 +116,7 @@ class _SignupScreenState extends State<SignupScreen> {
     }
   }
 
-  bool get _isFormValid {
+  /*bool get _isFormValid {
     return _nameController.text.isNotEmpty &&
         _emailController.text.isNotEmpty &&
         _cpfController.text.isNotEmpty &&
@@ -89,13 +125,15 @@ class _SignupScreenState extends State<SignupScreen> {
         _confirmPasswordController.text.isNotEmpty &&
         _passwordController.text == _confirmPasswordController.text &&
         _aceitaTermos;
-  }
+  }*/
 
   @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
     _cpfController.dispose();
+    _phoneController.dispose();
+    _cepController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _searchController.dispose();
@@ -103,6 +141,7 @@ class _SignupScreenState extends State<SignupScreen> {
     _emailFocus.dispose();
     _cpfFocus.dispose();
     _phoneFocus.dispose();
+    _cepFocus.dispose();
     _passwordFocus.dispose();
     _confirmPasswordFocus.dispose();
     super.dispose();
@@ -192,7 +231,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       icon: Icons.badge_outlined,
                       focusNode: _cpfFocus,
                       nextFocus: _phoneFocus,
-                      isEmail: true,
                     ),
                     const SizedBox(height: 16),
 
@@ -203,7 +241,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       icon: Icons.phone_outlined,
                       focusNode: _phoneFocus,
                       nextFocus: _cepFocus,
-                      isEmail: true,
                     ),
                     const SizedBox(height: 16),
 
@@ -214,7 +251,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       icon: Icons.location_on_outlined,
                       focusNode: _cepFocus,
                       nextFocus: _passwordFocus,
-                      isEmail: true,
                     ),
                     const SizedBox(height: 16),
 
@@ -346,6 +382,9 @@ class _SignupScreenState extends State<SignupScreen> {
           if (!value.contains(RegExp(r'[A-Z]'))) {
             return 'Inclua uma letra maiúscula';
           }
+          if (!value.contains(RegExp(r'[a-z]'))) {
+            return 'Inclua uma letra minúscula';
+          }
           if (!value.contains(RegExp(r'[0-9]'))) {
             return 'Inclua um número';
           }
@@ -435,14 +474,13 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          // Tornamos o fundo do botão transparente para que o gradiente do Container apareça
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
         ),
-        onPressed: _isLoading || !_isFormValid ? null : _handleSignup,
+        onPressed: _isLoading ? null : _handleSignup,
         child: _isLoading
             ? const SizedBox(
                 height: 20,
