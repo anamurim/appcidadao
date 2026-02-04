@@ -5,7 +5,7 @@ import '../dados/dadoshome.dart';
 import 'componentes/listanotificacoes.dart';
 import 'componentes/listafuncionalidades.dart';
 import 'componentes/cabecalhohome.dart';
-import 'componentes/informacoesconta.dart'; // Importe o novo arquivo
+import 'componentes/informacoesconta.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -55,15 +55,6 @@ class _HomeScreenState extends State<HomeScreen> {
             icon: const Icon(Icons.notifications),
             onPressed: () => NotificacoesLista.exibirTodasNotificacoes(context),
           ),
-          /*IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => FuncoesAuxiliares.exibirLogout(context),
-            /*onPressed: () => Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const Configuracoes(),
-              ),*/
-          ),*/
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () => FuncoesAuxiliares.exibirLogout(context),

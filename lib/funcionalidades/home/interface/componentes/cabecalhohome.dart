@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
+import '../../configuracoes/configuracoesusuario.dart';
 
 class CabecalhoHome extends StatelessWidget {
   final Map<String, dynamic> user;
@@ -9,7 +10,6 @@ class CabecalhoHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [AppCores.deepBlue, AppCores.electricBlue],
@@ -25,62 +25,93 @@ class CabecalhoHome extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      //Permite o posicionamento livre do ícone
+      child: Stack(
         children: [
-          Container(
-            width: 60,
-            height: 60,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.white,
-              border: Border.all(color: AppCores.neonBlue, width: 2),
-            ),
-            child: Center(
-              child: Icon(Icons.person, size: 40, color: AppCores.deepBlue),
-            ),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          //Informações Principais do Usuário
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
               children: [
-                Text(
-                  'Olá, ${user['name']}',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  user['email'],
-                  style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.8),
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 8),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 4,
-                  ),
+                  width: 60,
+                  height: 60,
                   decoration: BoxDecoration(
-                    color: AppCores.neonBlue.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: AppCores.neonBlue, width: 1),
+                    shape: BoxShape.circle,
+                    color: Colors.white,
+                    border: Border.all(color: AppCores.neonBlue, width: 2),
                   ),
-                  child: Text(
-                    'Conta: ${user['account']}',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
+                  child: Center(
+                    child: Icon(
+                      Icons.person,
+                      size: 40,
+                      color: AppCores.deepBlue,
                     ),
                   ),
                 ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Olá, ${user['name']}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        user['email'],
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.8),
+                          fontSize: 14,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppCores.neonBlue.withValues(alpha: 0.2),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                            color: AppCores.neonBlue,
+                            width: 1,
+                          ),
+                        ),
+                        child: Text(
+                          'Conta: ${user['account']}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
+            ),
+          ),
+
+          //Botão de Configuraçõesdo usuário
+          Positioned(
+            top: 5,
+            right: 5,
+            child: IconButton(
+              icon: const Icon(Icons.settings, color: Colors.white),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ConfiguracoesUsuario(),
+                ),
+              ),
             ),
           ),
         ],
