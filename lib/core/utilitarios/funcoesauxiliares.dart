@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../constantes/cores.dart';
 
 class FuncoesAuxiliares {
-  // Função para exibir o diálogo de Logout
+  // Função genérica de Logout
   static void exibirLogout(BuildContext context) {
     showDialog(
       context: context,
@@ -24,41 +24,49 @@ class FuncoesAuxiliares {
           ElevatedButton(
             onPressed: () {
               Navigator.pop(context);
-              Navigator.pushReplacementNamed(context, '/');
+              // Volta para a tela de login removendo o histórico
+              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppCores.neonBlue),
-            child: const Text('SAIR'),
+            child: const Text('SAIR', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
     );
   }
 
-  // Função para construir o campo de busca (retorna o Widget)
+  // Widget do Campo de Busca (Componente visual reutilizável)
   static Widget construirCampoBusca({
     required TextEditingController controller,
     required VoidCallback onClear,
+    required Function(String) onChanged,
   }) {
-    return TextField(
-      controller: controller,
-      autofocus: true,
-      style: const TextStyle(color: Colors.white),
-      decoration: InputDecoration(
-        hintText: 'Buscar serviço...',
-        hintStyle: const TextStyle(color: Colors.white54),
-        border: InputBorder.none,
-        suffixIcon: IconButton(
-          icon: const Icon(Icons.close, color: Colors.white54),
-          onPressed: onClear,
+    return Container(
+      height: 40,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: TextField(
+        controller: controller,
+        autofocus: true,
+        onChanged: onChanged,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
+        decoration: InputDecoration(
+          hintText: 'Buscar funcionalidades...',
+          hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+          border: InputBorder.none,
+          prefixIcon: const Icon(Icons.search, color: AppCores.neonBlue),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.close, color: Colors.white.withValues(alpha: 0.7)),
+            onPressed: onClear,
+          ),
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 8,
+          ),
         ),
       ),
     );
-  }
-
-  // Você pode adicionar outras funções aqui futuramente, por exemplo:
-  static void mostrarMensagem(BuildContext context, String mensagem) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(mensagem)));
   }
 }

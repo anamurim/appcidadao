@@ -1,3 +1,4 @@
+import 'package:appcidadao/funcionalidades/home/configuracoes/configuracoesusuario.dart';
 import 'package:flutter/material.dart';
 import '../../../core/utilitarios/funcoesauxiliares.dart';
 import '../../../core/constantes/cores.dart';
@@ -19,85 +20,106 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _showSearchBar = false;
   final TextEditingController _searchController = TextEditingController();
 
+  // Função para mudar de aba via código
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+      _showSearchBar = false;
+    });
+  }
+
   @override
   void dispose() {
     _searchController.dispose();
     super.dispose();
   }
 
+  void _toggleSearchBar() {
+    setState(() {
+      _showSearchBar = !_showSearchBar;
+      if (!_showSearchBar) _searchController.clear();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Define as páginas aqui dentro do build para garantir que a função de callback esteja atualizada
+    final List<Widget> paginas = [
+      _buildHomePageContent(), // Index 0
+      const Center(
+        child: Text('Histórico', style: TextStyle(color: Colors.white)),
+      ), // Index 1
+      ConfiguracoesUsuario(
+        onBackToHome: () => _onItemTapped(0),
+      ), // Passa a função de voltar
+    ];
+
     return Scaffold(
       backgroundColor: AppCores.techGray,
-      appBar: AppBar(
-        title: _showSearchBar
-            ? FuncoesAuxiliares.construirCampoBusca(
-                controller: _searchController,
-                onClear: () => setState(() => _showSearchBar = false),
-              )
-            : const Text(
-                'APP CIDADÃO',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 22,
-                  fontWeight: FontWeight.w700,
+      // Remove a AppBar apenas no index 2 (Configurações)
+      appBar: _selectedIndex == 2
+          ? null
+          : _selectedIndex == 0
+          ? AppBar(
+              title: _showSearchBar
+                  ? FuncoesAuxiliares.construirCampoBusca(
+                      controller: _searchController,
+                      onClear: _toggleSearchBar,
+                      onChanged: (value) => setState(() {}),
+                    )
+                  : const Text(
+                      'APP CIDADÃO',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+              backgroundColor: AppCores.deepBlue,
+              actions: [
+                IconButton(
+                  icon: Icon(_showSearchBar ? Icons.close : Icons.search),
+                  onPressed: _toggleSearchBar,
                 ),
-              ),
-        backgroundColor: AppCores.deepBlue,
-        elevation: 0,
-        centerTitle: false,
-        actions: [
-          IconButton(
-            icon: Icon(_showSearchBar ? Icons.close : Icons.search),
-            onPressed: () => setState(() => _showSearchBar = !_showSearchBar),
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications),
-            onPressed: () => NotificacoesLista.exibirTodasNotificacoes(context),
-          ),
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: () => FuncoesAuxiliares.exibirLogout(context),
-          ),
-        ],
-      ),
-      body: _buildHomePage(),
+                IconButton(
+                  icon: const Icon(Icons.notifications),
+                  onPressed: () =>
+                      NotificacoesLista.exibirTodasNotificacoes(context),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.logout),
+                  onPressed: () => FuncoesAuxiliares.exibirLogout(context),
+                ),
+              ],
+            )
+          : AppBar(
+              title: const Text('Histórico'),
+              backgroundColor: AppCores.deepBlue,
+            ),
+      body: IndexedStack(index: _selectedIndex, children: paginas),
       bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
-  Widget _buildHomePage() {
+  Widget _buildHomePageContent() {
     final user = DadosHome.userData;
-
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Saudação e informações do usuário
           const SizedBox(height: 24),
           CabecalhoHome(user: user),
-
-          // Cards de funcionalidades e problemas urbanos
           const SizedBox(height: 24),
-          const ListaFuncionalidades(),
-
-          // Últimas notificações
+          ListaFuncionalidades(searchController: _searchController),
+          const SizedBox(height: 24),
           const NotificacoesLista(),
           const SizedBox(height: 24),
-
-          // Informações da conta
           const InformacoesConta(),
           const SizedBox(height: 24),
         ],
       ),
     );
-  }
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
   }
 
   Widget _buildBottomNavigationBar() {
@@ -115,24 +137,19 @@ class _HomeScreenState extends State<HomeScreen> {
         onTap: _onItemTapped,
         selectedItemColor: AppCores.neonBlue,
         unselectedItemColor: Colors.white.withValues(alpha: 0.6),
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
         type: BottomNavigationBarType.fixed,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
             label: 'Início',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.history_outlined),
-            activeIcon: Icon(Icons.history_outlined),
             label: 'Histórico',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
-            activeIcon: Icon(Icons.settings),
-            label: 'Configurações',
+            label: 'Ajustes',
           ),
         ],
       ),

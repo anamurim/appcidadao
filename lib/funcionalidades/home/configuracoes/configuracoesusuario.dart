@@ -3,7 +3,10 @@ import '../../../../core/constantes/cores.dart';
 import '../../../core/utilitarios/funcoesauxiliares.dart';
 
 class ConfiguracoesUsuario extends StatelessWidget {
-  const ConfiguracoesUsuario({super.key});
+  // 1. Criamos a variável para receber a função da Home
+  final VoidCallback onBackToHome;
+
+  const ConfiguracoesUsuario({super.key, required this.onBackToHome});
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +19,14 @@ class ConfiguracoesUsuario extends StatelessWidget {
         backgroundColor: AppCores.deepBlue,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: AppCores.neonBlue),
+          // 2. Ação alterada: Chama a função da Home em vez do Navigator.pop
+          onPressed: onBackToHome,
+        ),
       ),
       body: Container(
-        color: Colors.grey[50], // Fundo levemente cinza para destacar os cards
+        color: Colors.grey[50],
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -35,22 +43,20 @@ class ConfiguracoesUsuario extends StatelessWidget {
               subtitulo: 'Alterar senha e biometria',
               onTap: () {},
             ),
-
             const SizedBox(height: 24),
             _buildSecao('Preferências'),
             _buildCardItem(
-              icon: Icons.notifications_none,
+              icon: Icons.notifications_none_outlined,
               titulo: 'Notificações',
-              subtitulo: 'Gerenciar alertas do aplicativo',
+              subtitulo: 'Gerenciar alertas do app',
               onTap: () {},
             ),
             _buildCardItem(
               icon: Icons.dark_mode_outlined,
-              titulo: 'Aparência',
-              subtitulo: 'Tema claro, escuro ou sistema',
+              titulo: 'Tema',
+              subtitulo: 'Claro, escuro ou sistema',
               onTap: () {},
             ),
-
             const SizedBox(height: 24),
             _buildSecao('Suporte'),
             _buildCardItem(
@@ -65,16 +71,15 @@ class ConfiguracoesUsuario extends StatelessWidget {
             ),
 
             const SizedBox(height: 32),
-            TextButton.icon(
-              onPressed: () {
-                FuncoesAuxiliares.exibirLogout(context);
-              },
-              icon: const Icon(Icons.logout, color: Colors.redAccent),
-              label: const Text(
-                'Sair da Conta',
-                style: TextStyle(
-                  color: Colors.redAccent,
-                  fontWeight: FontWeight.bold,
+            Center(
+              child: TextButton(
+                onPressed: () => FuncoesAuxiliares.exibirLogout(context),
+                child: const Text(
+                  'Sair da Conta',
+                  style: TextStyle(
+                    color: Colors.redAccent,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -84,7 +89,6 @@ class ConfiguracoesUsuario extends StatelessWidget {
     );
   }
 
-  // Widget auxiliar para os títulos das seções
   Widget _buildSecao(String titulo) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 8),
@@ -100,7 +104,6 @@ class ConfiguracoesUsuario extends StatelessWidget {
     );
   }
 
-  // Widget auxiliar para os itens da lista (Cards)
   Widget _buildCardItem({
     required IconData icon,
     required String titulo,

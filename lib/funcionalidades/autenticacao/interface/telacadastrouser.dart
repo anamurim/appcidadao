@@ -155,7 +155,13 @@ class _SignupScreenState extends State<SignupScreen> {
         title: _showSearchBar
             ? FuncoesAuxiliares.construirCampoBusca(
                 controller: _searchController,
-                onClear: () => setState(() => _showSearchBar = false),
+                onChanged: (value) => setState(() {}),
+                onClear: () {
+                  setState(() {
+                    _showSearchBar = false;
+                    _searchController.clear();
+                  });
+                },
               )
             : const Text(
                 'Criar Nova Conta',

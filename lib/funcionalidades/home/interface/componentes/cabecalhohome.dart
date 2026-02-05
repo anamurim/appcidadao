@@ -42,10 +42,23 @@ class CabecalhoHome extends StatelessWidget {
                     border: Border.all(color: AppCores.neonBlue, width: 2),
                   ),
                   child: Center(
-                    child: Icon(
-                      Icons.person,
-                      size: 40,
-                      color: AppCores.deepBlue,
+                    //Para usar o ícone a foto do usuário como botão da configuração manter esse trecho
+                    child: IconButton(
+                      icon: const Icon(
+                        Icons.person,
+                        size: 40,
+                        color: AppCores.deepBlue,
+                      ),
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConfiguracoesUsuario(
+                            onBackToHome: () => Navigator.pop(
+                              context,
+                            ), // Nesse trecho o "voltar" apenas fecha a tela sobreposta
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -100,8 +113,8 @@ class CabecalhoHome extends StatelessWidget {
             ),
           ),
 
-          //Botão de Configuraçõesdo usuário
-          Positioned(
+          //Botão de Configuraçõesdo do ícone do usuário
+          /*Positioned(
             top: 5,
             right: 5,
             child: IconButton(
@@ -113,7 +126,7 @@ class CabecalhoHome extends StatelessWidget {
                 ),
               ),
             ),
-          ),
+          ),*/
         ],
       ),
     );
