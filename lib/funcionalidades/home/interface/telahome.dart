@@ -76,21 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
               backgroundColor: AppCores.deepBlue,
-              actions: [
-                IconButton(
-                  icon: Icon(_showSearchBar ? Icons.close : Icons.search),
-                  onPressed: _toggleSearchBar,
-                ),
-                IconButton(
-                  icon: const Icon(Icons.notifications),
-                  onPressed: () =>
-                      NotificacoesLista.exibirTodasNotificacoes(context),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.logout),
-                  onPressed: () => FuncoesAuxiliares.exibirLogout(context),
-                ),
-              ],
+              actions: _buildAppBarActions(),
             )
           : AppBar(
               title: const Text('Histórico'),
@@ -154,5 +140,26 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
     );
+  }
+
+  List<Widget> _buildAppBarActions() {
+    if (_showSearchBar) {
+      return [];
+    }
+
+    return [
+      IconButton(
+        icon: Icon(Icons.search_outlined, color: Colors.white),
+        onPressed: _toggleSearchBar,
+      ),
+      IconButton(
+        icon: const Icon(Icons.notifications),
+        onPressed: () => NotificacoesLista.exibirTodasNotificacoes(context),
+      ),
+      IconButton(
+        icon: const Icon(Icons.logout),
+        onPressed: () => FuncoesAuxiliares.exibirLogout(context),
+      ),
+    ];
   }
 }
