@@ -382,8 +382,8 @@ class _SignupScreenState extends State<SignupScreen> {
         }
 
         if (isPassword && !isConfirmPassword) {
-          if (value.length < 6) {
-            return 'Mínimo 6 caracteres';
+          if (value.length < 8) {
+            return 'Mínimo 8 caracteres';
           }
           if (!value.contains(RegExp(r'[A-Z]'))) {
             return 'Inclua uma letra maiúscula';
