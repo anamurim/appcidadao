@@ -1,4 +1,4 @@
-import 'package:appcidadao/funcionalidades/home/configuracoes/configuracoesusuario.dart';
+import 'package:appcidadao/funcionalidades/home/interface/configuracoes/configuracoes.dart';
 import 'package:flutter/material.dart';
 import '../../../core/utilitarios/funcoesauxiliares.dart';
 import '../../../core/constantes/cores.dart';
