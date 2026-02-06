@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constantes/cores.dart';
+import 'telaalterarsenha.dart';
 
 class TelaSeguranca extends StatefulWidget {
   const TelaSeguranca({super.key});
@@ -33,7 +34,14 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
               titulo: 'Alterar Senha',
               subtitulo: 'Atualize sua senha de acesso periodicamente',
               trailing: const Icon(Icons.chevron_right),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TelaAlterarSenha(),
+                  ),
+                );
+              },
             ),
 
             _buildCardConfig(
