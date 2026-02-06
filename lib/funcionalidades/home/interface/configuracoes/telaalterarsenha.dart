@@ -100,7 +100,7 @@ class _TelaAlterarSenhaState extends State<TelaAlterarSenha> {
                 height: 55,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppCores.deepBlue,
+                    backgroundColor: AppCores.electricBlue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),

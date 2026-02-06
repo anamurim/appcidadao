@@ -461,7 +461,7 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget _buildSubmitButton() {
     return Container(
       width: double.infinity,
-      height: 60,
+      height: 55,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [AppCores.electricBlue, AppCores.neonBlue],
