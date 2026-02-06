@@ -1,12 +1,12 @@
-import 'package:appcidadao/funcionalidades/home/interface/configuracoes/configuracoes.dart';
+import '../../../ajustes/apresentacao/paginas/ajustes_pagina.dart';
 import 'package:flutter/material.dart';
-import '../../../core/utilitarios/funcoesauxiliares.dart';
-import '../../../core/constantes/cores.dart';
-import '../dados/dadoshome.dart';
-import 'componentes/listanotificacoes.dart';
-import 'componentes/listafuncionalidades.dart';
-import 'componentes/cabecalhohome.dart';
-import 'componentes/resumoconta.dart';
+import '../../../../core/utilitarios/funcoes_auxiliares.dart';
+import '../../../../core/constantes/cores.dart';
+import '../../dados/fonte_dados/home_local_datasource.dart';
+import '../../apresentacao/componentes/lista_funcionalidades_widget.dart';
+import '../../apresentacao/componentes/lista_notificacoes_widget.dart';
+import '../../apresentacao/componentes/cabecalho_home_widget.dart';
+import '../../apresentacao/componentes/resumo_conta_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

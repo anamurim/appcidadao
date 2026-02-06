@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/constantes/cores.dart';
+import '../../../../core/constantes/cores.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});

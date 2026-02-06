@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:appcidadao/funcionalidades/autenticacao/interface/telalogin.dart';
-import 'funcionalidades/autenticacao/interface/telarecuperacaosenha.dart';
-import 'funcionalidades/autenticacao/interface/telacadastrouser.dart';
-import 'package:appcidadao/funcionalidades/home/interface/telahome.dart';
-import 'core/tema/apptema.dart';
+import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_login.dart';
+import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_recuperar_senha.dart';
+import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_cadastro_usuario.dart';
+import 'package:appcidadao/funcionalidades/home/apresentacao/paginas/tela_home.dart';
+import 'package:appcidadao/core/tema/app_tema.dart';
 
 void main() {
   runApp(const AppCidadao());

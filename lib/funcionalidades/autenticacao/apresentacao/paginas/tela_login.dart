@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../../core/widgets/linhaconexao.dart';
+import '../../../../core/widgets/linha_conexao.dart';
 
 class TechLoginScreen extends StatefulWidget {
   const TechLoginScreen({super.key});

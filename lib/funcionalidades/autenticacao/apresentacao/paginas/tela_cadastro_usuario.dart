@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../../core/widgets/linhaconexao.dart';
+import '../../../../core/widgets/linha_conexao.dart';
 import '../../../../core/widgets/particulas.dart';
-import '../../../../core/utilitarios/funcoesauxiliares.dart';
+import '../../../../core/utilitarios/funcoes_auxiliares.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});

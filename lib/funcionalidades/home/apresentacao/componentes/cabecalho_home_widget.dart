@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
-import '../configuracoes/configuracoes.dart';
+import '../../../ajustes/apresentacao/paginas/ajustes_pagina.dart';
 
 class CabecalhoHome extends StatelessWidget {
   final Map<String, dynamic> user;

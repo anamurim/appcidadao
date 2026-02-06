@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constantes/cores.dart';
-import '../../../../core/utilitarios/funcoesauxiliares.dart';
-import '../../../autenticacao/interface/telaperfil.dart';
-import '../../../home/interface/configuracoes/telaseguranca.dart';
+import '../../../../core/utilitarios/funcoes_auxiliares.dart';
+//import '../../../autenticacao/apresentacao/paginas/tela_login.dart';
+//import '../../../autenticacao/apresentacao/paginas/tela_recuperar_senha.dart';
+import '../../../perfil/tela_perfil.dart';
+import '../../../ajustes/apresentacao/paginas/seguranca_pagina.dart';
 
 class ConfiguracoesUsuario extends StatelessWidget {
   final VoidCallback onBackToHome;

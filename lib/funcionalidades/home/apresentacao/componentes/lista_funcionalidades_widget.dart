@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:appcidadao/funcionalidades/home/dados/dadoshome.dart';
+import '../../dados/fonte_dados/home_local_datasource.dart';
 import '../../../../core/constantes/cores.dart';
 
 class ListaFuncionalidades extends StatefulWidget {

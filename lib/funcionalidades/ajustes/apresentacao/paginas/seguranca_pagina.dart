@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constantes/cores.dart';
-import 'telaalterarsenha.dart';
+import '../../../ajustes/apresentacao/paginas/alterar_senha_pagina.dart';
 
 class TelaSeguranca extends StatefulWidget {
   const TelaSeguranca({super.key});

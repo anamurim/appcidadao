@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../dados/dadoshome.dart';
+import '../../dados/fonte_dados/home_local_datasource.dart';
 
 class NotificacoesLista extends StatelessWidget {
   final ScrollController? scrollController;
