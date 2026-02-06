@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../core/utilitarios/funcoesauxiliares.dart';
+import '../../autenticacao/interface/telaperfil.dart'; // 👈 IMPORT DA TELA DE PERFIL
 
 class ConfiguracoesUsuario extends StatelessWidget {
-  // 1. Criamos a variável para receber a função da Home
   final VoidCallback onBackToHome;
 
   const ConfiguracoesUsuario({super.key, required this.onBackToHome});
@@ -21,7 +21,6 @@ class ConfiguracoesUsuario extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppCores.neonBlue),
-          // 2. Ação alterada: Chama a função da Home em vez do Navigator.pop
           onPressed: onBackToHome,
         ),
       ),
@@ -35,7 +34,12 @@ class ConfiguracoesUsuario extends StatelessWidget {
               icon: Icons.person_outline,
               titulo: 'Perfil',
               subtitulo: 'Editar nome, e-mail e foto',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TelaPerfil()),
+                );
+              },
             ),
             _buildCardItem(
               icon: Icons.lock_outline,
@@ -69,7 +73,6 @@ class ConfiguracoesUsuario extends StatelessWidget {
               titulo: 'Sobre o App',
               onTap: () {},
             ),
-
             const SizedBox(height: 32),
             Center(
               child: TextButton(
