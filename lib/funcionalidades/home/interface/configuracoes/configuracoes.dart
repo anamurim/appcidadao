@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constantes/cores.dart';
 import '../../../../core/utilitarios/funcoesauxiliares.dart';
-import '../../../autenticacao/interface/telaperfil.dart'; // 👈 IMPORT DA TELA DE PERFIL
+import '../../../autenticacao/interface/telaperfil.dart';
+import '../../../home/interface/configuracoes/telaseguranca.dart';
 
 class ConfiguracoesUsuario extends StatelessWidget {
   final VoidCallback onBackToHome;
@@ -25,7 +26,7 @@ class ConfiguracoesUsuario extends StatelessWidget {
         ),
       ),
       body: Container(
-        color: Colors.grey[50],
+        color: AppCores.techGray,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -45,7 +46,14 @@ class ConfiguracoesUsuario extends StatelessWidget {
               icon: Icons.lock_outline,
               titulo: 'Segurança',
               subtitulo: 'Alterar senha e biometria',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TelaSeguranca(),
+                  ),
+                );
+              },
             ),
             const SizedBox(height: 24),
             _buildSecao('Preferências'),
@@ -98,7 +106,7 @@ class ConfiguracoesUsuario extends StatelessWidget {
       child: Text(
         titulo.toUpperCase(),
         style: TextStyle(
-          color: AppCores.deepBlue.withValues(alpha: 0.6),
+          color: Colors.white,
           fontSize: 12,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
