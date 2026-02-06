@@ -19,7 +19,6 @@ class _TelaAlterarSenhaState extends State<TelaAlterarSenha> {
   bool _obscureNovaSenha = true;
   bool _obscureConfirmarSenha = true;
 
-  // Função de validação extraída do seu telacadastrouser.dart
   String? _validarSenha(String? value, {bool isConfirmacao = false}) {
     if (value == null || value.isEmpty) {
       return 'Campo obrigatório';
@@ -146,7 +145,6 @@ class _TelaAlterarSenhaState extends State<TelaAlterarSenha> {
 
                 const SizedBox(height: 30),
 
-                // Botão com o gradiente e estilo da telacadastrouser.dart
                 Container(
                   width: double.infinity,
                   height: 55,
