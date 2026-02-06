@@ -6,7 +6,7 @@ import '../dados/dadoshome.dart';
 import 'componentes/listanotificacoes.dart';
 import 'componentes/listafuncionalidades.dart';
 import 'componentes/cabecalhohome.dart';
-import 'componentes/informacoesconta.dart';
+import 'componentes/resumoconta.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
