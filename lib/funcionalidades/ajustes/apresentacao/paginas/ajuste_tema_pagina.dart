@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constantes/cores.dart';
+import '../../../../core/tema/tema_controller.dart';
 
 class AjustesTema extends StatefulWidget {
   const AjustesTema({super.key});
@@ -117,6 +118,8 @@ class _AjustesTemaState extends State<AjustesTema> {
             setState(() {
               _temaSelecionado = novoValor;
             });
+            // CHAMA A LÓGICA REAL:
+            TemaController.instance.mudarTema(novoValor);
           }
         },
         title: Row(
