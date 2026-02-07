@@ -23,7 +23,7 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: AppCores.deepBlue,
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(color: AppCores.neonBlue),
         elevation: 0,
       ),
       body: Container(

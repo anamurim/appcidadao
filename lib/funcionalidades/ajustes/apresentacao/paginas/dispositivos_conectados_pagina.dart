@@ -14,7 +14,9 @@ class TelaDispositivosConectados extends StatelessWidget {
         ),
         backgroundColor:
             AppCores.deepBlue, // Padrão da sua tela de configurações
-        iconTheme: const IconThemeData(color: Colors.white),
+        iconTheme: const IconThemeData(
+          color: AppCores.neonBlue,
+        ), // Ícones em neon azul para consistência
         elevation: 0,
       ),
       body: Container(
@@ -81,9 +83,7 @@ class TelaDispositivosConectados extends StatelessWidget {
             // Opção para encerrar todas as outras sessões
             Center(
               child: TextButton(
-                onPressed: () {
-                  // Lógica para deslogar de tudo
-                },
+                onPressed: () => _confirmarLogoutGeral(context),
                 child: const Text(
                   'Encerrar todas as outras sessões',
                   style: TextStyle(
@@ -148,11 +148,132 @@ class TelaDispositivosConectados extends StatelessWidget {
                   color: Colors.redAccent,
                   size: 20,
                 ),
-                onPressed: () {
-                  // Confirmar encerramento desta sessão específica
-                },
+                onPressed: () => _confirmarEncerramento(context, aparelho),
               ),
       ),
+    );
+  }
+
+  void _confirmarEncerramento(BuildContext context, String aparelho) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor:
+              AppCores.lightGray, // Padrão do seu diálogo de carregamento
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Text(
+            'Encerrar Sessão?',
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          content: Text(
+            'Deseja realmente desconectar sua conta do dispositivo $aparelho?',
+            style: const TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'CANCELAR',
+                style: TextStyle(color: Colors.white54),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                // Aqui entraria a lógica de API para deslogar
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Sessão em $aparelho encerrada.')),
+                );
+              },
+              child: const Text(
+                'ENCERRAR',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _confirmarLogoutGeral(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppCores
+              .lightGray, // Mantendo o padrão do seu telacadastrouser.dart
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent),
+              SizedBox(width: 10),
+              Text(
+                'Atenção',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'Isso fará com que sua conta seja desconectada de todos os aparelhos, exceto deste que você está usando agora. Continuar?',
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'CANCELAR',
+                style: TextStyle(color: Colors.white54),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppCores
+                    .deepBlue, // Usando sua cor principal para ação em massa
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                // Lógica para invalidar todos os tokens/sessões via API
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Desconectado de todos os outros dispositivos.',
+                    ),
+                    backgroundColor: AppCores.electricBlue,
+                  ),
+                );
+              },
+              child: const Text(
+                'CONFIRMAR',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
