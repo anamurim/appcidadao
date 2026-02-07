@@ -535,7 +535,7 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  // Informações de segurança - CORRIGIDO: Adicionado 'return' e fechamento correto
+  // Informações de segurança
   Widget _buildSecurityInfo() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -578,6 +578,53 @@ class _SignupScreenState extends State<SignupScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildCheckBoxLegal({
+    required String prefixo, // Ex: "Li e concordo com os "
+    required String documento, // Ex: "Termos de Uso"
+    required bool valor,
+    required Function(bool?) onChanged,
+    required VoidCallback onTapDoc,
+  }) {
+    return Row(
+      children: [
+        SizedBox(
+          height: 24,
+          width: 24,
+          child: Checkbox(
+            value: valor,
+            onChanged: onChanged,
+            activeColor: AppCores.neonBlue,
+            side: const BorderSide(color: Colors.white70),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: RichText(
+            text: TextSpan(
+              style: const TextStyle(color: Colors.white70, fontSize: 13),
+              children: [
+                TextSpan(text: prefixo),
+                WidgetSpan(
+                  child: GestureDetector(
+                    onTap: onTapDoc, // Ação que por enquanto não faz nada
+                    child: Text(
+                      documento,
+                      style: const TextStyle(
+                        color: AppCores.neonBlue,
+                        fontWeight: FontWeight.bold,
+                        decoration: TextDecoration.underline,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

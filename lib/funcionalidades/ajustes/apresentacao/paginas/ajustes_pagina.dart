@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constantes/cores.dart';
 import '../../../../core/utilitarios/funcoes_auxiliares.dart';
-//import '../../../autenticacao/apresentacao/paginas/tela_login.dart';
-//import '../../../autenticacao/apresentacao/paginas/tela_recuperar_senha.dart';
 import '../../../perfil/tela_perfil.dart';
 import '../../../ajustes/apresentacao/paginas/seguranca_pagina.dart';
+import '../../../ajustes/apresentacao/paginas/notificacoes_aplicativo_pagina.dart';
+import '../../../ajustes/apresentacao/paginas/ajuste_tema_pagina.dart';
+import '../../../ajustes/apresentacao/paginas/suporte_pagina.dart';
 
 class ConfiguracoesUsuario extends StatelessWidget {
   final VoidCallback onBackToHome;
@@ -63,20 +64,38 @@ class ConfiguracoesUsuario extends StatelessWidget {
               icon: Icons.notifications_none_outlined,
               titulo: 'Notificações',
               subtitulo: 'Gerenciar alertas do app',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TelaNotificacoesAplicativo(),
+                  ),
+                );
+              },
             ),
             _buildCardItem(
               icon: Icons.dark_mode_outlined,
               titulo: 'Tema',
               subtitulo: 'Claro, escuro ou sistema',
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AjustesTema()),
+                );
+              },
             ),
             const SizedBox(height: 24),
             _buildSecao('Suporte'),
             _buildCardItem(
-              icon: Icons.help_outline,
-              titulo: 'Ajuda e FAQ',
-              onTap: () {},
+              icon: Icons.help_outline_rounded,
+              titulo: 'Ajuda e Suporte',
+              subtitulo: 'FAQ e contato',
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TelaSuporte()),
+                );
+              },
             ),
             _buildCardItem(
               icon: Icons.info_outline,
