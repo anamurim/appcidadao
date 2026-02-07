@@ -4,6 +4,7 @@ import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tel
 import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_cadastro_usuario.dart';
 import 'package:appcidadao/funcionalidades/home/apresentacao/paginas/tela_home.dart';
 import 'package:appcidadao/core/tema/app_tema.dart';
+//import 'package:appcidadao/funcionalidades/home/apresentacao/paginas/interferencia_pagina.dart';
 
 void main() {
   runApp(const AppCidadao());
@@ -22,6 +23,7 @@ class AppCidadao extends StatelessWidget {
       routes: {
         '/': (context) => const TechLoginScreen(),
         '/home': (context) => const HomeScreen(),
+        //'/reportar_interferencia': (context) => const TelaReportarInterferencia(),
         '/forgot-password': (context) => const ForgotPasswordScreen(),
         '/signup': (context) => const SignupScreen(),
       },

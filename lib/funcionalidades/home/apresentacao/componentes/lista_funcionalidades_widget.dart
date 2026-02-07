@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../dados/fonte_dados/home_local_datasource.dart';
 import '../../../../core/constantes/cores.dart';
+// Importe a sua página de interferência
+import '../paginas/interferencia_pagina.dart';
 
 class ListaFuncionalidades extends StatefulWidget {
   final TextEditingController searchController;
@@ -12,7 +14,6 @@ class ListaFuncionalidades extends StatefulWidget {
 }
 
 class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
-  // Implementação do snippet de filtragem
   List<Map<String, dynamic>> get _filteredFeatures {
     final features = DadosHome.getfuncionalidades;
     if (widget.searchController.text.isEmpty) {
@@ -22,9 +23,42 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
     final query = widget.searchController.text.toLowerCase();
     return features.where((feature) {
       return feature['title'].toLowerCase().contains(query) ||
-          feature['description'].toLowerCase().contains(query) ||
           (feature['category']?.toString().toLowerCase() ?? '').contains(query);
     }).toList();
+  }
+
+  // FUNÇÃO DE NAVEGAÇÃO CENTRALIZADA
+  void _executarChamadaFuncionalidade(Map<String, dynamic> feature) {
+    Widget? destino;
+
+    // Mapeamento de títulos para telas
+    switch (feature['title']) {
+      case 'Interferência na Via':
+        destino = const TelaReportarInterferencia();
+        break;
+      // Você pode adicionar novos cases aqui conforme criar as outras telas:
+      // case 'Sinalização':
+      //   destino = const TelaSinalizacao();
+      //   break;
+      default:
+        destino = null;
+    }
+
+    if (destino != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => destino!),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Funcionalidade ${feature['title']} em desenvolvimento',
+          ),
+          backgroundColor: AppCores.electricBlue,
+        ),
+      );
+    }
   }
 
   @override
@@ -34,8 +68,6 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
 
   Widget _buildFeaturesGrid() {
     final filtered = _filteredFeatures;
-
-    // Separação por categoria solicitada no snippet
     final problemasUrbanos = filtered
         .where((feature) => feature['category'] == 'problemas_urbanos')
         .toList();
@@ -46,72 +78,44 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Indicador de resultados da busca
-        if (widget.searchController.text.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(bottom: 12),
-            child: Text(
-              'Resultados da busca: ${filtered.length} encontrados',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.7),
-                fontSize: 14,
-              ),
-            ),
-          ),
-
-        // Bloco de Funcionalidades Principais
         if (listafuncionalidades.isNotEmpty) ...[
-          const Text(
-            'Funcionalidades Principais',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          _buildSecaoTitulo('Funcionalidades Principais'),
           const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.8,
-            ),
-            itemCount: listafuncionalidades.length,
-            itemBuilder: (context, index) =>
-                _buildFeatureCard(listafuncionalidades[index]),
-          ),
+          _buildGrid(listafuncionalidades),
         ],
-
-        // Bloco de Problemas Urbanos
         if (problemasUrbanos.isNotEmpty) ...[
           const SizedBox(height: 24),
-          const Text(
-            'Problemas Urbanos',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
+          _buildSecaoTitulo('Problemas Urbanos'),
           const SizedBox(height: 16),
-          GridView.builder(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3, // 3 cards por linha
-              crossAxisSpacing: 12, // Espaçamento horizontal
-              mainAxisSpacing: 12, // Espaçamento vertical
-              childAspectRatio: 0.9, // Proporção do card
-            ),
-            itemCount: problemasUrbanos.length,
-            itemBuilder: (context, index) =>
-                _buildFeatureCard(problemasUrbanos[index]),
-          ),
+          _buildGrid(problemasUrbanos),
         ],
       ],
+    );
+  }
+
+  Widget _buildSecaoTitulo(String titulo) {
+    return Text(
+      titulo,
+      style: const TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.w700,
+      ),
+    );
+  }
+
+  Widget _buildGrid(List<Map<String, dynamic>> itens) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 12,
+        mainAxisSpacing: 12,
+        childAspectRatio: 0.85,
+      ),
+      itemCount: itens.length,
+      itemBuilder: (context, index) => _buildFeatureCard(itens[index]),
     );
   }
 
@@ -127,40 +131,17 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
         child: InkWell(
           onTap: () => _showFeatureDetails(feature),
           borderRadius: BorderRadius.circular(15),
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: (feature['color'] as Color).withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Center(
-                    child: Icon(
-                      feature['icon'],
-                      color: feature['color'],
-                      size: 24,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  feature['title'],
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(feature['icon'], color: feature['color'], size: 28),
+              const SizedBox(height: 8),
+              Text(
+                feature['title'],
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: Colors.white, fontSize: 11),
+              ),
+            ],
           ),
         ),
       ),
@@ -186,7 +167,7 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 22,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(height: 12),
@@ -200,8 +181,14 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: feature['color'],
                 minimumSize: const Size(double.infinity, 50),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                Navigator.pop(context); // Fecha o modal
+                _executarChamadaFuncionalidade(feature); // Chama a tela
+              },
               child: Text(
                 'ACESSAR ${feature['title'].toUpperCase()}',
                 style: const TextStyle(
