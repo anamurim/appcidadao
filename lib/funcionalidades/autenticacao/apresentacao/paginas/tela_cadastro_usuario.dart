@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../../core/widgets/linha_conexao.dart';
-import '../../../../core/widgets/particulas.dart';
 import '../../../../core/utilitarios/funcoes_auxiliares.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -180,13 +178,6 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
       body: Stack(
         children: [
-          const ParticulasWidget(),
-          CustomPaint(
-            painter: ConnectionLinesPainter(
-              color: AppCores.electricBlue.withValues(alpha: 0.1),
-            ),
-          ),
-
           if (_isLoading)
             Container(
               color: Colors.black.withValues(alpha: 0.5),
@@ -318,93 +309,105 @@ class _SignupScreenState extends State<SignupScreen> {
     bool isConfirmPassword = false,
     VoidCallback? toggleVisibility,
   }) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      focusNode: focusNode,
-      textInputAction: nextFocus != null
-          ? TextInputAction.next
-          : TextInputAction.done,
-      onFieldSubmitted: (_) {
-        if (nextFocus != null) {
-          nextFocus.requestFocus();
-        }
-      },
-      style: const TextStyle(color: Colors.white, fontSize: 14),
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(
-          color: AppCores.neonBlue,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1,
-        ),
-        prefixIcon: Icon(icon, color: AppCores.neonBlue),
-        suffixIcon: isPassword && toggleVisibility != null
-            ? IconButton(
-                icon: Icon(
-                  obscureText ? Icons.visibility_off : Icons.visibility,
-                  color: AppCores.neonBlue,
-                ),
-                onPressed: toggleVisibility,
-              )
-            : null,
-        filled: true,
-        fillColor: AppCores.lightGray.withValues(alpha: 0.2),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(
-            color: AppCores.neonBlue.withValues(alpha: 0.3),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        boxShadow: [
+          BoxShadow(
+            color: AppCores.electricBlue.withValues(alpha: 0.1),
+            blurRadius: 20,
+            spreadRadius: 2,
+          ),
+        ],
+      ),
+      child: TextFormField(
+        controller: controller,
+        obscureText: obscureText,
+        focusNode: focusNode,
+        textInputAction: nextFocus != null
+            ? TextInputAction.next
+            : TextInputAction.done,
+        onFieldSubmitted: (_) {
+          if (nextFocus != null) {
+            nextFocus.requestFocus();
+          }
+        },
+        style: const TextStyle(color: Colors.white, fontSize: 14),
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(
+            color: AppCores.neonBlue,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1,
+          ),
+          prefixIcon: Icon(icon, color: AppCores.neonBlue),
+          suffixIcon: isPassword && toggleVisibility != null
+              ? IconButton(
+                  icon: Icon(
+                    obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: AppCores.neonBlue,
+                  ),
+                  onPressed: toggleVisibility,
+                )
+              : null,
+          filled: true,
+          fillColor: AppCores.lightGray.withValues(alpha: 0.2),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide(
+              color: AppCores.neonBlue.withValues(alpha: 0.3),
+            ),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: AppCores.neonBlue),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: const BorderSide(color: Colors.red),
           ),
         ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: AppCores.neonBlue),
-        ),
-        errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Colors.red),
-        ),
+        validator: (value) {
+          if (value == null || value.isEmpty) {
+            return 'Campo obrigatório';
+          }
+
+          if (isEmail) {
+            final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+            if (!emailRegex.hasMatch(value)) {
+              return 'E-mail inválido';
+            }
+          }
+
+          if (isPassword && !isConfirmPassword) {
+            if (value.length < 8) {
+              return 'Mínimo 8 caracteres';
+            }
+            if (!value.contains(RegExp(r'[A-Z]'))) {
+              return 'Inclua uma letra maiúscula';
+            }
+            if (!value.contains(RegExp(r'[a-z]'))) {
+              return 'Inclua uma letra minúscula';
+            }
+            if (!value.contains(RegExp(r'[0-9]'))) {
+              return 'Inclua um número';
+            }
+          }
+
+          if (isConfirmPassword) {
+            if (value != _passwordController.text) {
+              return 'As senhas não coincidem';
+            }
+          }
+
+          return null;
+        },
+        onChanged: (_) => setState(() {}),
       ),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Campo obrigatório';
-        }
-
-        if (isEmail) {
-          final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-          if (!emailRegex.hasMatch(value)) {
-            return 'E-mail inválido';
-          }
-        }
-
-        if (isPassword && !isConfirmPassword) {
-          if (value.length < 8) {
-            return 'Mínimo 8 caracteres';
-          }
-          if (!value.contains(RegExp(r'[A-Z]'))) {
-            return 'Inclua uma letra maiúscula';
-          }
-          if (!value.contains(RegExp(r'[a-z]'))) {
-            return 'Inclua uma letra minúscula';
-          }
-          if (!value.contains(RegExp(r'[0-9]'))) {
-            return 'Inclua um número';
-          }
-        }
-
-        if (isConfirmPassword) {
-          if (value != _passwordController.text) {
-            return 'As senhas não coincidem';
-          }
-        }
-
-        return null;
-      },
-      onChanged: (_) => setState(() {}),
     );
   }
 

@@ -284,7 +284,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
             _buildTextField(
               controller: _emailController,
               label: 'E-MAIL',
-              hint: 'email cadastrado',
+              hint: 'E-mail cadastrado',
               icon: Icons.person_outline,
             ),
             const SizedBox(height: 25),
@@ -322,7 +322,6 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                         color: AppCores.neonBlue.withValues(alpha: 0.8),
                         width: 2,
                       ),
-                      // Arredondamento leve para combinar com o estilo tech
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4),
                       ),
