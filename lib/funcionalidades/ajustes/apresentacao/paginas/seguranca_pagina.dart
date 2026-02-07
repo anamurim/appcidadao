@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constantes/cores.dart';
 import '../../../ajustes/apresentacao/paginas/alterar_senha_pagina.dart';
+import '../../../ajustes/apresentacao/paginas/dispositivos_conectados_pagina.dart';
 
 class TelaSeguranca extends StatefulWidget {
   const TelaSeguranca({super.key});
@@ -17,7 +18,10 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Segurança', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Ajustes de segurança',
+          style: TextStyle(color: Colors.white),
+        ),
         backgroundColor: AppCores.deepBlue,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
@@ -49,7 +53,6 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
               titulo: 'Biometria',
               subtitulo: 'Acessar o app usando digital ou rosto',
               trailing: Switch(
-                // 🔹 Correção: 'activeThumbColor' em vez de 'activeColor'
                 activeThumbColor: AppCores.neonBlue,
                 value: _biometriaAtiva,
                 onChanged: (bool value) {
@@ -66,7 +69,7 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
 
             _buildCardConfig(
               icon: Icons.verified_user_outlined,
-              titulo: 'Autenticação em duas etapas',
+              titulo: 'Autenticação dois fatores',
               subtitulo: 'Um código extra será solicitado no login',
               trailing: Switch(
                 // 🔹 Correção: 'activeThumbColor' em vez de 'activeColor'
@@ -86,7 +89,14 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
               titulo: 'Dispositivos Conectados',
               subtitulo: 'Gerencie onde sua conta está aberta',
               trailing: const Icon(Icons.chevron_right),
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TelaDispositivosConectados(),
+                  ),
+                );
+              },
             ),
 
             const SizedBox(height: 32),
