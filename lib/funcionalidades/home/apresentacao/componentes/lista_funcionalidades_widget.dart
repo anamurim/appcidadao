@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../dados/fonte_dados/home_local_datasource.dart';
 import '../../../../core/constantes/cores.dart';
-// Importe a sua página de interferência
 import '../paginas/interferencia_pagina.dart';
+import '../paginas/reporte_semaforo_pagina.dart';
+import '../paginas/veiculos_quebrado_pagina.dart';
+import '../paginas/estacionamento_irregular_pagina.dart';
+import '../paginas/reporte_sinalizacao_pagina.dart';
+import '../paginas/reporte_iluminacao_pagina.dart';
 
 class ListaFuncionalidades extends StatefulWidget {
   final TextEditingController searchController;
@@ -36,10 +40,21 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
       case 'Interferência na Via':
         destino = const TelaReportarInterferencia();
         break;
-      // Você pode adicionar novos cases aqui conforme criar as outras telas:
-      // case 'Sinalização':
-      //   destino = const TelaSinalizacao();
-      //   break;
+      case 'Semáforo':
+        destino = const TelaReportarSemaforo();
+        break;
+      case 'Veículo Quebrado':
+        destino = const TelaVeiculoQuebrado();
+        break;
+      case 'Estacionamento Irregular':
+        destino = const TelaEstacionamentoIrregular();
+        break;
+      case 'Sinalização':
+        destino = const TelaReporteSinalizacao();
+        break;
+      case 'Iluminação Pública':
+        destino = const TelaReporteIluminacao();
+        break;
       default:
         destino = null;
     }
@@ -60,6 +75,35 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
       );
     }
   }
+
+  /* // FUNÇÃO DE NAVEGAÇÃO CENTRALIZADA - VERSÃO USANDO ROTAS
+  void _executarChamadaFuncionalidade(Map<String, dynamic> feature) {
+    String? rota;
+
+    // Mapeamos o título do DadosHome para a String da rota na main.dart
+    switch (feature['title']) {
+      case 'Interferência na Via':
+        rota = '/interferencia';
+        break;
+      case 'Pagamentos':
+        rota = '/pagamentos';
+        break;
+      default:
+        rota = null;
+    }
+
+    if (rota != null) {
+      // Navegação usando o nome da rota registrado na main.dart
+      Navigator.pushNamed(context, rota);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('A tela de "${feature['title']}" está em desenvolvimento.'),
+          backgroundColor: Colors.blueGrey,
+        ),
+      );
+    }
+  } */
 
   @override
   Widget build(BuildContext context) {
@@ -190,10 +234,27 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
                 _executarChamadaFuncionalidade(feature); // Chama a tela
               },
               child: Text(
-                'ACESSAR ${feature['title'].toUpperCase()}',
+                'REPORTAR ${feature['title'].toUpperCase()}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8), // Pequeno espaçamento entre os botões
+            // BOTÃO CANCELAR
+            TextButton(
+              style: TextButton.styleFrom(
+                minimumSize: const Size(double.infinity, 45),
+              ),
+              onPressed: () {
+                Navigator.pop(context); // Apenas fecha o modal
+              },
+              child: const Text(
+                'CANCELAR',
+                style: TextStyle(
+                  color: Colors.white54, // Cor mais discreta
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
