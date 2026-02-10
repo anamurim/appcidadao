@@ -7,6 +7,7 @@ import '../../apresentacao/componentes/lista_funcionalidades_widget.dart';
 import '../../apresentacao/componentes/lista_notificacoes_widget.dart';
 import '../../apresentacao/componentes/cabecalho_home_widget.dart';
 import '../../apresentacao/componentes/resumo_conta_widget.dart';
+import '../../apresentacao/paginas/historico_reportes_pagina.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -46,20 +47,18 @@ class _HomeScreenState extends State<HomeScreen> {
     // Define as páginas aqui dentro do build para garantir que a função de callback esteja atualizada
     final List<Widget> paginas = [
       _buildHomePageContent(), // Index 0
-      const Center(
-        child: Text('Histórico', style: TextStyle(color: Colors.white)),
-      ), // Index 1
-      AjustesPagina(
-        onBackToHome: () => _onItemTapped(0),
-      ), // Passa a função de voltar
+      HistoricoReportesPagina(
+        onBackToHome: () => _onItemTapped(0), // Leva para o Início
+      ), // Index 1 - Substituído o Center pelo Histórico real
+      AjustesPagina(onBackToHome: () => _onItemTapped(0)), // Index 2
     ];
 
     return Scaffold(
       backgroundColor: AppCores.techGray,
       // Remove a AppBar apenas no index 2 (Configurações)
-      appBar: _selectedIndex == 2
+      appBar: _selectedIndex == 1
           ? null
-          : _selectedIndex == 0
+          : _selectedIndex == 2
           ? AppBar(
               title: _showSearchBar
                   ? FuncoesAuxiliares.construirCampoBusca(
@@ -81,6 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
           : AppBar(
               title: const Text('Histórico'),
               backgroundColor: AppCores.deepBlue,
+              elevation: 0,
             ),
       body: IndexedStack(index: _selectedIndex, children: paginas),
       bottomNavigationBar: _buildBottomNavigationBar(),
