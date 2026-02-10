@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import '../../../../core/constantes/cores.dart';
-
-enum MediaType { image, video }
-
-class MediaItem {
-  final String url;
-  final MediaType type;
-  const MediaItem({required this.url, required this.type});
-}
+import '../../../../core/modelos/media_item.dart';
+import '../../../../core/repositorios/reporte_repositorio_local.dart';
+import '../../dados/modelos/reporte_sinalizacao.dart';
 
 class TelaReporteSinalizacao extends StatefulWidget {
   const TelaReporteSinalizacao({super.key});
@@ -19,6 +13,7 @@ class TelaReporteSinalizacao extends StatefulWidget {
 
 class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
   final _formKey = GlobalKey<FormState>();
+  final _repositorio = ReporteRepositorioLocal();
 
   // Controllers e variáveis de estado
   String? _selecionaTipoSinalizacao;
@@ -61,7 +56,7 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
   InputDecoration _inputStyle(String label, IconData icon, {String? hint}) {
     return InputDecoration(
       labelText: label,
-      hintText: hint, // Agora o parâmetro existe e pode ser usado aqui
+      hintText: hint,
       hintStyle: const TextStyle(color: Colors.white30),
       labelStyle: const TextStyle(color: Colors.white70),
       prefixIcon: Icon(icon, color: AppCores.neonBlue),
@@ -78,41 +73,57 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
     );
   }
 
-  void _submitReport() {
+  Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      debugPrint('--- Reporte de Sinalização ---');
-      debugPrint('Tipo: $_selecionaTipoSinalizacao');
-      debugPrint('Endereço: ${_enderecoSinalizacaoController.text}');
-
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-          backgroundColor: AppCores.lightGray,
-          title: const Text(
-            'Reporte Enviado',
-            style: TextStyle(color: Color.fromARGB(255, 2, 1, 1)),
-          ),
-          content: const Text(
-            'Obrigado! Sua colaboração ajuda a tornar o trânsito mais seguro para todos.',
-            style: TextStyle(color: Colors.white70),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                Navigator.pop(context);
-              },
-              child: const Text(
-                'FECHAR',
-                style: TextStyle(color: AppCores.neonBlue),
-              ),
-            ),
-          ],
-        ),
+      final reporte = ReporteSinalizacao(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        endereco: _enderecoSinalizacaoController.text,
+        pontoReferencia:
+            _pontoReferenciaSinalizacaoController.text.isNotEmpty
+                ? _pontoReferenciaSinalizacaoController.text
+                : null,
+        descricao: _descricaoSinalizacaoController.text,
+        midias: List.from(_selectedMediaItemsSinalizacao),
+        tipoSinalizacao: _selecionaTipoSinalizacao!,
       );
+
+      await _repositorio.salvarReporte(reporte);
+
+      debugPrint('--- Reporte de Sinalização salvo ---');
+      debugPrint('ID: ${reporte.id}');
+      debugPrint('Tipo: ${reporte.tipoSinalizacao}');
+
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: AppCores.lightGray,
+            title: const Text(
+              'Reporte Enviado',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: const Text(
+              'Obrigado! Sua colaboração ajuda a tornar o trânsito mais seguro para todos.',
+              style: TextStyle(color: Colors.white70),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'FECHAR',
+                  style: TextStyle(color: AppCores.neonBlue),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
       _clearForm();
     }
   }
@@ -241,7 +252,7 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: _selectedMediaItemsSinalizacao.length,
-                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
                     itemBuilder: (ctx, i) => Container(
                       width: 80,
                       decoration: BoxDecoration(
@@ -298,29 +309,4 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
       ),
     );
   }
-
-  /*Widget _buildBotaoFoto() {
-    return InkWell(
-      onTap: () {}, // Implementação futura da câmera
-      child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          color: AppCores.lightGray,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppCores.neonBlue.withValues(alpha: 0.2)),
-        ),
-        child: const Column(
-          children: [
-            Icon(Icons.add_a_photo, color: AppCores.neonBlue, size: 32),
-            SizedBox(height: 8),
-            Text(
-              "Tirar foto da sinalização",
-              style: TextStyle(color: Colors.white70),
-            ),
-          ],
-        ),
-      ),
-    );
-  }*/
 }

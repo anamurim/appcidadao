@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter/services.dart';
 import '../../../../core/constantes/cores.dart';
-
-enum MediaType { image, video }
-
-class MediaItem {
-  final String url;
-  final MediaType type;
-  const MediaItem({required this.url, required this.type});
-}
+import '../../../../core/modelos/media_item.dart';
+import '../../../../core/repositorios/reporte_repositorio_local.dart';
+import '../../dados/modelos/reporte_iluminacao.dart';
 
 class TelaReporteIluminacao extends StatefulWidget {
   const TelaReporteIluminacao({super.key});
@@ -19,6 +13,7 @@ class TelaReporteIluminacao extends StatefulWidget {
 
 class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   final _formKey = GlobalKey<FormState>();
+  final _repositorio = ReporteRepositorioLocal();
 
   // Controllers e variáveis de estado
   String? _selecionaTipoProblemaIluminacao;
@@ -81,42 +76,61 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
     );
   }
 
-  void _submitReport() {
+  Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      debugPrint('--- Solicitação de Reparo de Iluminação ---');
-      debugPrint('Problema: $_selecionaTipoProblemaIluminacao');
-      debugPrint('Poste Nº: ${_numeroPosteController.text}');
-      debugPrint('Endereço: ${_enderecoIluminacaoController.text}');
-
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (ctx) => AlertDialog(
-          backgroundColor: AppCores.lightGray,
-          title: const Text(
-            'Solicitação Registrada',
-            style: TextStyle(color: Colors.white),
-          ),
-          content: const Text(
-            'Recebemos seu reporte. O prazo para manutenção é de até 72 horas úteis.',
-            style: TextStyle(color: Colors.white70),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx);
-                Navigator.pop(context);
-              },
-              child: const Text(
-                'ENTENDIDO',
-                style: TextStyle(color: AppCores.accentGreen),
-              ),
-            ),
-          ],
-        ),
+      final reporte = ReporteIluminacao(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        endereco: _enderecoIluminacaoController.text,
+        pontoReferencia:
+            _pontoReferenciaIluminacaoController.text.isNotEmpty
+                ? _pontoReferenciaIluminacaoController.text
+                : null,
+        descricao: _descricaoIluminacaoController.text,
+        midias: List.from(_selectedMediaItemsIluminacao),
+        tipoProblema: _selecionaTipoProblemaIluminacao!,
+        numeroPoste: _numeroPosteController.text.isNotEmpty
+            ? _numeroPosteController.text
+            : null,
       );
+
+      await _repositorio.salvarReporte(reporte);
+
+      debugPrint('--- Solicitação de Reparo de Iluminação salva ---');
+      debugPrint('ID: ${reporte.id}');
+      debugPrint('Problema: ${reporte.tipoProblema}');
+      debugPrint('Poste Nº: ${reporte.numeroPoste ?? "Não informado"}');
+
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: AppCores.lightGray,
+            title: const Text(
+              'Solicitação Registrada',
+              style: TextStyle(color: Colors.white),
+            ),
+            content: const Text(
+              'Recebemos seu reporte. O prazo para manutenção é de até 72 horas úteis.',
+              style: TextStyle(color: Colors.white70),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'ENTENDIDO',
+                  style: TextStyle(color: AppCores.accentGreen),
+                ),
+              ),
+            ],
+          ),
+        );
+      }
       _clearForm();
     }
   }
@@ -254,7 +268,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: _selectedMediaItemsIluminacao.length,
-                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
                     itemBuilder: (ctx, i) => Container(
                       width: 80,
                       decoration: BoxDecoration(
