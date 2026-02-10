@@ -82,16 +82,17 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
         tipoVeiculo: _selecionaTipoVeiculo!,
         placa: _placaController.text,
         marca: _marcaController.text.isNotEmpty ? _marcaController.text : null,
-        modelo:
-            _modeloController.text.isNotEmpty ? _modeloController.text : null,
+        modelo: _modeloController.text.isNotEmpty
+            ? _modeloController.text
+            : null,
         cor: _corController.text.isNotEmpty ? _corController.text : null,
-        nomeContato:
-            _nomeController.text.isNotEmpty ? _nomeController.text : null,
+        nomeContato: _nomeController.text.isNotEmpty
+            ? _nomeController.text
+            : null,
         telefone: _telefoneController.text.isNotEmpty
             ? _telefoneController.text
             : null,
-        email:
-            _emailController.text.isNotEmpty ? _emailController.text : null,
+        email: _emailController.text.isNotEmpty ? _emailController.text : null,
       );
 
       await _repositorio.salvarReporte(reporte);
@@ -326,7 +327,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: _selectedMediaItems.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    separatorBuilder: (_, _) => const SizedBox(width: 8),
                     itemBuilder: (ctx, i) => Container(
                       width: 80,
                       decoration: BoxDecoration(
