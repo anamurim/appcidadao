@@ -132,6 +132,8 @@ class _TelaEstacionamentoIrregularState
             ],
           ),
         );
+        // Volta para a Home automaticamente
+        Navigator.pop(context);
       }
       _clearForm();
     }

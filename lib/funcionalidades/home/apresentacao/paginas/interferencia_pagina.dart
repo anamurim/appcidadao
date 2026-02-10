@@ -88,10 +88,12 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Enviando relato...'),
+            content: Text('Relato enviado com sucesso!'),
             backgroundColor: AppCores.accentGreen,
           ),
         );
+        // Volta para a Home automaticamente
+        Navigator.pop(context);
       }
       _clearForm();
     }

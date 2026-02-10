@@ -129,6 +129,8 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
             ],
           ),
         );
+        // Volta para a Home automaticamente
+        Navigator.pop(context);
       }
       _clearForm();
     }
