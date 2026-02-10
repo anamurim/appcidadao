@@ -52,7 +52,7 @@ class CabecalhoHome extends StatelessWidget {
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ConfiguracoesUsuario(
+                          builder: (context) => AjustesPagina(
                             onBackToHome: () => Navigator.pop(
                               context,
                             ), // Nesse trecho o "voltar" apenas fecha a tela sobreposta

@@ -1,7 +1,10 @@
+import 'package:appcidadao/funcionalidades/ajustes/apresentacao/paginas/ajustes_pagina.dart';
 import 'package:flutter/material.dart';
 import '../../dados/fonte_dados/home_local_datasource.dart';
 import '../../../../core/constantes/cores.dart';
+import '../../../perfil/tela_perfil.dart';
 import '../paginas/interferencia_pagina.dart';
+//import '../../../ajustes/apresentacao/paginas/ajustes_pagina.dart';
 import '../paginas/reporte_semaforo_pagina.dart';
 import '../paginas/veiculos_quebrado_pagina.dart';
 import '../paginas/estacionamento_irregular_pagina.dart';
@@ -37,6 +40,12 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
 
     // Mapeamento de títulos para telas
     switch (feature['title']) {
+      case 'Minha Conta':
+        destino = const TelaPerfil();
+        break;
+      case 'Suporte':
+        destino = AjustesPagina(onBackToHome: () => Navigator.pop(context));
+        break;
       case 'Interferência na Via':
         destino = const TelaReportarInterferencia();
         break;

@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
       const Center(
         child: Text('Histórico', style: TextStyle(color: Colors.white)),
       ), // Index 1
-      ConfiguracoesUsuario(
+      AjustesPagina(
         onBackToHome: () => _onItemTapped(0),
       ), // Passa a função de voltar
     ];

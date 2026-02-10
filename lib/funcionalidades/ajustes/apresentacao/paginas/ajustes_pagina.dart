@@ -7,10 +7,10 @@ import '../../../ajustes/apresentacao/paginas/notificacoes_aplicativo_pagina.dar
 import '../../../ajustes/apresentacao/paginas/ajuste_tema_pagina.dart';
 import '../../../ajustes/apresentacao/paginas/suporte_pagina.dart';
 
-class ConfiguracoesUsuario extends StatelessWidget {
+class AjustesPagina extends StatelessWidget {
   final VoidCallback onBackToHome;
 
-  const ConfiguracoesUsuario({super.key, required this.onBackToHome});
+  const AjustesPagina({super.key, required this.onBackToHome});
 
   @override
   Widget build(BuildContext context) {
