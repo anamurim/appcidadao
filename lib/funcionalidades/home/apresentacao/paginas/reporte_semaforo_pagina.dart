@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
-
-enum MediaType { image, video }
-
-class MediaItem {
-  final String url;
-  final MediaType type;
-  const MediaItem({required this.url, required this.type});
-}
+import '../../../../core/modelos/media_item.dart';
+import '../../../../core/repositorios/reporte_repositorio_local.dart';
+import '../../dados/modelos/reporte_semaforo.dart';
 
 class TelaReportarSemaforo extends StatefulWidget {
   const TelaReportarSemaforo({super.key});
@@ -18,6 +13,7 @@ class TelaReportarSemaforo extends StatefulWidget {
 
 class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   final _formKey = GlobalKey<FormState>();
+  final _repositorio = ReporteRepositorioLocal();
 
   // Variáveis de estado
   String? _selecionaTipoProblemaSemaforo;
@@ -27,8 +23,6 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
       TextEditingController();
   final TextEditingController _descricaoSemaforoController =
       TextEditingController();
-  //String? _problemType;
-  //String? _description;
 
   final List<String> _problemTypes = [
     'Apagado',
@@ -46,8 +40,6 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
     _enderecoSemaforoController.dispose();
     _pontoReferenciaSemaforoController.dispose();
     _descricaoSemaforoController.dispose();
-    //_nomeContatoController.dispose();
-    //_emailContatoPhoneController.dispose();
     super.dispose();
   }
 
@@ -64,47 +56,56 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
     });
   }
 
-  void _submitReport() {
+  Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      debugPrint(
-        'Log de Desenvolvimento - Local: $_enderecoSemaforoController',
-      );
-      debugPrint(
-        'Log de Desenvolvimento - Ponto de Referência: $_pontoReferenciaSemaforoController',
-      );
-      debugPrint(
-        'Log de Desenvolvimento - Descrição: $_descricaoSemaforoController',
+      final reporte = ReporteSemaforo(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        endereco: _enderecoSemaforoController.text,
+        pontoReferencia: _pontoReferenciaSemaforoController.text.isNotEmpty
+            ? _pontoReferenciaSemaforoController.text
+            : null,
+        descricao: _descricaoSemaforoController.text,
+        midias: List.from(_selectedMediaItems),
+        tipoProblema: _selecionaTipoProblemaSemaforo!,
       );
 
-      showDialog(
-        context: context,
-        barrierDismissible: false, // Obriga o usuário a clicar no botão
-        builder: (ctx) => AlertDialog(
-          backgroundColor: AppCores.lightGray,
-          title: const Text('Sucesso', style: TextStyle(color: Colors.white)),
-          content: const Text(
-            'Seu relatório de semáforo foi enviado com sucesso.',
-            style: TextStyle(color: Colors.white70),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(ctx); // Fecha o alerta
-                Navigator.pop(context); // Volta para a tela principal (Home)
-              },
-              child: const Text(
-                'OK',
-                style: TextStyle(
-                  color: AppCores.neonBlue,
-                  fontWeight: FontWeight.bold,
+      await _repositorio.salvarReporte(reporte);
+
+      debugPrint(
+        'Log de Desenvolvimento - Reporte salvo: ${reporte.toMap()}',
+      );
+
+      if (mounted) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            backgroundColor: AppCores.lightGray,
+            title: const Text('Sucesso', style: TextStyle(color: Colors.white)),
+            content: const Text(
+              'Seu relatório de semáforo foi enviado com sucesso.',
+              style: TextStyle(color: Colors.white70),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.pop(context);
+                },
+                child: const Text(
+                  'OK',
+                  style: TextStyle(
+                    color: AppCores.neonBlue,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
-            ),
-          ],
-        ),
-      );
+            ],
+          ),
+        );
+      }
       _clearForm();
     }
   }
@@ -116,8 +117,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
       _enderecoSemaforoController.clear();
       _pontoReferenciaSemaforoController.clear();
       _descricaoSemaforoController.clear();
-      //_problemType = null;
-      //_description = null;
+      _selectedMediaItems.clear();
     });
   }
 
@@ -173,7 +173,6 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
                   Icons.location_on,
                 ),
                 validator: (val) => val!.isEmpty ? 'Informe o local' : null,
-                //onSaved: (val) => _location = val,
               ),
               const SizedBox(height: 16),
 
@@ -182,7 +181,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
                 dropdownColor: AppCores.lightGray,
                 style: const TextStyle(color: Colors.white),
                 decoration: _inputStyle('Tipo de Problema', Icons.traffic),
-                initialValue: _selecionaTipoProblemaSemaforo,
+                value: _selecionaTipoProblemaSemaforo,
                 items: _problemTypes
                     .map(
                       (type) =>

@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/constantes/cores.dart';
-
-enum MediaType { image, video }
-
-class MediaItem {
-  final String url;
-  final MediaType type;
-  const MediaItem({required this.url, required this.type});
-}
+import '../../../../core/modelos/media_item.dart';
+import '../../../../core/repositorios/reporte_repositorio_local.dart';
+import '../../dados/modelos/reporte_veiculo.dart';
 
 class TelaVeiculoQuebrado extends StatefulWidget {
   const TelaVeiculoQuebrado({super.key});
@@ -19,6 +14,7 @@ class TelaVeiculoQuebrado extends StatefulWidget {
 
 class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _repositorio = ReporteRepositorioLocal();
 
   // Controllers e variáveis de estado
   String? _selecionaTipoVeiculo;
@@ -27,6 +23,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   final _marcaController = TextEditingController();
   final _corController = TextEditingController();
   final _enderecoController = TextEditingController();
+  final _pontoReferenciaController = TextEditingController();
   final _descricaoController = TextEditingController();
   final _nomeController = TextEditingController();
   final _telefoneController = TextEditingController();
@@ -49,6 +46,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
     _marcaController.dispose();
     _corController.dispose();
     _enderecoController.dispose();
+    _pontoReferenciaController.dispose();
     _descricaoController.dispose();
     _nomeController.dispose();
     _telefoneController.dispose();
@@ -69,52 +67,75 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
     });
   }
 
-  void _submitReport() {
+  Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      // Logs de depuração
-      debugPrint('--- Relatório de Veículo ---');
-      debugPrint('Placa: ${_placaController.text}');
-      debugPrint('Tipo: ${_selecionaTipoVeiculo ?? "Não selecionado"}');
-      debugPrint('Local: ${_enderecoController.text}');
-
-      //Remove qualquer SnackBar que esteja aberta no momento
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-
-      //Exibe a SnackBar de sucesso
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: const Row(
-            children: [
-              Icon(Icons.check_circle, color: Colors.white),
-              SizedBox(width: 12),
-              Text(
-                'O reporte do veículo foi enviado!',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-          backgroundColor:
-              AppCores.accentGreen, // Usando a cor de destaque que você já tem
-          behavior:
-              SnackBarBehavior.floating, // Faz ela flutuar sobre o conteúdo
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          duration: const Duration(seconds: 3),
-          action: SnackBarAction(
-            label: 'OK',
-            textColor: Colors.white,
-            onPressed: () {
-              // Opcional: ação manual ao clicar no OK da SnackBar
-            },
-          ),
-        ),
+      final reporte = ReporteVeiculo(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        endereco: _enderecoController.text,
+        pontoReferencia: _pontoReferenciaController.text.isNotEmpty
+            ? _pontoReferenciaController.text
+            : null,
+        descricao: _descricaoController.text,
+        midias: List.from(_selectedMediaItems),
+        tipoVeiculo: _selecionaTipoVeiculo!,
+        placa: _placaController.text,
+        marca: _marcaController.text.isNotEmpty ? _marcaController.text : null,
+        modelo:
+            _modeloController.text.isNotEmpty ? _modeloController.text : null,
+        cor: _corController.text.isNotEmpty ? _corController.text : null,
+        nomeContato:
+            _nomeController.text.isNotEmpty ? _nomeController.text : null,
+        telefone: _telefoneController.text.isNotEmpty
+            ? _telefoneController.text
+            : null,
+        email:
+            _emailController.text.isNotEmpty ? _emailController.text : null,
       );
+
+      await _repositorio.salvarReporte(reporte);
+
+      // Logs de depuração
+      debugPrint('--- Relatório de Veículo salvo ---');
+      debugPrint('ID: ${reporte.id}');
+      debugPrint('Placa: ${reporte.placa}');
+      debugPrint('Tipo: ${reporte.tipoVeiculo}');
+
+      if (mounted) {
+        //Remove qualquer SnackBar que esteja aberta no momento
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+
+        //Exibe a SnackBar de sucesso
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 12),
+                Text(
+                  'O reporte do veículo foi enviado!',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            backgroundColor: AppCores.accentGreen,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+            duration: const Duration(seconds: 3),
+            action: SnackBarAction(
+              label: 'OK',
+              textColor: Colors.white,
+              onPressed: () {},
+            ),
+          ),
+        );
+      }
 
       //Limpa o formulário
       _clearForm();
@@ -130,11 +151,12 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
       _modeloController.clear();
       _corController.clear();
       _enderecoController.clear();
+      _pontoReferenciaController.clear();
       _descricaoController.clear();
       _nomeController.clear();
       _telefoneController.clear();
       _emailController.clear();
-      super.dispose();
+      _selectedMediaItems.clear();
     });
   }
 
@@ -234,7 +256,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               const SizedBox(height: 15),
 
               TextFormField(
-                controller: _descricaoController,
+                controller: _pontoReferenciaController,
                 maxLines: 2,
                 style: const TextStyle(color: Colors.white),
                 decoration: _inputStyle(
@@ -259,7 +281,6 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               _buildSecaoTitulo("Mídia (imagens ou vídeos)"),
               const SizedBox(height: 10),
 
-              //_buildBotaoMidia(),
               Row(
                 children: [
                   Expanded(
@@ -305,7 +326,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: _selectedMediaItems.length,
-                    separatorBuilder: (_, _) => const SizedBox(width: 8),
+                    separatorBuilder: (_, __) => const SizedBox(width: 8),
                     itemBuilder: (ctx, i) => Container(
                       width: 80,
                       decoration: BoxDecoration(
@@ -383,31 +404,4 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
       ),
     );
   }
-
-  /*Widget _buildBotaoMidia() {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(15),
-      decoration: BoxDecoration(
-        color: AppCores.lightGray,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppCores.neonBlue.withValues(alpha: 0.3),
-          style: BorderStyle.none,
-        ),
-      ),
-      child: Column(
-        children: [
-          const Icon(Icons.camera_enhance, color: Colors.white54, size: 30),
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              "Adicionar Fotos ou Vídeos",
-              style: TextStyle(color: Colors.white70),
-            ),
-          ),
-        ],
-      ),
-    );
-  }*/
 }

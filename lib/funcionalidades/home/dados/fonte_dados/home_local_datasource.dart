@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import '../../../../core/modelos/usuario.dart';
 
 class DadosHome {
-  // Dados do usuário (simulação)
-  static final Map<String, dynamic> userData = {
-    'name': 'Usuário',
-    'email': 'e-mail@gmail.com',
-    'account': '12345-6',
-    'avatar':
+  // Dados do usuário (modelo tipado)
+  static final Usuario usuario = const Usuario(
+    nome: 'Usuário',
+    email: 'e-mail@gmail.com',
+    conta: '12345-6',
+    avatar:
         'https://ui-avatars.com/api/?name=Carlos+Silva&background=0066FF&color=fff',
-  };
+  );
+
+  // Compatibilidade: mantém acesso via Map para widgets existentes
+  static Map<String, dynamic> get userData => {
+        'name': usuario.nome,
+        'email': usuario.email,
+        'account': usuario.conta,
+        'avatar': usuario.avatar,
+      };
 
   //Lista de funcionalidades principais
   static final List<Map<String, dynamic>> getfuncionalidades = [

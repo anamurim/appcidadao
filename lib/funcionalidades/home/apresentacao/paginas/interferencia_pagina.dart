@@ -1,13 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
-
-enum MediaType { image, video }
-
-class MediaItem {
-  final String url;
-  final MediaType type;
-  const MediaItem({required this.url, required this.type});
-}
+import '../../../../core/modelos/media_item.dart';
+import '../../../../core/repositorios/reporte_repositorio_local.dart';
+import '../../dados/modelos/reporte_interferencia.dart';
 
 class TelaReportarInterferencia extends StatefulWidget {
   const TelaReportarInterferencia({super.key});
@@ -19,6 +14,7 @@ class TelaReportarInterferencia extends StatefulWidget {
 
 class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _repositorio = ReporteRepositorioLocal();
 
   // Controllers e variáveis de estado
   String? _selecionaTipoInterferencia;
@@ -68,14 +64,36 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
     });
   }
 
-  void _submitReport() {
+  Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Enviando relato...'),
-          backgroundColor: AppCores.accentGreen,
-        ),
+      final reporte = ReporteInterferencia(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        endereco: _enderecoInterferenciaController.text,
+        pontoReferencia: _pontoReferenciaInterferenciaController.text.isNotEmpty
+            ? _pontoReferenciaInterferenciaController.text
+            : null,
+        descricao: _descricaoInterferenciaController.text,
+        midias: List.from(_selectedMediaItemsInterferencia),
+        tipoInterferencia: _selecionaTipoInterferencia!,
+        nomeContato: _nomeContatoInterferenciaController.text.isNotEmpty
+            ? _nomeContatoInterferenciaController.text
+            : null,
+        emailContato:
+            _emailContatoPhoneInterferenciaController.text.isNotEmpty
+                ? _emailContatoPhoneInterferenciaController.text
+                : null,
       );
+
+      await _repositorio.salvarReporte(reporte);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Enviando relato...'),
+            backgroundColor: AppCores.accentGreen,
+          ),
+        );
+      }
       _clearForm();
     }
   }
@@ -159,7 +177,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                     'Tipo de Interferência *',
                     Icons.merge_type,
                   ),
-                  initialValue: _selecionaTipoInterferencia,
+                  value: _selecionaTipoInterferencia,
                   items: _tipoInterferencia
                       .map(
                         (type) =>
@@ -260,7 +278,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: _selectedMediaItemsInterferencia.length,
-                      separatorBuilder: (_, _) => const SizedBox(width: 8),
+                      separatorBuilder: (_, __) => const SizedBox(width: 8),
                       itemBuilder: (ctx, i) => Container(
                         width: 80,
                         decoration: BoxDecoration(
