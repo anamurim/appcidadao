@@ -83,10 +83,9 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
       final reporte = ReporteIluminacao(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         endereco: _enderecoIluminacaoController.text,
-        pontoReferencia:
-            _pontoReferenciaIluminacaoController.text.isNotEmpty
-                ? _pontoReferenciaIluminacaoController.text
-                : null,
+        pontoReferencia: _pontoReferenciaIluminacaoController.text.isNotEmpty
+            ? _pontoReferenciaIluminacaoController.text
+            : null,
         descricao: _descricaoIluminacaoController.text,
         midias: List.from(_selectedMediaItemsIluminacao),
         tipoProblema: _selecionaTipoProblemaIluminacao!,
@@ -268,7 +267,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: _selectedMediaItemsIluminacao.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    separatorBuilder: (_, _) => const SizedBox(width: 8),
                     itemBuilder: (ctx, i) => Container(
                       width: 80,
                       decoration: BoxDecoration(

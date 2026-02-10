@@ -88,13 +88,14 @@ class _TelaEstacionamentoIrregularState
         endereco: _enderecoEstacionamentoController.text,
         pontoReferencia:
             _pontoReferenciaEstacionamentoController.text.isNotEmpty
-                ? _pontoReferenciaEstacionamentoController.text
-                : null,
+            ? _pontoReferenciaEstacionamentoController.text
+            : null,
         descricao: _descricaoEstacionamentoController.text,
         midias: List.from(_selectedMediaItemsEstacionamento),
         tipoInfracao: _selecionaTipoInfracao!,
-        placaVeiculo:
-            _placaController.text.isNotEmpty ? _placaController.text : null,
+        placaVeiculo: _placaController.text.isNotEmpty
+            ? _placaController.text
+            : null,
       );
 
       await _repositorio.salvarReporte(reporte);
@@ -278,7 +279,7 @@ class _TelaEstacionamentoIrregularState
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     itemCount: _selectedMediaItemsEstacionamento.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 8),
+                    separatorBuilder: (_, _) => const SizedBox(width: 8),
                     itemBuilder: (ctx, i) => Container(
                       width: 80,
                       decoration: BoxDecoration(
