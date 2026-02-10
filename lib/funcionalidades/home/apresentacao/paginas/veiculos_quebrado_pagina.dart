@@ -136,6 +136,8 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
             ),
           ),
         );
+        // Volta para a Home automaticamente
+        Navigator.pop(context);
       }
 
       //Limpa o formulário

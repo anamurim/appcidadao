@@ -103,6 +103,8 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
             ],
           ),
         );
+        // Volta para a Home automaticamente
+        Navigator.pop(context);
       }
       _clearForm();
     }
