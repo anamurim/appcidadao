@@ -243,7 +243,7 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
                 _executarChamadaFuncionalidade(feature); // Chama a tela
               },
               child: Text(
-                'REPORTAR ${feature['title'].toUpperCase()}',
+                'ACESSAR ${feature['title'].toUpperCase()}',
                 style: const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
