@@ -48,8 +48,5 @@ The placeholder "Histórico" text is now a fully functional tab showing submitte
 - Report cards with type-specific icons, addresses, and status badges
 - Auto-refresh when new reports are submitted from any page
 
-## Verification
 
-- ✅ No lingering `_repositorio` or `ReporteRepositorioLocal` references in UI pages
-- ✅ All import paths verified consistent
-- ⚠️ `flutter analyze` / `flutter build` requires Flutter SDK on PATH — please run manually
+
