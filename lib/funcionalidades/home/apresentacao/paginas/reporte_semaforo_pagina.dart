@@ -74,9 +74,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
 
       await context.read<ReporteController>().submeterReporte(reporte);
 
-      debugPrint(
-        'Log de Desenvolvimento - Reporte salvo: ${reporte.toMap()}',
-      );
+      debugPrint('Log de Desenvolvimento - Reporte salvo: ${reporte.toMap()}');
 
       if (mounted) {
         showDialog(
@@ -106,6 +104,8 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
             ],
           ),
         );
+        // Volta para a Home automaticamente
+        Navigator.pop(context);
       }
       _clearForm();
     }
@@ -182,7 +182,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
                 dropdownColor: AppCores.lightGray,
                 style: const TextStyle(color: Colors.white),
                 decoration: _inputStyle('Tipo de Problema', Icons.traffic),
-                value: _selecionaTipoProblemaSemaforo,
+                initialValue: _selecionaTipoProblemaSemaforo,
                 items: _problemTypes
                     .map(
                       (type) =>

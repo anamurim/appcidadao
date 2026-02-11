@@ -79,10 +79,9 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
         nomeContato: _nomeContatoInterferenciaController.text.isNotEmpty
             ? _nomeContatoInterferenciaController.text
             : null,
-        emailContato:
-            _emailContatoPhoneInterferenciaController.text.isNotEmpty
-                ? _emailContatoPhoneInterferenciaController.text
-                : null,
+        emailContato: _emailContatoPhoneInterferenciaController.text.isNotEmpty
+            ? _emailContatoPhoneInterferenciaController.text
+            : null,
       );
 
       await context.read<ReporteController>().submeterReporte(reporte);
@@ -90,10 +89,12 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Enviando relato...'),
+            content: Text('Relato enviado com sucesso!'),
             backgroundColor: AppCores.accentGreen,
           ),
         );
+        // Volta para a Home automaticamente
+        Navigator.pop(context);
       }
       _clearForm();
     }
@@ -171,6 +172,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
 
                 _buildSecaoTitulo("Informações da interferência"),
                 const SizedBox(height: 10),
+
                 DropdownButtonFormField<String>(
                   dropdownColor: AppCores.lightGray,
                   style: const TextStyle(color: Colors.white),
@@ -178,7 +180,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                     'Tipo de Interferência *',
                     Icons.merge_type,
                   ),
-                  value: _selecionaTipoInterferencia,
+                  initialValue: _selecionaTipoInterferencia,
                   items: _tipoInterferencia
                       .map(
                         (type) =>
@@ -279,7 +281,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                     child: ListView.separated(
                       scrollDirection: Axis.horizontal,
                       itemCount: _selectedMediaItemsInterferencia.length,
-                      separatorBuilder: (_, __) => const SizedBox(width: 8),
+                      separatorBuilder: (_, _) => const SizedBox(width: 8),
                       itemBuilder: (ctx, i) => Container(
                         width: 80,
                         decoration: BoxDecoration(
