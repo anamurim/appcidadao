@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/modelos/media_item.dart';
-import '../../../../core/repositorios/reporte_repositorio_local.dart';
+import 'package:provider/provider.dart';
+import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_estacionamento.dart';
 
 class TelaEstacionamentoIrregular extends StatefulWidget {
@@ -16,7 +17,7 @@ class TelaEstacionamentoIrregular extends StatefulWidget {
 class _TelaEstacionamentoIrregularState
     extends State<TelaEstacionamentoIrregular> {
   final _formKey = GlobalKey<FormState>();
-  final _repositorio = ReporteRepositorioLocal();
+
 
   // Controllers e variáveis de estado
   String? _selecionaTipoInfracao;
@@ -97,7 +98,7 @@ class _TelaEstacionamentoIrregularState
             _placaController.text.isNotEmpty ? _placaController.text : null,
       );
 
-      await _repositorio.salvarReporte(reporte);
+      await context.read<ReporteController>().submeterReporte(reporte);
 
       debugPrint('--- Relatório de Estacionamento Irregular salvo ---');
       debugPrint('ID: ${reporte.id}');

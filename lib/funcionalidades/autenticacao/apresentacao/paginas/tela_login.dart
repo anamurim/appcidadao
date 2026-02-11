@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/linha_conexao.dart';
+import '../../controladores/autenticacao_controller.dart';
 
 class TechLoginScreen extends StatefulWidget {
   const TechLoginScreen({super.key});
@@ -15,20 +17,18 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
   bool _rememberMe = false;
-  bool _isLoading = false;
 
   void _handleLogin() async {
     if (_formKey.currentState!.validate()) {
-      setState(() => _isLoading = true);
-      // Simulação de processo de login
-      await Future.delayed(const Duration(seconds: 2));
+      final controller = context.read<AutenticacaoController>();
+      final success = await controller.login(
+        _emailController.text,
+        _passwordController.text,
+      );
 
-      setState(() {
-        _isLoading = false;
-      });
-
-      // Navegar para a tela inicial após login bem-sucedido
-      if (mounted) Navigator.pushReplacementNamed(context, '/home');
+      if (success && mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
     }
   }
 
@@ -414,19 +414,21 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
           ),
         ],
       ),
-      child: InkWell(
-        onTap: _isLoading ? null : _handleLogin,
-        child: Center(
-          child: _isLoading
-              ? const CircularProgressIndicator(color: Colors.white)
-              : const Text(
-                  'ACESSAR SISTEMA',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.5,
+      child: Consumer<AutenticacaoController>(
+        builder: (context, auth, _) => InkWell(
+          onTap: auth.isLoading ? null : _handleLogin,
+          child: Center(
+            child: auth.isLoading
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text(
+                    'ACESSAR SISTEMA',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.5,
+                    ),
                   ),
-                ),
+          ),
         ),
       ),
     );
