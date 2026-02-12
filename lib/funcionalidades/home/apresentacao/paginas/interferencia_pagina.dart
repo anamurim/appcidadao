@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
-import '../../../perfil/dados/repositorios/reporte_repositorio_local.dart';
+import '../../../../core/modelos/media_item.dart';
+import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_interferencia.dart';
 
 class TelaReportarInterferencia extends StatefulWidget {
@@ -14,7 +15,6 @@ class TelaReportarInterferencia extends StatefulWidget {
 
 class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final _repositorio = ReporteRepositorioLocal();
 
   // Controllers e variáveis de estado
   String? _selecionaTipoInterferencia;
@@ -83,7 +83,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
             : null,
       );
 
-      await _repositorio.salvarReporte(reporte);
+      await context.read<ReporteController>().submeterReporte(reporte);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

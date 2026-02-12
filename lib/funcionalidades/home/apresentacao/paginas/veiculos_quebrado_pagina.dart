@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
-import '../../../perfil/dados/repositorios/reporte_repositorio_local.dart';
+import '../../../../core/modelos/media_item.dart';
+import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_veiculo.dart';
 
 class TelaVeiculoQuebrado extends StatefulWidget {
@@ -14,7 +15,6 @@ class TelaVeiculoQuebrado extends StatefulWidget {
 
 class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final _repositorio = ReporteRepositorioLocal();
 
   // Controllers e variáveis de estado
   String? _selecionaTipoVeiculo;
@@ -95,7 +95,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
         email: _emailController.text.isNotEmpty ? _emailController.text : null,
       );
 
-      await _repositorio.salvarReporte(reporte);
+      await context.read<ReporteController>().submeterReporte(reporte);
 
       // Logs de depuração
       debugPrint('--- Relatório de Veículo salvo ---');
