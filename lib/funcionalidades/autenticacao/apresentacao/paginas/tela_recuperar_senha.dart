@@ -135,26 +135,29 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
                 const SizedBox(height: 40),
 
-                //Conecta o _emailController ao TextFormField
-                TextFormField(
-                  controller: _emailController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: AppCores.lightGray.withValues(alpha: 0.3),
-                    hintText: 'E-mail cadastrado',
-                    hintStyle: const TextStyle(color: AppCores.neonBlue),
-                    prefixIcon: const Icon(
-                      Icons.email,
-                      color: AppCores.neonBlue,
+                //Conecta o _emailController ao TextFormField dentro de um Form
+                Form(
+                  key: _formKey,
+                  child: TextFormField(
+                    controller: _emailController,
+                    style: const TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      filled: true,
+                      fillColor: AppCores.lightGray.withValues(alpha: 0.3),
+                      hintText: 'E-mail cadastrado',
+                      hintStyle: const TextStyle(color: AppCores.neonBlue),
+                      prefixIcon: const Icon(
+                        Icons.email,
+                        color: AppCores.neonBlue,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
+                    validator: (value) => (value == null || !value.contains('@'))
+                        ? 'E-mail inválido'
+                        : null,
                   ),
-                  validator: (value) => (value == null || !value.contains('@'))
-                      ? 'E-mail inválido'
-                      : null,
                 ),
 
                 const SizedBox(height: 30),

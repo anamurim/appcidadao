@@ -19,7 +19,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
   bool _rememberMe = false;
 
   void _handleLogin() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       final controller = context.read<AutenticacaoController>();
       final success = await controller.login(
         _emailController.text,
@@ -28,6 +28,11 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
 
       if (success && mounted) {
         Navigator.pushReplacementNamed(context, '/home');
+      } else if (mounted) {
+        final msg = controller.errorMessage ?? 'Falha ao realizar login.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(msg), backgroundColor: Colors.red),
+        );
       }
     }
   }
@@ -61,7 +66,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                   //Espaço entre os elementos e a borda da tela?
                   padding: const EdgeInsets.symmetric(horizontal: 0),
                   child: Form(
-                    //key: _formKey,
+                    key: _formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
