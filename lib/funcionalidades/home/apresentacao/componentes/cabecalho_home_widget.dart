@@ -3,9 +3,16 @@ import '../../../../core/constantes/cores.dart';
 import '../../../ajustes/apresentacao/paginas/ajustes_pagina.dart';
 
 class CabecalhoHome extends StatelessWidget {
-  final Map<String, dynamic> user;
+  final String nome;
+  final String email;
+  final String conta;
 
-  const CabecalhoHome({super.key, required this.user});
+  const CabecalhoHome({
+    super.key,
+    required this.nome,
+    required this.email,
+    required this.conta,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +75,7 @@ class CabecalhoHome extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Olá, ${user['name']}',
+                        'Olá, $nome',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -77,7 +84,7 @@ class CabecalhoHome extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        user['email'],
+                        email,
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.8),
                           fontSize: 14,
@@ -98,7 +105,7 @@ class CabecalhoHome extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Conta: ${user['account']}',
+                          'Conta: $conta',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
@@ -112,21 +119,6 @@ class CabecalhoHome extends StatelessWidget {
               ],
             ),
           ),
-
-          //Botão de Configuraçõesdo do ícone do usuário
-          /*Positioned(
-            top: 5,
-            right: 5,
-            child: IconButton(
-              icon: const Icon(Icons.settings, color: Colors.white),
-              onPressed: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ConfiguracoesUsuario(),
-                ),
-              ),
-            ),
-          ),*/
         ],
       ),
     );

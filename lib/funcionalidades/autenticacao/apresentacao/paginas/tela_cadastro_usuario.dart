@@ -25,6 +25,7 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _aceitaTermos = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  String? _errorMessage;
 
   // FocusNodes para navegação entre campos
   final _nameFocus = FocusNode();
@@ -38,19 +39,14 @@ class _SignupScreenState extends State<SignupScreen> {
   void _handleSignup() async {
     if (_formKey.currentState!.validate()) {
       if (!_aceitaTermos) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              'Por favor, aceite os termos de uso',
-              style: TextStyle(color: Colors.white),
-            ),
-            backgroundColor: Colors.red,
-          ),
-        );
+        setState(() => _errorMessage = 'Por favor, aceite os termos de uso');
         return;
       }
 
-      setState(() => _isLoading = true);
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
 
       try {
         // Simulação de cadastro
@@ -93,6 +89,7 @@ class _SignupScreenState extends State<SignupScreen> {
           throw 'E-mail já cadastrado';
         }
 
+        setState(() => _errorMessage = null);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Conta criada com sucesso!'),
@@ -102,6 +99,7 @@ class _SignupScreenState extends State<SignupScreen> {
         Navigator.pop(context);
       } catch (e) {
         if (mounted) {
+          setState(() => _errorMessage = e.toString());
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
           );
@@ -112,6 +110,34 @@ class _SignupScreenState extends State<SignupScreen> {
         }
       }
     }
+  }
+
+  Widget _buildErrorBanner() {
+    if (_errorMessage == null) return const SizedBox.shrink();
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.red.shade700,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              _errorMessage!,
+              style: const TextStyle(color: Colors.white, fontSize: 14),
+            ),
+          ),
+          IconButton(
+            onPressed: () => setState(() => _errorMessage = null),
+            icon: const Icon(Icons.close, color: Colors.white),
+          ),
+        ],
+      ),
+    );
   }
 
   /*bool get _isFormValid {
@@ -194,6 +220,8 @@ class _SignupScreenState extends State<SignupScreen> {
                 key: _formKey,
                 child: Column(
                   children: [
+                    const SizedBox(height: 10),
+                    if (_errorMessage != null) _buildErrorBanner(),
                     const SizedBox(height: 10),
                     const Text(
                       'Preencha os dados abaixo para se cadastrar',

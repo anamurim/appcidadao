@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
-import '../../../perfil/dados/repositorios/reporte_repositorio_local.dart';
+import '../../../../core/modelos/media_item.dart';
+import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_iluminacao.dart';
 
 class TelaReporteIluminacao extends StatefulWidget {
@@ -13,7 +14,6 @@ class TelaReporteIluminacao extends StatefulWidget {
 
 class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   final _formKey = GlobalKey<FormState>();
-  final _repositorio = ReporteRepositorioLocal();
 
   // Controllers e variáveis de estado
   String? _selecionaTipoProblemaIluminacao;
@@ -94,7 +94,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
             : null,
       );
 
-      await _repositorio.salvarReporte(reporte);
+      await context.read<ReporteController>().submeterReporte(reporte);
 
       debugPrint('--- Solicitação de Reparo de Iluminação salva ---');
       debugPrint('ID: ${reporte.id}');

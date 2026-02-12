@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
-import '../../../perfil/dados/repositorios/reporte_repositorio_local.dart';
+import '../../../../core/modelos/media_item.dart';
+import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_sinalizacao.dart';
 
 class TelaReporteSinalizacao extends StatefulWidget {
@@ -13,7 +14,6 @@ class TelaReporteSinalizacao extends StatefulWidget {
 
 class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
   final _formKey = GlobalKey<FormState>();
-  final _repositorio = ReporteRepositorioLocal();
 
   // Controllers e variáveis de estado
   String? _selecionaTipoSinalizacao;
@@ -88,7 +88,7 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
         tipoSinalizacao: _selecionaTipoSinalizacao!,
       );
 
-      await _repositorio.salvarReporte(reporte);
+      await context.read<ReporteController>().submeterReporte(reporte);
 
       debugPrint('--- Reporte de Sinalização salvo ---');
       debugPrint('ID: ${reporte.id}');

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
-import '../../../perfil/dados/repositorios/reporte_repositorio_local.dart';
+import '../../../../core/modelos/media_item.dart';
+import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_semaforo.dart';
 
 class TelaReportarSemaforo extends StatefulWidget {
@@ -13,7 +14,6 @@ class TelaReportarSemaforo extends StatefulWidget {
 
 class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   final _formKey = GlobalKey<FormState>();
-  final _repositorio = ReporteRepositorioLocal();
 
   // Variáveis de estado
   String? _selecionaTipoProblemaSemaforo;
@@ -71,7 +71,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
         tipoProblema: _selecionaTipoProblemaSemaforo!,
       );
 
-      await _repositorio.salvarReporte(reporte);
+      await context.read<ReporteController>().submeterReporte(reporte);
 
       debugPrint('Log de Desenvolvimento - Reporte salvo: ${reporte.toMap()}');
 
