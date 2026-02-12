@@ -1,4 +1,4 @@
-import '../modelos/usuario.dart';
+import '../entidades/usuario.dart';
 
 /// Interface abstrata do repositório de usuário.
 ///

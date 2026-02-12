@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
 
-class InformacoesConta extends StatelessWidget {
-  const InformacoesConta({super.key});
+class ResumoContaWidget extends StatelessWidget {
+  const ResumoContaWidget({super.key});
 
   @override
   Widget build(BuildContext context) {

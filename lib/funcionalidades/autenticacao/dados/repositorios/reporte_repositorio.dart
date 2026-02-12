@@ -1,5 +1,5 @@
-import '../modelos/reporte_base.dart';
-import '../../../core/modelos/reporte_status.dart';
+import '../../../reportes/dominio/entidades/reporte_base.dart';
+import '../../../reportes/dominio/entidades/reporte_status.dart';
 
 /// Interface abstrata do repositório de reportes.
 ///

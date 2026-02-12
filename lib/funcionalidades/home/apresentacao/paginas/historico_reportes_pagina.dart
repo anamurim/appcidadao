@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../../core/repositorios/reporte_repositorio_local.dart';
-import '../../../../core/modelos/reporte_base.dart';
+import '../../../perfil/dados/repositorios/reporte_repositorio_local.dart';
+import '../../../reportes/dominio/entidades/reporte_base.dart';
 import '../../dados/modelos/reporte_interferencia.dart';
 
 class HistoricoReportesPagina extends StatefulWidget {
