@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../../core/modelos/media_item.dart';
-import '../../../../core/repositorios/reporte_repositorio_local.dart';
+import '../../../reportes/dominio/entidades/media_item.dart';
+import '../../../perfil/dados/repositorios/reporte_repositorio_local.dart';
 import '../../dados/modelos/reporte_veiculo.dart';
 
 class TelaVeiculoQuebrado extends StatefulWidget {

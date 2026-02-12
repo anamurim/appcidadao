@@ -1,6 +1,6 @@
-import '../../../../core/modelos/reporte_base.dart';
-import '../../../../core/modelos/media_item.dart';
-import '../../../../core/modelos/reporte_status.dart';
+import '../../../reportes/dominio/entidades/reporte_base.dart';
+import '../../../reportes/dominio/entidades/media_item.dart';
+import '../../../reportes/dominio/entidades/reporte_status.dart';
 
 /// Reporte de interferência na via pública.
 ///
@@ -42,7 +42,8 @@ class ReporteInterferencia extends ReporteBase {
       endereco: map['endereco'] as String,
       pontoReferencia: map['pontoReferencia'] as String?,
       descricao: map['descricao'] as String,
-      midias: (map['midias'] as List<dynamic>?)
+      midias:
+          (map['midias'] as List<dynamic>?)
               ?.map((m) => MediaItem.fromMap(m as Map<String, dynamic>))
               .toList() ??
           [],

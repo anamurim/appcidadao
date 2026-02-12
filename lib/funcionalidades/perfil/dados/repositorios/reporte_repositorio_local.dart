@@ -1,6 +1,6 @@
-import '../modelos/reporte_base.dart';
-import '../modelos/reporte_status.dart';
-import 'reporte_repositorio.dart';
+import '../../../reportes/dominio/entidades/reporte_base.dart';
+import '../../../reportes/dominio/entidades/reporte_status.dart';
+import '../../../autenticacao/dados/repositorios/reporte_repositorio.dart';
 
 /// Implementação local (em memória) do repositório de reportes.
 ///
