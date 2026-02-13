@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../../core/modelos/media_item.dart';
+import '../../../../core/widgets/seletor_midia_widget.dart';
+import '../../../reportes/dominio/entidades/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_semaforo.dart';
 
@@ -43,18 +44,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
     super.dispose();
   }
 
-  void _addMedia(MediaType type) {
-    setState(() {
-      _selectedMediaItems.add(
-        MediaItem(
-          url: type == MediaType.image
-              ? 'https://www.gstatic.com/flutter-onestack-prototype/genui/example_1.jpg'
-              : 'video_placeholder',
-          type: type,
-        ),
-      );
-    });
-  }
+
 
   Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
@@ -218,45 +208,13 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
               ),
               const SizedBox(height: 30),
 
-              _buildSecaoTitulo("Mídia (imagens ou vídeos)"),
-              const SizedBox(height: 16),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _addMedia(MediaType.image),
-                      icon: const Icon(
-                        Icons.camera_alt,
-                        color: AppCores.neonBlue,
-                      ),
-                      label: const Text(
-                        'Foto',
-                        style: TextStyle(color: AppCores.neonBlue),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppCores.lightGray,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _addMedia(MediaType.video),
-                      icon: const Icon(
-                        Icons.videocam,
-                        color: AppCores.neonBlue,
-                      ),
-                      label: const Text(
-                        'Vídeo',
-                        style: TextStyle(color: AppCores.neonBlue),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppCores.lightGray,
-                      ),
-                    ),
-                  ),
-                ],
+              SeletorMidiaWidget(
+                midias: _selectedMediaItems,
+                onChanged: (novaLista) => setState(
+                  () => _selectedMediaItems
+                    ..clear()
+                    ..addAll(novaLista),
+                ),
               ),
               const SizedBox(height: 15),
 
