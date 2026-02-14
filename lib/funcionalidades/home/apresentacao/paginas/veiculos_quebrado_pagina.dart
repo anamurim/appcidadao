@@ -3,13 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
-<<<<<<< HEAD
-import '../../../reportes/media_item.dart';
-=======
 import '../../../reportes/dominio/entidades/media_item.dart';
->>>>>>> fcb63e66a5b7cad3745b145988a00c8127db5855
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_veiculo.dart';
+import '../../../../core/modelos/reporte_base.dart';
 
 class TelaVeiculoQuebrado extends StatefulWidget {
   const TelaVeiculoQuebrado({super.key});
@@ -59,11 +56,6 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
     super.dispose();
   }
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> fcb63e66a5b7cad3745b145988a00c8127db5855
   Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -92,8 +84,9 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
         email: _emailController.text.isNotEmpty ? _emailController.text : null,
       );
 
-      await context.read<ReporteController>().submeterReporte(reporte);
-
+      await context.read<ReporteController>().submeterReporte(
+        reporte as ReporteBase,
+      );
       // Logs de depuração
       debugPrint('--- Relatório de Veículo salvo ---');
       debugPrint('ID: ${reporte.id}');

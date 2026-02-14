@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../constantes/cores.dart';
-import '../../funcionalidades/reportes/media_item.dart';
+import '../../funcionalidades/reportes/dominio/entidades/media_item.dart';
 
 /// Widget reutilizável para seleção de mídias (fotos e vídeos) em formulários
 /// de reporte.

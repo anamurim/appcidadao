@@ -33,7 +33,7 @@ class AppCidadao extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => const TechLoginScreen(),
-          '/home': (context) => const HomeScreen(),
+          '/home': (context) => const HomePagina(),
           '/forgot-password': (context) => const ForgotPasswordScreen(),
           '/signup': (context) => const SignupScreen(),
         },

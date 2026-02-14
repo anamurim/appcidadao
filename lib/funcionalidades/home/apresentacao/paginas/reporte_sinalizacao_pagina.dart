@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
-<<<<<<< HEAD
-import '../../../reportes/media_item.dart';
-=======
 import '../../../reportes/dominio/entidades/media_item.dart';
->>>>>>> fcb63e66a5b7cad3745b145988a00c8127db5855
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_sinalizacao.dart';
+import '../../../../core/modelos/reporte_base.dart';
 
 class TelaReporteSinalizacao extends StatefulWidget {
   const TelaReporteSinalizacao({super.key});
@@ -45,11 +42,6 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
     super.dispose();
   }
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> fcb63e66a5b7cad3745b145988a00c8127db5855
   InputDecoration _inputStyle(String label, IconData icon, {String? hint}) {
     return InputDecoration(
       labelText: label,
@@ -85,8 +77,9 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
         tipoSinalizacao: _selecionaTipoSinalizacao!,
       );
 
-      await context.read<ReporteController>().submeterReporte(reporte);
-
+      await context.read<ReporteController>().submeterReporte(
+        reporte as ReporteBase,
+      );
       debugPrint('--- Reporte de Sinalização salvo ---');
       debugPrint('ID: ${reporte.id}');
       debugPrint('Tipo: ${reporte.tipoSinalizacao}');

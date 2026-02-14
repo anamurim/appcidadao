@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-//import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/linha_conexao.dart';
 import '../../controladores/autenticacao_controller.dart';
-//import '../../controladores/autenticacao_controller.dart';
 
 class TechLoginScreen extends StatefulWidget {
   const TechLoginScreen({super.key});
@@ -24,39 +22,32 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
   bool _rememberMe = false;
 
   void _handleLogin() async {
+    // Valida o formulário antes de prosseguir
     if (_formKey.currentState != null && _formKey.currentState!.validate()) {
       final controller = context.read<AutenticacaoController>();
+
       final success = await controller.login(
         _emailController.text,
         _passwordController.text,
       );
 
-      if (success && mounted) {
-        Navigator.pushReplacementNamed(context, '/home');
-      } else if (mounted) {
-        final msg = controller.errorMessage ?? 'Falha ao realizar login.';
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg), backgroundColor: Colors.red),
-        );
-      }
-    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
-      final controller = context.read<AutenticacaoController>();
-      final success = await controller.login(
-        _emailController.text,
-        _passwordController.text,
-      );
+      // Verifica se o widget ainda está na tela antes de navegar (evita erro de contexto)
+      if (!mounted) return;
 
-      if (success && mounted) {
+      if (success) {
         Navigator.pushReplacementNamed(context, '/home');
-      } else if (mounted) {
+      } else {
         final msg = controller.errorMessage ?? 'Falha ao realizar login.';
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text(msg),
+            backgroundColor: Colors.red,
+            behavior: SnackBarBehavior.floating,
+          ),
         );
       }
     }
   }
-
 
   void _handleSignup() {
     Navigator.pushNamed(context, '/signup');
@@ -80,13 +71,12 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                 physics: const AlwaysScrollableScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 0),
-                  // REMOVIDO: O Form que estava aqui foi removido para evitar duplicidade de GlobalKey
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       _buildHeader(context),
                       const SizedBox(height: 40),
-                      _buildLoginForm(), // O Form real está dentro deste widget
+                      _buildLoginForm(),
                       const SizedBox(height: 20),
                     ],
                   ),
@@ -162,120 +152,48 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
           bottomLeft: Radius.circular(40),
           bottomRight: Radius.circular(40),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: AppCores.electricBlue.withValues(alpha: 0.4),
-            blurRadius: 30,
-            spreadRadius: 5,
-          ),
-        ],
       ),
-      child: Stack(
-        children: [
-          Positioned(
-            bottom: 0,
-            child: Container(
-              height: 40,
-              width: MediaQuery.of(context).size.width,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 100,
+              height: 100,
               decoration: BoxDecoration(
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(40),
-                  bottomRight: Radius.circular(40),
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.white,
+                    AppCores.neonBlue.withValues(alpha: 0.8),
+                  ],
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: AppCores.techGray.withValues(alpha: 0.3),
-                    blurRadius: 20,
-                    spreadRadius: 2,
-                  ),
-                ],
+              ),
+              child: const Center(
+                child: Icon(Icons.bolt, size: 50, color: AppCores.deepBlue),
               ),
             ),
-          ),
-          Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    gradient: LinearGradient(
-                      colors: [
-                        Colors.white,
-                        AppCores.neonBlue.withValues(alpha: 0.8),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppCores.electricBlue.withValues(alpha: 0.6),
-                        blurRadius: 20,
-                        spreadRadius: 5,
-                      ),
-                    ],
-                  ),
-                  child: Stack(
-                    children: [
-                      Center(
-                        child: Icon(
-                          Icons.bolt,
-                          size: 50,
-                          color: AppCores.deepBlue,
-                          shadows: [
-                            Shadow(
-                              color: Colors.white.withValues(alpha: 0.8),
-                              blurRadius: 10,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.3),
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                ShaderMask(
-                  shaderCallback: (bounds) {
-                    return LinearGradient(
-                      colors: [Colors.white, AppCores.neonBlue, Colors.white],
-                      stops: const [0.0, 0.5, 1.0],
-                    ).createShader(bounds);
-                  },
-                  child: const Text(
-                    'EQUATORIAL',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w900,
-                      letterSpacing: 2,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  'APP CIDADÃO',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w300,
-                    color: Colors.white.withValues(alpha: 0.8),
-                    letterSpacing: 4,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 20),
+            const Text(
+              'EQUATORIAL',
+              style: TextStyle(
+                fontSize: 28,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 2,
+                color: Colors.white,
+              ),
             ),
-          ),
-        ],
+            const Text(
+              'APP CIDADÃO',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w300,
+                color: Colors.white70,
+                letterSpacing: 4,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -284,10 +202,8 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 40),
       child: Form(
-        key:
-            _formKey, // Mantemos este Form, que é o necessário para validação dos campos
+        key: _formKey,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _buildTextField(
               controller: _emailController,
@@ -309,9 +225,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                   : null,
               suffix: IconButton(
                 icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
+                  _obscurePassword ? Icons.visibility_off : Icons.visibility,
                   color: AppCores.neonBlue,
                 ),
                 onPressed: () =>
@@ -327,22 +241,11 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                     Checkbox(
                       value: _rememberMe,
                       activeColor: AppCores.neonBlue,
-                      checkColor: AppCores.deepBlue,
-                      side: BorderSide(
-                        color: AppCores.neonBlue.withValues(alpha: 0.8),
-                        width: 2,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4),
-                      ),
                       onChanged: (val) => setState(() => _rememberMe = val!),
                     ),
-                    const SizedBox(width: 10),
-                    Text(
+                    const Text(
                       'Lembrar-me',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                      ),
+                      style: TextStyle(color: Colors.white70),
                     ),
                   ],
                 ),
@@ -350,10 +253,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                   onPressed: _handleForgotPassword,
                   child: const Text(
                     'Esqueci a senha',
-                    style: TextStyle(
-                      color: AppCores.neonBlue,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    style: TextStyle(color: AppCores.neonBlue),
                   ),
                 ),
               ],
@@ -388,67 +288,37 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
         filled: true,
         fillColor: AppCores.lightGray.withValues(alpha: 0.8),
         labelText: label,
-        labelStyle: const TextStyle(
-          color: AppCores.neonBlue,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1,
-        ),
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
+        labelStyle: const TextStyle(color: AppCores.neonBlue),
         prefixIcon: Icon(icon, color: AppCores.neonBlue),
         suffixIcon: suffix,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: AppCores.neonBlue, width: 2),
-        ),
-        errorStyle: const TextStyle(color: Colors.redAccent),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
       ),
     );
   }
 
   Widget _buildMainButton() {
-    return Container(
-      width: double.infinity,
-      height: 60,
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppCores.electricBlue, AppCores.neonBlue],
-        ),
-        borderRadius: BorderRadius.circular(15),
-        boxShadow: [
-          BoxShadow(
-            color: AppCores.electricBlue.withValues(alpha: 0.4),
-            blurRadius: 15,
-            offset: const Offset(0, 4),
+    return Consumer<AutenticacaoController>(
+      builder: (context, auth, _) => Container(
+        width: double.infinity,
+        height: 60,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [AppCores.electricBlue, AppCores.neonBlue],
           ),
-        ],
-      ),
-      child: Consumer<AutenticacaoController>(
-        builder: (context, auth, _) => InkWell(
+          borderRadius: BorderRadius.circular(15),
+        ),
+        child: InkWell(
           onTap: auth.isLoading ? null : _handleLogin,
           child: Center(
             child: auth.isLoading
-                ? const SizedBox(
-                    height: 24,
-                    width: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
+                ? const CircularProgressIndicator(color: Colors.white)
                 : const Text(
                     'ACESSAR SISTEMA',
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.5,
                     ),
                   ),
-          ),
           ),
         ),
       ),
@@ -456,17 +326,14 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
   }
 
   Widget _buildDivider() {
-    return Row(
+    return const Row(
       children: [
-        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.2))),
+        Expanded(child: Divider(color: Colors.white24)),
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
-          child: Text(
-            'ou',
-            style: TextStyle(color: Colors.white.withValues(alpha: 0.5)),
-          ),
+          padding: EdgeInsets.symmetric(horizontal: 15),
+          child: Text('ou', style: TextStyle(color: Colors.white54)),
         ),
-        Expanded(child: Divider(color: Colors.white.withValues(alpha: 0.2))),
+        Expanded(child: Divider(color: Colors.white24)),
       ],
     );
   }
@@ -476,10 +343,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
       onPressed: _handleSignup,
       style: OutlinedButton.styleFrom(
         minimumSize: const Size(double.infinity, 60),
-        side: BorderSide(
-          color: AppCores.neonBlue.withValues(alpha: 0.5),
-          width: 2,
-        ),
+        side: const BorderSide(color: AppCores.neonBlue),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       ),
       child: const Text(
