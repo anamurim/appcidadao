@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/linha_conexao.dart';
 import '../../controladores/autenticacao_controller.dart';
+//import '../../controladores/autenticacao_controller.dart';
 
 class TechLoginScreen extends StatefulWidget {
   const TechLoginScreen({super.key});
@@ -37,8 +39,24 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
           SnackBar(content: Text(msg), backgroundColor: Colors.red),
         );
       }
+    if (_formKey.currentState != null && _formKey.currentState!.validate()) {
+      final controller = context.read<AutenticacaoController>();
+      final success = await controller.login(
+        _emailController.text,
+        _passwordController.text,
+      );
+
+      if (success && mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else if (mounted) {
+        final msg = controller.errorMessage ?? 'Falha ao realizar login.';
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(msg), backgroundColor: Colors.red),
+        );
+      }
     }
   }
+
 
   void _handleSignup() {
     Navigator.pushNamed(context, '/signup');
@@ -430,6 +448,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                       letterSpacing: 1.5,
                     ),
                   ),
+          ),
           ),
         ),
       ),

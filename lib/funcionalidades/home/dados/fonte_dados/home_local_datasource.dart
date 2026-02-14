@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../core/modelos/usuario.dart';
+import '../../../perfil/dominio/entidades/usuario.dart';
 
 class DadosHome {
   // Dados do usuário (modelo tipado)
@@ -13,11 +13,11 @@ class DadosHome {
 
   // Compatibilidade: mantém acesso via Map para widgets existentes
   static Map<String, dynamic> get userData => {
-        'name': usuario.nome,
-        'email': usuario.email,
-        'account': usuario.conta,
-        'avatar': usuario.avatar,
-      };
+    'name': usuario.nome,
+    'email': usuario.email,
+    'account': usuario.conta,
+    'avatar': usuario.avatar,
+  };
 
   //Lista de funcionalidades principais
   static final List<Map<String, dynamic>> getfuncionalidades = [
