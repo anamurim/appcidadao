@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../../core/modelos/media_item.dart';
-import '../../../../core/repositorios/reporte_repositorio_local.dart';
+import '../../../../core/widgets/seletor_midia_widget.dart';
+import '../../../reportes/media_item.dart';
+import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_veiculo.dart';
 
 class TelaVeiculoQuebrado extends StatefulWidget {
@@ -14,7 +16,6 @@ class TelaVeiculoQuebrado extends StatefulWidget {
 
 class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final _repositorio = ReporteRepositorioLocal();
 
   // Controllers e variáveis de estado
   String? _selecionaTipoVeiculo;
@@ -54,19 +55,6 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
     super.dispose();
   }
 
-  void _addMedia(MediaType type) {
-    setState(() {
-      _selectedMediaItems.add(
-        MediaItem(
-          url: type == MediaType.image
-              ? 'https://www.gstatic.com/flutter-onestack-prototype/genui/example_1.jpg'
-              : 'video_placeholder',
-          type: type,
-        ),
-      );
-    });
-  }
-
   Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
@@ -95,7 +83,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
         email: _emailController.text.isNotEmpty ? _emailController.text : null,
       );
 
-      await _repositorio.salvarReporte(reporte);
+      await context.read<ReporteController>().submeterReporte(reporte);
 
       // Logs de depuração
       debugPrint('--- Relatório de Veículo salvo ---');
@@ -281,71 +269,14 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               ),
               const SizedBox(height: 25),
 
-              _buildSecaoTitulo("Mídia (imagens ou vídeos)"),
-              const SizedBox(height: 10),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _addMedia(MediaType.image),
-                      icon: const Icon(
-                        Icons.camera_alt,
-                        color: AppCores.neonBlue,
-                      ),
-                      label: const Text(
-                        'Foto',
-                        style: TextStyle(color: AppCores.neonBlue),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppCores.lightGray,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _addMedia(MediaType.video),
-                      icon: const Icon(
-                        Icons.videocam,
-                        color: AppCores.neonBlue,
-                      ),
-                      label: const Text(
-                        'Vídeo',
-                        style: TextStyle(color: AppCores.neonBlue),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppCores.lightGray,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              if (_selectedMediaItems.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 80,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _selectedMediaItems.length,
-                    separatorBuilder: (_, _) => const SizedBox(width: 8),
-                    itemBuilder: (ctx, i) => Container(
-                      width: 80,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppCores.neonBlue),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        _selectedMediaItems[i].type == MediaType.image
-                            ? Icons.image
-                            : Icons.play_circle,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+              SeletorMidiaWidget(
+                midias: _selectedMediaItems,
+                onChanged: (novaLista) => setState(
+                  () => _selectedMediaItems
+                    ..clear()
+                    ..addAll(novaLista),
                 ),
-              ],
+              ),
               const SizedBox(height: 25),
 
               _buildSecaoTitulo("Seus Dados (Opcional)"),
