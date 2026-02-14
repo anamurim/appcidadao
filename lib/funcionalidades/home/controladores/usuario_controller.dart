@@ -11,7 +11,7 @@ class UsuarioController extends ChangeNotifier {
   final UsuarioRepositorio _repositorio;
 
   UsuarioController({UsuarioRepositorio? repositorio})
-      : _repositorio = repositorio ?? UsuarioRepositorioLocal();
+    : _repositorio = repositorio ?? UsuarioRepositorioLocal();
 
   Usuario? _usuario;
   bool _isLoading = false;

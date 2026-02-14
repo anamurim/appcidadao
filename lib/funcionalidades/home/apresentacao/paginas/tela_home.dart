@@ -115,7 +115,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 24),
               const NotificacoesLista(),
               const SizedBox(height: 24),
-              const InformacoesConta(),
+              const ResumoContaWidget(),
               const SizedBox(height: 24),
             ],
           ),
@@ -207,9 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: AppCores.lightGray,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: AppCores.neonBlue.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: AppCores.neonBlue.withValues(alpha: 0.2)),
       ),
       child: Row(
         children: [

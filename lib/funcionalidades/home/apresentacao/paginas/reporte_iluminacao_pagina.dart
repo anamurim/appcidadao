@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
-<<<<<<< HEAD
-import '../../../reportes/media_item.dart';
-=======
 import '../../../reportes/dominio/entidades/media_item.dart';
->>>>>>> fcb63e66a5b7cad3745b145988a00c8127db5855
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_iluminacao.dart';
+import '../../../../core/modelos/reporte_base.dart';
 
 class TelaReporteIluminacao extends StatefulWidget {
   const TelaReporteIluminacao({super.key});
@@ -48,11 +45,6 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
     super.dispose();
   }
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> fcb63e66a5b7cad3745b145988a00c8127db5855
   InputDecoration _inputStyle(String label, IconData icon, {String? hint}) {
     return InputDecoration(
       labelText: label,
@@ -91,7 +83,9 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
             : null,
       );
 
-      await context.read<ReporteController>().submeterReporte(reporte);
+      await context.read<ReporteController>().submeterReporte(
+        reporte as ReporteBase,
+      );
 
       debugPrint('--- Solicitação de Reparo de Iluminação salva ---');
       debugPrint('ID: ${reporte.id}');

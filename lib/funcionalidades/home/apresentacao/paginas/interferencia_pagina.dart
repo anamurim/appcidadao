@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-//import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
-import '../../../reportes/media_item.dart';
+import '../../../reportes/dominio/entidades/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_interferencia.dart';
+import '../../../../core/modelos/reporte_base.dart';
 
 class TelaReportarInterferencia extends StatefulWidget {
   const TelaReportarInterferencia({super.key});
@@ -72,9 +72,9 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
             : null,
       );
 
-      await context.read<ReporteController>().submeterReporte(reporte);
-      //await context.read<ReporteController>().submeterReporte(reporte);
-
+      await context.read<ReporteController>().submeterReporte(
+        reporte as ReporteBase,
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -222,14 +222,6 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                 ),
                 const SizedBox(height: 25),
 
-                SeletorMidiaWidget(
-                  midias: _selectedMediaItemsInterferencia,
-                  onChanged: (novaLista) => setState(
-                    () => _selectedMediaItemsInterferencia
-                      ..clear()
-                      ..addAll(novaLista),
-                  ),
-                ),
                 SeletorMidiaWidget(
                   midias: _selectedMediaItemsInterferencia,
                   onChanged: (novaLista) => setState(
