@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_login.dart';
 import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_recuperar_senha.dart';
 import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_cadastro_usuario.dart';
-import 'package:appcidadao/funcionalidades/home/apresentacao/paginas/tela_home.dart';
+import 'package:appcidadao/funcionalidades/home/apresentacao/paginas/home_pagina.dart';
 import 'package:appcidadao/core/tema/app_tema.dart';
 import 'package:appcidadao/funcionalidades/autenticacao/controladores/autenticacao_controller.dart';
 import 'package:appcidadao/funcionalidades/home/controladores/reporte_controller.dart';

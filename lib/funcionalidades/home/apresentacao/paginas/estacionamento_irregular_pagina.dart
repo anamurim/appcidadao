@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
 import '../../../reportes/media_item.dart';
@@ -86,6 +87,7 @@ class _TelaEstacionamentoIrregularState
             : null,
       );
 
+      await context.read<ReporteController>().submeterReporte(reporte);
       await context.read<ReporteController>().submeterReporte(reporte);
 
       debugPrint('--- Relatório de Estacionamento Irregular salvo ---');
@@ -221,6 +223,15 @@ class _TelaEstacionamentoIrregularState
               ),
               const SizedBox(height: 25),
 
+              SeletorMidiaWidget(
+                midias: _selectedMediaItemsEstacionamento,
+                titulo: 'Prova Visual - Mídia (imagens ou vídeos)',
+                onChanged: (novaLista) => setState(
+                  () => _selectedMediaItemsEstacionamento
+                    ..clear()
+                    ..addAll(novaLista),
+                ),
+              ),
               SeletorMidiaWidget(
                 midias: _selectedMediaItemsEstacionamento,
                 titulo: 'Prova Visual - Mídia (imagens ou vídeos)',

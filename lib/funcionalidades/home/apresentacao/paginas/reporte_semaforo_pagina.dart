@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
+<<<<<<< HEAD
 import '../../../reportes/media_item.dart';
+=======
+import '../../../reportes/dominio/entidades/media_item.dart';
+>>>>>>> fcb63e66a5b7cad3745b145988a00c8127db5855
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_semaforo.dart';
 
@@ -44,6 +48,11 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
     super.dispose();
   }
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> fcb63e66a5b7cad3745b145988a00c8127db5855
   Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();

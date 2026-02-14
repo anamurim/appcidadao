@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+//import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
 import '../../../reportes/media_item.dart';
@@ -72,6 +73,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
       );
 
       await context.read<ReporteController>().submeterReporte(reporte);
+      //await context.read<ReporteController>().submeterReporte(reporte);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -220,6 +222,14 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                 ),
                 const SizedBox(height: 25),
 
+                SeletorMidiaWidget(
+                  midias: _selectedMediaItemsInterferencia,
+                  onChanged: (novaLista) => setState(
+                    () => _selectedMediaItemsInterferencia
+                      ..clear()
+                      ..addAll(novaLista),
+                  ),
+                ),
                 SeletorMidiaWidget(
                   midias: _selectedMediaItemsInterferencia,
                   onChanged: (novaLista) => setState(
