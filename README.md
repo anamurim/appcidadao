@@ -6,12 +6,12 @@ O **App Cidadão** é uma plataforma mobile desenvolvida em Flutter que permite 
 
 O aplicativo conta com diversos módulos de reporte, cada um com campos específicos e validações robustas:
 
-*  Interferência na Via:** Reporte de buracos, lixo descartado ou obstruções.
-*  Semáforos:** Notificação de luzes queimadas ou problemas de sincronia.
-*  Veículos Abandonados:** Registro de carros quebrados ou abandonados em via pública.
-*  Estacionamento Irregular:** Denúncia de infrações de trânsito.
-*  Sinalização:** Alerta sobre placas danificadas ou faixas apagadas.
-*  Iluminação Pública:** Solicitação de reparos em postes de luz.
+*  Interferência na Via: Reporte de buracos, lixo descartado ou obstruções.
+*  Semáforos: Notificação de luzes queimadas ou problemas de sincronia.
+*  Veículos Abandonados: Registro de carros quebrados ou abandonados em via pública.
+*  Estacionamento Irregular: Denúncia de infrações de trânsito.
+*  Sinalização: Alerta sobre placas danificadas ou faixas apagadas.
+*  Iluminação Pública: Solicitação de reparos em postes de luz.
 
 ##  Tecnologias Utilizadas
 
