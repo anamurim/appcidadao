@@ -6,6 +6,7 @@ import '../../../reportes/dominio/entidades/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_semaforo.dart';
 import '../../../../core/modelos/reporte_base.dart';
+import '../../../../core/utilitarios/localizacao_service.dart';
 
 class TelaReportarSemaforo extends StatefulWidget {
   const TelaReportarSemaforo({super.key});
@@ -19,6 +20,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
 
   // Variáveis de estado
   String? _selecionaTipoProblemaSemaforo;
+  bool _loadingEndereco = false;
   final TextEditingController _enderecoSemaforoController =
       TextEditingController();
   final TextEditingController _pontoReferenciaSemaforoController =
@@ -162,6 +164,32 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
                 decoration: _inputStyle(
                   'Localização (Rua/Cruzamento)',
                   Icons.location_on,
+                ).copyWith(
+                  suffixIcon: _loadingEndereco
+                      ? const SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: Padding(
+                            padding: EdgeInsets.all(6.0),
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.my_location, color: AppCores.neonBlue),
+                          onPressed: () async {
+                            setState(() => _loadingEndereco = true);
+                            try {
+                              final endereco = await LocalizacaoService.obterEnderecoAtual();
+                              _enderecoSemaforoController.text = endereco;
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Erro ao obter localização: $e')),
+                              );
+                            } finally {
+                              if (mounted) setState(() => _loadingEndereco = false);
+                            }
+                          },
+                        ),
                 ),
                 validator: (val) => val!.isEmpty ? 'Informe o local' : null,
               ),

@@ -6,6 +6,7 @@ import '../../../reportes/dominio/entidades/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_iluminacao.dart';
 import '../../../../core/modelos/reporte_base.dart';
+import '../../../../core/utilitarios/localizacao_service.dart';
 
 class TelaReporteIluminacao extends StatefulWidget {
   const TelaReporteIluminacao({super.key});
@@ -19,6 +20,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
 
   // Controllers e variáveis de estado
   String? _selecionaTipoProblemaIluminacao;
+  bool _loadingEndereco = false;
   final _enderecoIluminacaoController = TextEditingController();
   final _numeroPosteController =
       TextEditingController(); // Importante para manutenção
@@ -176,7 +178,33 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
               TextFormField(
                 controller: _enderecoIluminacaoController,
                 style: const TextStyle(color: Colors.white),
-                decoration: _inputStyle('Endereço completo', Icons.location_on),
+                decoration: _inputStyle('Endereço completo', Icons.location_on).copyWith(
+                  suffixIcon: _loadingEndereco
+                      ? const SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: Padding(
+                            padding: EdgeInsets.all(6.0),
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.my_location, color: AppCores.neonBlue),
+                          onPressed: () async {
+                            setState(() => _loadingEndereco = true);
+                            try {
+                              final endereco = await LocalizacaoService.obterEnderecoAtual();
+                              _enderecoIluminacaoController.text = endereco;
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Erro ao obter localização: $e')),
+                              );
+                            } finally {
+                              if (mounted) setState(() => _loadingEndereco = false);
+                            }
+                          },
+                        ),
+                ),
                 validator: (val) => val!.isEmpty ? 'Informe o endereço' : null,
               ),
               const SizedBox(height: 15),
