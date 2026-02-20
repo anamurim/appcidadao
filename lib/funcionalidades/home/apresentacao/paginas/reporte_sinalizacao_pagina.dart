@@ -6,6 +6,7 @@ import '../../../reportes/dominio/entidades/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_sinalizacao.dart';
 import '../../../../core/modelos/reporte_base.dart';
+import '../../../../core/utilitarios/localizacao_service.dart';
 
 class TelaReporteSinalizacao extends StatefulWidget {
   const TelaReporteSinalizacao({super.key});
@@ -19,6 +20,7 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
 
   // Controllers e variáveis de estado
   String? _selecionaTipoSinalizacao;
+  bool _loadingEndereco = false;
   final _enderecoSinalizacaoController = TextEditingController();
   final _pontoReferenciaSinalizacaoController = TextEditingController();
   final _descricaoSinalizacaoController = TextEditingController();
@@ -170,6 +172,32 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
                 decoration: _inputStyle(
                   'Endereço ou Cruzamento',
                   Icons.location_on,
+                ).copyWith(
+                  suffixIcon: _loadingEndereco
+                      ? const SizedBox(
+                          width: 28,
+                          height: 28,
+                          child: Padding(
+                            padding: EdgeInsets.all(6.0),
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : IconButton(
+                          icon: const Icon(Icons.my_location, color: AppCores.neonBlue),
+                          onPressed: () async {
+                            setState(() => _loadingEndereco = true);
+                            try {
+                              final endereco = await LocalizacaoService.obterEnderecoAtual();
+                              _enderecoSinalizacaoController.text = endereco;
+                            } catch (e) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text('Erro ao obter localização: $e')),
+                              );
+                            } finally {
+                              if (mounted) setState(() => _loadingEndereco = false);
+                            }
+                          },
+                        ),
                 ),
                 validator: (val) => val!.isEmpty ? 'Informe o local' : null,
               ),
