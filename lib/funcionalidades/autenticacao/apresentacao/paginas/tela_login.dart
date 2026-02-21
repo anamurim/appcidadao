@@ -153,11 +153,10 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [AppCores.deepBlue, AppCores.electricBlue, AppCores.neonBlue],
-          //stops: [0.1, 0.5, 0.9],
         ),
         borderRadius: const BorderRadius.only(
-          bottomLeft: Radius.circular(40),
-          bottomRight: Radius.circular(40),
+          bottomLeft: Radius.circular(10),
+          bottomRight: Radius.circular(10),
         ),
       ),
       child: Center(

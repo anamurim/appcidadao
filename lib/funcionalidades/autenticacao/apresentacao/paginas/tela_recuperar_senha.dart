@@ -50,15 +50,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           icon: Icon(Icons.arrow_back, color: AppCores.neonBlue),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          'Recuperar Senha',
-          /*style: TextStyle(
-            color: Theme.of(
-              context,
-            ).colorScheme.onSurface.withValues(alpha: 0.7),
-            fontWeight: FontWeight.w600,
-          ),*/
-        ),
+        title: Text('Recuperar Senha'),
       ),
       body: Stack(
         children: [
@@ -73,7 +65,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       ? AppCores.deepBlue.withValues(alpha: 0.8)
                       : AppCores.lightGray.withValues(alpha: 0.8),
                 ],
-                //stops: const [0.1, 0.8],
               ),
             ),
           ),
@@ -115,7 +106,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   ),
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 10),
 
                 // Título
                 Text(
@@ -258,7 +249,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: AppCores.lightGray.withValues(alpha: 0.85),
+                    color: AppCores.deepBlue.withValues(alpha: 0.85),
                     borderRadius: BorderRadius.circular(15),
                     border: Border.all(
                       color: AppCores.neonBlue.withValues(alpha: 0.2),
