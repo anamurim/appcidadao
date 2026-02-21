@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../../core/utilitarios/funcoes_auxiliares.dart';
+//import '../../../../core/tema/app_tema.dart';
+//import '../../../../core/tema/tema_controller.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -20,7 +21,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _confirmPasswordController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
-  bool _showSearchBar = false;
+  // Variáveis de estado
   bool _isLoading = false;
   bool _aceitaTermos = false;
   bool _obscurePassword = true;
@@ -35,110 +36,6 @@ class _SignupScreenState extends State<SignupScreen> {
   final _cepFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
-
-  void _handleSignup() async {
-    if (_formKey.currentState!.validate()) {
-      if (!_aceitaTermos) {
-        setState(() => _errorMessage = 'Por favor, aceite os termos de uso');
-        return;
-      }
-
-      setState(() {
-        _isLoading = true;
-        _errorMessage = null;
-      });
-
-      try {
-        // Simulação de cadastro
-        // Exibe o diálogo de carregamento
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            backgroundColor: AppCores.lightGray,
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppCores.neonBlue,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                const Text(
-                  'Criando sua conta...',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ],
-            ),
-          ),
-        );
-
-        await Future.delayed(const Duration(seconds: 2));
-
-        if (!mounted) return;
-        Navigator.pop(context);
-
-        // Simulação de possíveis erros
-        if (_emailController.text.contains('exemplo@teste.com')) {
-          throw 'E-mail já cadastrado';
-        }
-
-        setState(() => _errorMessage = null);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Conta criada com sucesso!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context);
-      } catch (e) {
-        if (mounted) {
-          setState(() => _errorMessage = e.toString());
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() => _isLoading = false);
-        }
-      }
-    }
-  }
-
-  Widget _buildErrorBanner() {
-    if (_errorMessage == null) return const SizedBox.shrink();
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      margin: const EdgeInsets.only(bottom: 12),
-      decoration: BoxDecoration(
-        color: Colors.red.shade700,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              _errorMessage!,
-              style: const TextStyle(color: Colors.white, fontSize: 14),
-            ),
-          ),
-          IconButton(
-            onPressed: () => setState(() => _errorMessage = null),
-            icon: const Icon(Icons.close, color: Colors.white),
-          ),
-        ],
-      ),
-    );
-  }
 
   /*bool get _isFormValid {
     return _nameController.text.isNotEmpty &&
@@ -171,30 +68,49 @@ class _SignupScreenState extends State<SignupScreen> {
     super.dispose();
   }
 
+  Widget _buildErrorBanner() {
+    if (_errorMessage == null) return const SizedBox.shrink();
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.red.shade700,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              _errorMessage!,
+              style: TextStyle(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.7),
+                fontSize: 16,
+              ),
+            ),
+          ),
+          IconButton(
+            onPressed: () => setState(() => _errorMessage = null),
+            icon: const Icon(Icons.close, color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppCores.techGray,
+      //backgroundColor: AppCores.techGray,
       appBar: AppBar(
-        title: _showSearchBar
-            ? FuncoesAuxiliares.construirCampoBusca(
-                controller: _searchController,
-                onChanged: (value) => setState(() {}),
-                onClear: () {
-                  setState(() {
-                    _showSearchBar = false;
-                    _searchController.clear();
-                  });
-                },
-              )
-            : const Text(
-                'Criar Nova Conta',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-        backgroundColor: AppCores.techGray,
+        title: Text(
+          'Criar Conta',
+          //style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        //backgroundColor: AppCores.techGray,
         elevation: 0,
         centerTitle: false,
         leading: IconButton(
@@ -223,9 +139,15 @@ class _SignupScreenState extends State<SignupScreen> {
                     const SizedBox(height: 10),
                     if (_errorMessage != null) _buildErrorBanner(),
                     const SizedBox(height: 10),
-                    const Text(
+                    Text(
                       'Preencha os dados abaixo para se cadastrar',
-                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.7),
+                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                      ),
                     ),
                     const SizedBox(height: 30),
                     // Campo Nome Completo
@@ -360,26 +282,31 @@ class _SignupScreenState extends State<SignupScreen> {
             nextFocus.requestFocus();
           }
         },
-        style: const TextStyle(color: Colors.white, fontSize: 14),
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+          fontSize: 14,
+        ),
         decoration: InputDecoration(
           labelText: label,
-          labelStyle: const TextStyle(
-            color: AppCores.neonBlue,
+          labelStyle: TextStyle(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.7),
             fontWeight: FontWeight.bold,
             letterSpacing: 1,
           ),
-          prefixIcon: Icon(icon, color: AppCores.neonBlue),
+          prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.primary),
           suffixIcon: isPassword && toggleVisibility != null
               ? IconButton(
                   icon: Icon(
                     obscureText ? Icons.visibility_off : Icons.visibility,
-                    color: AppCores.neonBlue,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   onPressed: toggleVisibility,
                 )
               : null,
           filled: true,
-          fillColor: AppCores.lightGray.withValues(alpha: 0.2),
+          fillColor: Theme.of(context).colorScheme.surface,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide.none,
@@ -456,28 +383,42 @@ class _SignupScreenState extends State<SignupScreen> {
             child: RichText(
               text: TextSpan(
                 text: 'Eu concordo com os ',
-                style: const TextStyle(color: Colors.white70, fontSize: 14),
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
+                  fontSize: 14,
+                ),
                 children: [
                   TextSpan(
                     text: 'Termos de Uso',
                     style: TextStyle(
-                      color: AppCores.neonBlue,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
                     ),
                   ),
                   const TextSpan(text: ' e '),
                   TextSpan(
-                    text: 'Política de Privacidade ',
+                    text: 'Política de Privacidade',
                     style: TextStyle(
-                      color: AppCores.neonBlue,
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                       fontWeight: FontWeight.bold,
                       decoration: TextDecoration.underline,
                     ),
                   ),
                   TextSpan(
-                    text: 'da EquatorialTech',
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    text: ' da EquatorialTech',
+                    style: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
+                      fontSize: 14,
+                    ),
                   ),
                 ],
               ),
@@ -486,6 +427,87 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       ],
     );
+  }
+
+  void _handleSignup() async {
+    if (_formKey.currentState!.validate()) {
+      if (!_aceitaTermos) {
+        setState(() => _errorMessage = 'Por favor, aceite os termos de uso');
+        return;
+      }
+
+      setState(() {
+        _isLoading = true;
+        _errorMessage = null;
+      });
+
+      try {
+        // Simulação de cadastro
+        // Exibe o diálogo de carregamento
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            backgroundColor: AppCores.lightGray,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(
+                  width: 50,
+                  height: 50,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 3,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppCores.neonBlue,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  'Criando sua conta...',
+                  style: TextStyle(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.7),
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+
+        await Future.delayed(const Duration(seconds: 2));
+
+        if (!mounted) return;
+        Navigator.pop(context);
+
+        // Simulação de possíveis erros
+        if (_emailController.text.contains('exemplo@teste.com')) {
+          throw 'E-mail já cadastrado';
+        }
+
+        setState(() => _errorMessage = null);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Conta criada com sucesso!'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      } catch (e) {
+        if (mounted) {
+          setState(() => _errorMessage = e.toString());
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() => _isLoading = false);
+        }
+      }
+    }
   }
 
   //Botão de envio do formulário
@@ -527,11 +549,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   strokeWidth: 2,
                 ),
               )
-            : const Text(
+            : Text(
                 'CRIAR CONTA',
                 style: TextStyle(
+                  color: Colors.white.withValues(alpha: 0.9),
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
                   fontSize: 16,
                   letterSpacing: 1,
                 ),
@@ -544,19 +566,23 @@ class _SignupScreenState extends State<SignupScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        const Text(
+        Text(
           'Já tem uma conta? ',
           style: TextStyle(
-            color: AppCores.neonBlue,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.7),
             fontWeight: FontWeight.bold,
           ),
         ),
         GestureDetector(
           onTap: () => Navigator.pop(context),
-          child: const Text(
+          child: Text(
             'Faça login',
             style: TextStyle(
-              color: AppCores.neonBlue,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.7),
               fontWeight: FontWeight.bold,
               decoration: TextDecoration.underline,
             ),
@@ -571,7 +597,7 @@ class _SignupScreenState extends State<SignupScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppCores.lightGray.withValues(alpha: 0.5),
+        color: AppCores.deepBlue.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppCores.neonBlue.withValues(alpha: 0.2)),
       ),
@@ -583,29 +609,26 @@ class _SignupScreenState extends State<SignupScreen> {
               Icon(
                 Icons.security,
                 size: 20,
-                color: Colors.green,
+                color: AppCores.accentGreen,
               ), // Substituí AppCores.accentGreen se não existir
               SizedBox(width: 10),
               Text(
                 'Segurança da conta',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppCores.accentGreen,
                   fontWeight: FontWeight.w600,
+                  fontSize: 14,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 12),
           Text(
-            '• Sua senha deve ter pelo menos 6 caracteres\n'
+            '• Sua senha deve ter pelo menos 8 caracteres\n'
             '• Use letras, números e caracteres especiais\n'
             '• Não compartilhe sua senha com ninguém\n'
             '• Seus dados são criptografados e protegidos',
-            style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.7),
-              fontSize: 13,
-              height: 1.6,
-            ),
+            style: TextStyle(color: Colors.white, fontSize: 13, height: 1.6),
           ),
         ],
       ),

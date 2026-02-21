@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/linha_conexao.dart';
 import '../../controladores/autenticacao_controller.dart';
+//import '../../../../core/tema/app_tema.dart';
+//import '../../../../core/tema/tema_controller.dart';
 
 class TechLoginScreen extends StatefulWidget {
   const TechLoginScreen({super.key});
@@ -57,10 +59,18 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
     Navigator.pushNamed(context, '/forgot-password');
   }
 
+  List<Widget> _buildParticles() {
+    return [
+      Positioned(top: 100, left: 50, child: _buildParticle(4, 0.6)),
+      Positioned(top: 200, right: 80, child: _buildParticle(3, 0.8, true)),
+      Positioned(top: 300, left: 100, child: _buildParticle(2, 0.4)),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppCores.deepBlue,
+      //backgroundColor: AppCores.deepBlue,
       body: Stack(
         children: [
           _buildTechBackground(),
@@ -90,6 +100,8 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
   }
 
   Widget _buildTechBackground() {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Stack(
       children: [
         Container(
@@ -98,39 +110,34 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
               center: Alignment.topLeft,
               radius: 1.5,
               colors: [
-                AppCores.deepBlue.withValues(alpha: 0.8),
-                AppCores.techGray,
+                isDark
+                    ? AppCores.deepBlue.withValues(alpha: 0.8)
+                    : AppCores.lightGray.withValues(alpha: 0.8),
               ],
-              stops: const [0.1, 0.8],
+              //stops: const [0.1, 0.8],
             ),
           ),
         ),
         ..._buildParticles(),
         CustomPaint(
           painter: ConnectionLinesPainter(
-            color: AppCores.electricBlue.withValues(alpha: 0.2),
+            color: AppCores.lightGray.withValues(alpha: 0.1),
           ),
         ),
       ],
     );
   }
 
-  List<Widget> _buildParticles() {
-    return [
-      Positioned(top: 100, left: 50, child: _buildParticle(4, 0.6)),
-      Positioned(top: 200, right: 80, child: _buildParticle(3, 0.8, true)),
-      Positioned(top: 300, left: 100, child: _buildParticle(2, 0.4)),
-    ];
-  }
-
   Widget _buildParticle(double size, double opacity, [bool neon = false]) {
+    bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: neon
+        color: isDark
             ? AppCores.neonBlue.withValues(alpha: 0.2)
-            : Colors.white.withValues(alpha: 0.2),
+            : AppCores.lightGray.withValues(alpha: 0.2),
         shape: BoxShape.circle,
       ),
     );
@@ -146,7 +153,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [AppCores.deepBlue, AppCores.electricBlue, AppCores.neonBlue],
-          stops: [0.1, 0.5, 0.9],
+          //stops: [0.1, 0.5, 0.9],
         ),
         borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(40),
@@ -220,13 +227,15 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
               hint: '••••••••',
               icon: Icons.lock_outline,
               obscure: _obscurePassword,
-              validator: (value) => (value == null || value.length < 6)
+              validator: (value) => (value == null || value.length < 8)
                   ? 'Senha muito curta'
                   : null,
               suffix: IconButton(
                 icon: Icon(
                   _obscurePassword ? Icons.visibility_off : Icons.visibility,
-                  color: AppCores.neonBlue,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
                 ),
                 onPressed: () =>
                     setState(() => _obscurePassword = !_obscurePassword),
@@ -243,17 +252,28 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                       activeColor: AppCores.neonBlue,
                       onChanged: (val) => setState(() => _rememberMe = val!),
                     ),
-                    const Text(
+                    Text(
                       'Lembrar-me',
-                      style: TextStyle(color: Colors.white70),
+                      style: TextStyle(
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.7),
+                        fontSize: 16,
+                      ),
                     ),
                   ],
                 ),
                 TextButton(
                   onPressed: _handleForgotPassword,
-                  child: const Text(
+                  child: Text(
                     'Esqueci a senha',
-                    style: TextStyle(color: AppCores.neonBlue),
+                    style: TextStyle(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
+                      fontSize: 16,
+                      decoration: TextDecoration.underline,
+                    ),
                   ),
                 ),
               ],
@@ -283,13 +303,13 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
       controller: controller,
       obscureText: obscure,
       validator: validator,
-      style: const TextStyle(color: Colors.white),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       decoration: InputDecoration(
         filled: true,
-        fillColor: AppCores.lightGray.withValues(alpha: 0.8),
+        fillColor: Theme.of(context).colorScheme.surface.withValues(alpha: 0.8),
         labelText: label,
-        labelStyle: const TextStyle(color: AppCores.neonBlue),
-        prefixIcon: Icon(icon, color: AppCores.neonBlue),
+        labelStyle: TextStyle(color: Theme.of(context).colorScheme.primary),
+        prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.primary),
         suffixIcon: suffix,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
       ),
@@ -317,6 +337,7 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
           ),
@@ -326,12 +347,21 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
   }
 
   Widget _buildDivider() {
-    return const Row(
+    return Row(
       children: [
         Expanded(child: Divider(color: Colors.white24)),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 15),
-          child: Text('ou', style: TextStyle(color: Colors.white54)),
+          child: Text(
+            'ou',
+            style: TextStyle(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.7),
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
         Expanded(child: Divider(color: Colors.white24)),
       ],
@@ -346,9 +376,12 @@ class _TechLoginScreenState extends State<TechLoginScreen> {
         side: const BorderSide(color: AppCores.neonBlue),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       ),
-      child: const Text(
+      child: Text(
         'CRIAR NOVA CONTA',
-        style: TextStyle(color: AppCores.neonBlue, fontWeight: FontWeight.bold),
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+          fontSize: 16,
+        ),
       ),
     );
   }
