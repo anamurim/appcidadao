@@ -1,8 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../core/constantes/cores.dart';
+import 'termos_uso_pagina.dart';
+import 'politica_privacidade_pagina.dart';
 
 class TelaSuporte extends StatelessWidget {
   const TelaSuporte({super.key});
+
+  Future<void> _abrirWhatsApp(BuildContext context) async {
+    final uri = Uri.parse(
+      'https://wa.me/5598999999999?text=Olá! Preciso de ajuda com o App Cidadão.',
+    );
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Não foi possível abrir o WhatsApp.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _abrirEmail(BuildContext context) async {
+    final uri = Uri(
+      scheme: 'mailto',
+      path: 'suporte@appcidadao.com.br',
+      queryParameters: {
+        'subject': 'Suporte - App Cidadão',
+        'body': 'Olá, preciso de ajuda com...',
+      },
+    );
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Não foi possível abrir o app de e-mail.'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,18 +71,14 @@ class TelaSuporte extends StatelessWidget {
               icon: Icons.chat_outlined,
               titulo: 'Chat via WhatsApp',
               subtitulo: 'Atendimento rápido em horário comercial',
-              onTap: () {
-                // Lógica para abrir link do WhatsApp
-              },
+              onTap: () => _abrirWhatsApp(context),
             ),
 
             _buildCardSuporte(
               icon: Icons.email_outlined,
               titulo: 'Enviar E-mail',
               subtitulo: 'suporte@appcidadao.com.br',
-              onTap: () {
-                // Lógica para abrir app de e-mail
-              },
+              onTap: () => _abrirEmail(context),
             ),
 
             const SizedBox(height: 24),
@@ -67,7 +107,12 @@ class TelaSuporte extends StatelessWidget {
               titulo: 'Termos de Uso',
               subtitulo: 'Regras e condições de uso do aplicativo',
               onTap: () {
-                // Navigator.push para a tela de texto dos termos
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TelaTermosUso(),
+                  ),
+                );
               },
             ),
 
@@ -76,7 +121,12 @@ class TelaSuporte extends StatelessWidget {
               titulo: 'Política de Privacidade',
               subtitulo: 'Como cuidamos dos seus dados pessoais',
               onTap: () {
-                // Navigator.push para a tela de privacidade
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const TelaPoliticaPrivacidade(),
+                  ),
+                );
               },
             ),
 
@@ -94,7 +144,7 @@ class TelaSuporte extends StatelessWidget {
     );
   }
 
-  // Widget para os botões de contato (Baseado no seu padrão de cards)
+  // Widget para os botões de contato
   Widget _buildCardSuporte({
     required IconData icon,
     required String titulo,
@@ -125,7 +175,7 @@ class TelaSuporte extends StatelessWidget {
     );
   }
 
-  // Widget de FAQ em formato de ExpansionTile (abre e fecha)
+  // Widget de FAQ em formato de ExpansionTile
   Widget _buildFAQItem({required String pergunta, required String resposta}) {
     return Card(
       elevation: 0,
