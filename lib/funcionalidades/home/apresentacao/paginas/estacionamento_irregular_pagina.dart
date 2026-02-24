@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../../core/modelos/media_item.dart';
+import '../../../../core/widgets/seletor_midia_widget.dart';
 import '../../../../core/utilitarios/localizacao_service.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_estacionamento.dart';
 import '../../../../core/modelos/reporte_base.dart';
+import '../../../reportes/dominio/entidades/media_item.dart';
 
 class TelaEstacionamentoIrregular extends StatefulWidget {
   const TelaEstacionamentoIrregular({super.key});
@@ -31,14 +32,14 @@ class _TelaEstacionamentoIrregularState
   final List<String> _tipoInfracoes = [
     'Fila Dupla',
     'Vaga de Idoso/PNE sem cartão',
-    'Guia Rebaixada (Garagem)',
-    'Calçada/Passeio',
+    'Guia Rebaixada (Entrada/Saída de veículos)',
+    'Estacionar sobre a Calçada',
     'Ponto de Ônibus',
-    'Ciclovia/Ciclofaixa',
+    'Estacionar em local proibido (Placa R6a/R6c)',
     'Outro - Especificar na descrição',
   ];
 
-  final List<MediaItem> _selectedMediaItemsEstacionamento = <MediaItem>[];
+  final List<MediaItem> _selectedMediaItems = <MediaItem>[];
 
   @override
   void dispose() {
@@ -49,40 +50,31 @@ class _TelaEstacionamentoIrregularState
     super.dispose();
   }
 
-  void _addMedia(MediaType type) {
-    setState(() {
-      _selectedMediaItemsEstacionamento.add(
-        MediaItem(
-          url: type == MediaType.image
-              ? 'https://www.gstatic.com/flutter-onestack-prototype/genui/example_1.jpg'
-              : 'video_placeholder',
-          type: type,
-        ),
-      );
-    });
-  }
-
   InputDecoration _inputStyle(String label, IconData icon, {String? hint}) {
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      labelStyle: const TextStyle(color: Colors.white70),
-      hintStyle: const TextStyle(color: Colors.white38),
-      prefixIcon: Icon(icon, color: AppCores.neonBlue),
+      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+      hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+      prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.onSurface),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppCores.neonBlue),
+        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
       ),
       filled: true,
-      fillColor: AppCores.lightGray,
+      fillColor: AppCores.lightGray.withValues(alpha: 0.2),
     );
   }
 
   Future<void> _submitReport() async {
+    final theme = Theme.of(context);
+
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -94,7 +86,7 @@ class _TelaEstacionamentoIrregularState
             ? _pontoReferenciaEstacionamentoController.text
             : null,
         descricao: _descricaoEstacionamentoController.text,
-        midias: List.from(_selectedMediaItemsEstacionamento),
+        midias: List.from(_selectedMediaItems),
         tipoInfracao: _selecionaTipoInfracao!,
         placaVeiculo: _placaController.text.isNotEmpty
             ? _placaController.text
@@ -114,14 +106,16 @@ class _TelaEstacionamentoIrregularState
           context: context,
           barrierDismissible: false,
           builder: (ctx) => AlertDialog(
-            backgroundColor: AppCores.lightGray,
-            title: const Text(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            title: Text(
               'Denúncia Enviada',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: theme.colorScheme.onSurface),
             ),
-            content: const Text(
+            content: Text(
               'As autoridades de trânsito foram notificadas sobre a irregularidade.',
-              style: TextStyle(color: Colors.white70),
+              style: TextStyle(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
             ),
             actions: [
               TextButton(
@@ -129,9 +123,9 @@ class _TelaEstacionamentoIrregularState
                   Navigator.pop(ctx);
                   Navigator.pop(context);
                 },
-                child: const Text(
+                child: Text(
                   'OK',
-                  style: TextStyle(color: AppCores.neonBlue),
+                  style: TextStyle(color: theme.colorScheme.primary),
                 ),
               ),
             ],
@@ -152,14 +146,20 @@ class _TelaEstacionamentoIrregularState
       _enderecoEstacionamentoController.clear();
       _pontoReferenciaEstacionamentoController.clear();
       _descricaoEstacionamentoController.clear();
-      _selectedMediaItemsEstacionamento.clear();
+      _selectedMediaItems.clear();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Estacionamento Irregular')),
+      appBar: AppBar(
+        title: const Text('Estacionamento Irregular'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: AppCores.neonBlue),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -172,8 +172,10 @@ class _TelaEstacionamentoIrregularState
 
               // Dropdown de Infração
               DropdownButtonFormField<String>(
-                dropdownColor: AppCores.lightGray,
-                style: const TextStyle(color: Colors.white),
+                dropdownColor: Colors.white,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle(
                   'Tipo de Irregularidade',
                   Icons.warning_amber_rounded,
@@ -190,7 +192,9 @@ class _TelaEstacionamentoIrregularState
               // Placa do Veículo
               TextFormField(
                 controller: _placaController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle(
                   'Placa do Veículo (Se visível)',
                   Icons.badge,
@@ -206,7 +210,9 @@ class _TelaEstacionamentoIrregularState
               // Endereço
               TextFormField(
                 controller: _enderecoEstacionamentoController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle('Endereço', Icons.location_on).copyWith(
                   suffixIcon: _loadingEndereco
                       ? const SizedBox(
@@ -218,18 +224,27 @@ class _TelaEstacionamentoIrregularState
                           ),
                         )
                       : IconButton(
-                          icon: const Icon(Icons.my_location, color: AppCores.neonBlue),
+                          icon: Icon(
+                            Icons.my_location,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
                           onPressed: () async {
                             setState(() => _loadingEndereco = true);
                             try {
-                              final endereco = await LocalizacaoService.obterEnderecoAtual();
+                              final endereco =
+                                  await LocalizacaoService.obterEnderecoAtual();
                               _enderecoEstacionamentoController.text = endereco;
                             } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Erro ao obter localização: $e')),
+                                SnackBar(
+                                  content: Text(
+                                    'Erro ao obter localização: $e',
+                                  ),
+                                ),
                               );
                             } finally {
-                              if (mounted) setState(() => _loadingEndereco = false);
+                              if (mounted)
+                                setState(() => _loadingEndereco = false);
                             }
                           },
                         ),
@@ -242,7 +257,9 @@ class _TelaEstacionamentoIrregularState
               TextFormField(
                 controller: _pontoReferenciaEstacionamentoController,
                 maxLines: 2,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle(
                   'Ponto de referência ou observações',
                   Icons.pin_drop,
@@ -255,7 +272,9 @@ class _TelaEstacionamentoIrregularState
               TextFormField(
                 controller: _descricaoEstacionamentoController,
                 maxLines: 4,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle(
                   'Descrição do problema',
                   Icons.description,
@@ -264,72 +283,14 @@ class _TelaEstacionamentoIrregularState
               ),
               const SizedBox(height: 25),
 
-              _buildSecaoTitulo("Prova Visual - Mídia (imagens ou vídeos)"),
-              const SizedBox(height: 10),
-
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _addMedia(MediaType.image),
-                      icon: const Icon(
-                        Icons.camera_alt,
-                        color: AppCores.neonBlue,
-                      ),
-                      label: const Text(
-                        'Foto',
-                        style: TextStyle(color: AppCores.neonBlue),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppCores.lightGray,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: () => _addMedia(MediaType.video),
-                      icon: const Icon(
-                        Icons.videocam,
-                        color: AppCores.neonBlue,
-                      ),
-                      label: const Text(
-                        'Vídeo',
-                        style: TextStyle(color: AppCores.neonBlue),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppCores.lightGray,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-
-              if (_selectedMediaItemsEstacionamento.isNotEmpty) ...[
-                const SizedBox(height: 16),
-                SizedBox(
-                  height: 80,
-                  child: ListView.separated(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: _selectedMediaItemsEstacionamento.length,
-                    separatorBuilder: (_, _) => const SizedBox(width: 8),
-                    itemBuilder: (ctx, i) => Container(
-                      width: 80,
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppCores.neonBlue),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Icon(
-                        _selectedMediaItemsEstacionamento[i].type ==
-                                MediaType.image
-                            ? Icons.image
-                            : Icons.play_circle,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+              SeletorMidiaWidget(
+                midias: _selectedMediaItems,
+                onChanged: (novaLista) => setState(
+                  () => _selectedMediaItems
+                    ..clear()
+                    ..addAll(novaLista),
                 ),
-              ],
+              ),
               const SizedBox(height: 40),
 
               // Botão de Envio
@@ -340,7 +301,7 @@ class _TelaEstacionamentoIrregularState
                   onPressed: _submitReport,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.redAccent.withValues(
-                      alpha: 0.8,
+                      alpha: 0.9,
                     ), // Cor de alerta
                   ),
                   child: const Text(
@@ -363,8 +324,8 @@ class _TelaEstacionamentoIrregularState
   Widget _buildSecaoTitulo(String titulo) {
     return Text(
       titulo,
-      style: const TextStyle(
-        color: AppCores.neonBlue,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
         fontSize: 16,
         fontWeight: FontWeight.bold,
       ),

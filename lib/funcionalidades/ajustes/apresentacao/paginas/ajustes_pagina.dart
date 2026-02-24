@@ -20,7 +20,7 @@ class AjustesPagina extends StatelessWidget {
           'Configurações',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: AppCores.deepBlue,
+        //backgroundColor: AppCores.deepBlue,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
         leading: IconButton(
@@ -29,11 +29,11 @@ class AjustesPagina extends StatelessWidget {
         ),
       ),
       body: Container(
-        color: AppCores.techGray,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            _buildSecao('Minha Conta'),
+            _buildSecao(context, 'Minha Conta'),
             _buildCardItem(
               icon: Icons.person_outline,
               titulo: 'Perfil',
@@ -59,7 +59,7 @@ class AjustesPagina extends StatelessWidget {
               },
             ),
             const SizedBox(height: 24),
-            _buildSecao('Preferências'),
+            _buildSecao(context, 'Preferências'),
             _buildCardItem(
               icon: Icons.notifications_none_outlined,
               titulo: 'Notificações',
@@ -85,7 +85,7 @@ class AjustesPagina extends StatelessWidget {
               },
             ),
             const SizedBox(height: 24),
-            _buildSecao('Suporte'),
+            _buildSecao(context, 'Suporte'),
             _buildCardItem(
               icon: Icons.help_outline_rounded,
               titulo: 'Ajuda e Suporte',
@@ -121,13 +121,13 @@ class AjustesPagina extends StatelessWidget {
     );
   }
 
-  Widget _buildSecao(String titulo) {
+  Widget _buildSecao(BuildContext context, String titulo) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 8),
       child: Text(
         titulo.toUpperCase(),
         style: TextStyle(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 12,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
@@ -150,7 +150,7 @@ class AjustesPagina extends StatelessWidget {
         side: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
       ),
       child: ListTile(
-        leading: Icon(icon, color: AppCores.electricBlue),
+        leading: Icon(icon, color: AppCores.neonBlue),
         title: Text(
           titulo,
           style: const TextStyle(fontWeight: FontWeight.w600),

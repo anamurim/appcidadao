@@ -20,15 +20,15 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppCores.techGray,
+      //backgroundColor: AppCores.techGray,
       appBar: AppBar(
         title: const Text('Histórico de Reportes'),
-        backgroundColor: AppCores.deepBlue,
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppCores.neonBlue),
           onPressed: widget.onBackToHome ?? () => Navigator.of(context).pop(),
         ),
+        //backgroundColor: AppCores.deepBlue,
       ),
       body: FutureBuilder<List<ReporteBase>>(
         // Utiliza o método exato do seu repositório
@@ -67,12 +67,17 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
           Icon(
             Icons.history_outlined,
             size: 64,
-            color: Colors.white.withValues(alpha: 0.2),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.2),
           ),
           const SizedBox(height: 16),
-          const Text(
+          Text(
             'Nenhum reporte enviado até o momento.',
-            style: TextStyle(color: Colors.white70, fontSize: 16),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontSize: 16,
+            ),
           ),
         ],
       ),
@@ -86,7 +91,7 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
         : "Reporte Geral";
 
     return Card(
-      color: AppCores.lightGray,
+      color: Theme.of(context).colorScheme.surface,
       margin: const EdgeInsets.only(bottom: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       child: ListTile(
@@ -104,8 +109,8 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
         ),
         title: Text(
           titulo,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -115,15 +120,26 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
             const SizedBox(height: 4),
             Text(
               'Status: ${reporte.status.name.toUpperCase()}',
-              style: const TextStyle(color: AppCores.accentGreen, fontSize: 12),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontSize: 12,
+              ),
             ),
             Text(
               'ID: ${reporte.id}',
-              style: const TextStyle(color: Colors.white38, fontSize: 10),
+              style: TextStyle(
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.5),
+                fontSize: 10,
+              ),
             ),
           ],
         ),
-        trailing: const Icon(Icons.chevron_right, color: Colors.white24),
+        trailing: Icon(
+          Icons.chevron_right,
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
         onTap: () => _exibirDetalhes(reporte, titulo),
       ),
     );
@@ -153,7 +169,9 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 20),
                   decoration: BoxDecoration(
-                    color: Colors.white24,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),

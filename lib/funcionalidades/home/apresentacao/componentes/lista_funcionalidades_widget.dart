@@ -1,8 +1,14 @@
-import 'package:appcidadao/funcionalidades/ajustes/apresentacao/paginas/ajustes_pagina.dart';
+//import 'package:appcidadao/funcionalidades/ajustes/apresentacao/paginas/ajustes_pagina.dart';
+import 'package:appcidadao/funcionalidades/home/apresentacao/paginas/suporte_energia_pagina.dart';
 import 'package:flutter/material.dart';
 import '../../dados/fonte_dados/home_local_datasource.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../perfil/tela_perfil.dart';
+import '../../../home/apresentacao/paginas/consumo_pagina.dart';
+import '../../../home/apresentacao/paginas/pagamentos_pagina.dart';
+import '../../../home/apresentacao/paginas/falta_energia_pagina.dart';
+import '../../../home/apresentacao/paginas/economia_pagina.dart';
+//import '../../../home/apresentacao/paginas/suporte_energia_pagina.dart';
 import '../paginas/interferencia_pagina.dart';
 //import '../../../ajustes/apresentacao/paginas/ajustes_pagina.dart';
 import '../paginas/reporte_semaforo_pagina.dart';
@@ -43,8 +49,20 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
       case 'Minha Conta':
         destino = const TelaPerfil();
         break;
+      case 'Consumo':
+        destino = const ConsumoEnergiaPagina();
+        break;
+      case 'Pagamentos':
+        destino = const HistoricoPagamentosPagina();
+        break;
       case 'Suporte':
-        destino = AjustesPagina(onBackToHome: () => Navigator.pop(context));
+        destino = const SuporteEnergiaPagina();
+        break;
+      case 'Falta de Energia':
+        destino = const FaltaEnergiaPagina();
+        break;
+      case 'Economia':
+        destino = const DicasEconomiaPagina();
         break;
       case 'Interferência na Via':
         destino = const TelaReportarInterferencia();
@@ -79,7 +97,7 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
           content: Text(
             'Funcionalidade ${feature['title']} em desenvolvimento',
           ),
-          backgroundColor: AppCores.electricBlue,
+          backgroundColor: Theme.of(context).colorScheme.onSurface,
         ),
       );
     }
@@ -122,7 +140,7 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
   Widget _buildFeaturesGrid() {
     final filtered = _filteredFeatures;
     final problemasUrbanos = filtered
-        .where((feature) => feature['category'] == 'problemas_urbanos')
+        .where((feature) => feature['category'] == 'funcionalidades_principais')
         .toList();
     final listafuncionalidades = filtered
         .where((feature) => feature['category'] != 'problemas_urbanos')
@@ -149,8 +167,8 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
   Widget _buildSecaoTitulo(String titulo) {
     return Text(
       titulo,
-      style: const TextStyle(
-        color: Colors.white,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
         fontSize: 20,
         fontWeight: FontWeight.w700,
       ),
@@ -175,12 +193,12 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
   Widget _buildFeatureCard(Map<String, dynamic> feature) {
     return Container(
       decoration: BoxDecoration(
-        color: AppCores.lightGray,
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: AppCores.neonBlue.withValues(alpha: 0.1)),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         child: InkWell(
           onTap: () => _showFeatureDetails(feature),
           borderRadius: BorderRadius.circular(15),
@@ -192,7 +210,11 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
               Text(
                 feature['title'],
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white, fontSize: 11),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -204,7 +226,7 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
   void _showFeatureDetails(Map<String, dynamic> feature) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppCores.lightGray,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
@@ -217,8 +239,8 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
             const SizedBox(height: 16),
             Text(
               feature['title'],
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
@@ -226,7 +248,10 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
             const SizedBox(height: 12),
             Text(
               feature['description'] ?? '',
-              style: const TextStyle(color: Colors.white70, fontSize: 16),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 16,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -259,10 +284,12 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
               onPressed: () {
                 Navigator.pop(context); // Apenas fecha o modal
               },
-              child: const Text(
+              child: Text(
                 'CANCELAR',
                 style: TextStyle(
-                  color: Colors.white54, // Cor mais discreta
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface, // Cor mais discreta
                   fontWeight: FontWeight.w500,
                 ),
               ),

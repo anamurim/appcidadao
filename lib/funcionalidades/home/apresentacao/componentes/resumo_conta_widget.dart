@@ -6,37 +6,50 @@ class ResumoContaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: AppCores.lightGray,
+        color: colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(color: AppCores.neonBlue.withValues(alpha: 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Resumo da Conta',
             style: TextStyle(
-              color: Colors.white,
+              color: colorScheme.onSurface,
               fontSize: 18,
               fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(height: 16),
-          _buildInfoItem('Última Fatura', 'R\$ 250,45', Icons.receipt),
-          const SizedBox(height: 12),
-          _buildInfoItem('Vencimento', '05/02/2026', Icons.calendar_today),
+          _buildInfoItem(
+            context,
+            'Vencimento',
+            '05/02/2026',
+            Icons.calendar_today,
+          ),
           const SizedBox(height: 12),
           _buildInfoItem(
+            context,
+            'Vencimento',
+            '05/02/2026',
+            Icons.calendar_today,
+          ),
+          const SizedBox(height: 12),
+          _buildInfoItem(
+            context,
             'Status',
             'Em dia',
             Icons.check_circle,
             color: AppCores.accentGreen,
           ),
           const SizedBox(height: 12),
-          _buildInfoItem('Próxima Leitura', '15/02/2026', Icons.speed),
+          _buildInfoItem(context, 'Próxima Leitura', '15/02/2026', Icons.speed),
           const SizedBox(height: 20),
 
           // Botão de Pagamento com Gradiente
@@ -83,24 +96,34 @@ class ResumoContaWidget extends StatelessWidget {
 
   // Widget auxiliar para os itens de informação
   Widget _buildInfoItem(
+    BuildContext context, // Adicionado contexto para acessar o tema
     String label,
     String value,
     IconData icon, {
     Color? color,
   }) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Row(
       children: [
-        Icon(icon, color: color ?? Colors.white70, size: 20),
+        Icon(
+          icon,
+          color: color ?? colorScheme.onSurfaceVariant, // Cor suave para ícones
+          size: 20,
+        ),
         const SizedBox(width: 12),
         Text(
           '$label:',
-          style: const TextStyle(color: Colors.white70, fontSize: 14),
+          style: TextStyle(
+            color: colorScheme.onSurfaceVariant, // Texto secundário adaptável
+            fontSize: 14,
+          ),
         ),
         const Spacer(),
         Text(
           value,
           style: TextStyle(
-            color: color ?? Colors.white,
+            color: color ?? colorScheme.onSurface, // Texto principal adaptável
             fontSize: 14,
             fontWeight: FontWeight.w600,
           ),
