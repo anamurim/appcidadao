@@ -103,7 +103,7 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
 
             Center(
               child: TextButton(
-                onPressed: () {},
+                onPressed: () => _confirmarDesativacao(context),
                 child: const Text(
                   'Desativar minha conta',
                   style: TextStyle(
@@ -158,6 +158,74 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
         trailing: trailing,
         onTap: onTap,
       ),
+    );
+  }
+
+  void _confirmarDesativacao(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppCores.lightGray,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: const Row(
+            children: [
+              Icon(Icons.warning_amber_rounded, color: Colors.redAccent),
+              SizedBox(width: 10),
+              Text(
+                'Desativar Conta',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          content: const Text(
+            'Tem certeza que deseja desativar sua conta? '
+            'Você perderá acesso ao aplicativo e todos os seus dados. '
+            'Esta ação não pode ser desfeita.',
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'CANCELAR',
+                style: TextStyle(color: Colors.white54),
+              ),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      'Solicitação de desativação enviada.',
+                    ),
+                    backgroundColor: Colors.redAccent,
+                  ),
+                );
+              },
+              child: const Text(
+                'DESATIVAR',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

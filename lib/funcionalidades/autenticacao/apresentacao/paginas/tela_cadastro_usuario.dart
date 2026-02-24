@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import '../../../../core/constantes/cores.dart';
 //import '../../../../core/tema/app_tema.dart';
 //import '../../../../core/tema/tema_controller.dart';
@@ -19,7 +21,19 @@ class _SignupScreenState extends State<SignupScreen> {
   final _cepController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final TextEditingController _searchController = TextEditingController();
+  // Máscaras de input
+  final _cpfMask = MaskTextInputFormatter(
+    mask: '###.###.###-##',
+    filter: {'#': RegExp(r'[0-9]')},
+  );
+  final _phoneMask = MaskTextInputFormatter(
+    mask: '(##) #####-####',
+    filter: {'#': RegExp(r'[0-9]')},
+  );
+  final _cepMask = MaskTextInputFormatter(
+    mask: '#####-###',
+    filter: {'#': RegExp(r'[0-9]')},
+  );
 
   // Variáveis de estado
   bool _isLoading = false;
@@ -57,7 +71,7 @@ class _SignupScreenState extends State<SignupScreen> {
     _cepController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _searchController.dispose();
+
     _nameFocus.dispose();
     _emailFocus.dispose();
     _cpfFocus.dispose();
@@ -173,6 +187,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       icon: Icons.badge_outlined,
                       focusNode: _cpfFocus,
                       nextFocus: _phoneFocus,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [_cpfMask],
                     ),
                     const SizedBox(height: 16),
 
@@ -183,6 +199,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       icon: Icons.phone_outlined,
                       focusNode: _phoneFocus,
                       nextFocus: _cepFocus,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [_phoneMask],
                     ),
                     const SizedBox(height: 16),
 
@@ -193,6 +211,8 @@ class _SignupScreenState extends State<SignupScreen> {
                       icon: Icons.location_on_outlined,
                       focusNode: _cepFocus,
                       nextFocus: _passwordFocus,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [_cepMask],
                     ),
                     const SizedBox(height: 16),
 
@@ -253,6 +273,8 @@ class _SignupScreenState extends State<SignupScreen> {
     bool isEmail = false,
     bool isConfirmPassword = false,
     VoidCallback? toggleVisibility,
+    TextInputType? keyboardType,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Container(
       decoration: BoxDecoration(
@@ -269,6 +291,8 @@ class _SignupScreenState extends State<SignupScreen> {
         controller: controller,
         obscureText: obscureText,
         focusNode: focusNode,
+        keyboardType: keyboardType,
+        inputFormatters: inputFormatters,
         textInputAction: nextFocus != null
             ? TextInputAction.next
             : TextInputAction.done,
