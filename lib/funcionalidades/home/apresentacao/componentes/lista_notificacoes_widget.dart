@@ -15,7 +15,7 @@ class NotificacoesLista extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    // Pegamos a fonte de dados centralizada
+    // Pega a fonte de dados centralizada
     final lista = DadosHome.notifications;
 
     return Column(
