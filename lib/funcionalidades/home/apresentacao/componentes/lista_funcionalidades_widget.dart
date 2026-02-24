@@ -28,7 +28,12 @@ class ListaFuncionalidades extends StatefulWidget {
 
 class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
   List<Map<String, dynamic>> get _filteredFeatures {
-    final features = DadosHome.getfuncionalidades;
+    final featuresServicos = DadosHome.getServicosEnergia;
+    if (widget.searchController.text.isEmpty) {
+      return featuresServicos;
+    }
+
+    final features = DadosHome.getProblemasUrbanos;
     if (widget.searchController.text.isEmpty) {
       return features;
     }
@@ -42,65 +47,54 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
 
   // FUNÇÃO DE NAVEGAÇÃO CENTRALIZADA
   void _executarChamadaFuncionalidade(Map<String, dynamic> feature) {
-    Widget? destino;
+    Widget? paginaDestino;
 
     // Mapeamento de títulos para telas
     switch (feature['title']) {
       case 'Minha Conta':
-        destino = const TelaPerfil();
+        paginaDestino = const TelaPerfil();
         break;
       case 'Consumo':
-        destino = const ConsumoEnergiaPagina();
+        paginaDestino = const ConsumoEnergiaPagina();
         break;
       case 'Pagamentos':
-        destino = const HistoricoPagamentosPagina();
+        paginaDestino = const HistoricoPagamentosPagina();
         break;
       case 'Suporte':
-        destino = const SuporteEnergiaPagina();
+        paginaDestino = const SuporteEnergiaPagina();
         break;
       case 'Falta de Energia':
-        destino = const FaltaEnergiaPagina();
+        paginaDestino = const FaltaEnergiaPagina();
         break;
       case 'Economia':
-        destino = const DicasEconomiaPagina();
+        paginaDestino = const DicasEconomiaPagina();
         break;
       case 'Interferência na Via':
-        destino = const TelaReportarInterferencia();
+        paginaDestino = const TelaReportarInterferencia();
         break;
       case 'Semáforo':
-        destino = const TelaReportarSemaforo();
+        paginaDestino = const TelaReportarSemaforo();
         break;
       case 'Veículo Quebrado':
-        destino = const TelaVeiculoQuebrado();
+        paginaDestino = const TelaVeiculoQuebrado();
         break;
       case 'Estacionamento Irregular':
-        destino = const TelaEstacionamentoIrregular();
+        paginaDestino = const TelaEstacionamentoIrregular();
         break;
       case 'Sinalização':
-        destino = const TelaReporteSinalizacao();
+        paginaDestino = const TelaReporteSinalizacao();
         break;
       case 'Iluminação Pública':
-        destino = const TelaReporteIluminacao();
+        paginaDestino = const TelaReporteIluminacao();
         break;
       default:
-        destino = null;
+        paginaDestino = null;
     }
 
-    if (destino != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => destino!),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Funcionalidade ${feature['title']} em desenvolvimento',
-          ),
-          backgroundColor: Theme.of(context).colorScheme.onSurface,
-        ),
-      );
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => paginaDestino!),
+    );
   }
 
   /* // FUNÇÃO DE NAVEGAÇÃO CENTRALIZADA - VERSÃO USANDO ROTAS
@@ -139,10 +133,10 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
 
   Widget _buildFeaturesGrid() {
     final filtered = _filteredFeatures;
-    final problemasUrbanos = filtered
+    final listafuncionalidades = filtered
         .where((feature) => feature['category'] == 'funcionalidades_principais')
         .toList();
-    final listafuncionalidades = filtered
+    final problemasUrbanos = filtered
         .where((feature) => feature['category'] != 'problemas_urbanos')
         .toList();
 
@@ -150,15 +144,15 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (listafuncionalidades.isNotEmpty) ...[
-          _buildSecaoTitulo('Funcionalidades Principais'),
+          _buildSecaoTitulo('Serviços de Energia'),
           const SizedBox(height: 16),
-          _buildGrid(listafuncionalidades),
+          _buildGrid(DadosHome.getServicosEnergia),
         ],
         if (problemasUrbanos.isNotEmpty) ...[
           const SizedBox(height: 24),
           _buildSecaoTitulo('Problemas Urbanos'),
           const SizedBox(height: 16),
-          _buildGrid(problemasUrbanos),
+          _buildGrid(DadosHome.getProblemasUrbanos),
         ],
       ],
     );

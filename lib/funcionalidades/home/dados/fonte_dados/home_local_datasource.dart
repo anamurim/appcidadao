@@ -20,7 +20,7 @@ class DadosHome {
   };
 
   //Lista de funcionalidades principais
-  static final List<Map<String, dynamic>> getfuncionalidades = [
+  static final List<Map<String, dynamic>> getServicosEnergia = [
     {
       'title': 'Minha Conta',
       'icon': Icons.account_balance_wallet,
@@ -63,6 +63,8 @@ class DadosHome {
       'description': 'Dicas para economizar',
       'category': 'funcionalidades_principais',
     },
+  ];
+  static final List<Map<String, dynamic>> getProblemasUrbanos = [
     {
       'title': 'Interferência na Via',
       'icon': Icons.traffic,
