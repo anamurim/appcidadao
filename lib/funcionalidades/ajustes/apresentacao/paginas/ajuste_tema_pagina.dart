@@ -20,12 +20,12 @@ class _AjustesTemaState extends State<AjustesTema> {
           'Tema do Aplicativo',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: AppCores.deepBlue,
-        iconTheme: const IconThemeData(color: Colors.white),
+        //backgroundColor: AppCores.deepBlue,
+        iconTheme: const IconThemeData(color: AppCores.neonBlue),
         elevation: 0,
       ),
       body: Container(
-        color: AppCores.techGray,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -56,11 +56,13 @@ class _AjustesTemaState extends State<AjustesTema> {
             const SizedBox(height: 24),
 
             Card(
-              color: AppCores.lightGray.withValues(alpha: 0.1),
+              color: Theme.of(
+                context,
+              ).scaffoldBackgroundColor.withValues(alpha: 0.1),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: const Padding(
+              child: Padding(
                 padding: EdgeInsets.all(16),
                 child: Row(
                   children: [
@@ -73,7 +75,10 @@ class _AjustesTemaState extends State<AjustesTema> {
                     Expanded(
                       child: Text(
                         'O modo escuro ajuda a economizar bateria em telas OLED e reduz o cansaço visual.',
-                        style: TextStyle(color: Colors.white70, fontSize: 13),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                   ],
@@ -124,7 +129,7 @@ class _AjustesTemaState extends State<AjustesTema> {
         },
         title: Row(
           children: [
-            Icon(icon, color: AppCores.electricBlue, size: 22),
+            Icon(icon, color: AppCores.neonBlue, size: 22),
             const SizedBox(width: 12),
             Text(titulo, style: const TextStyle(fontWeight: FontWeight.bold)),
           ],
@@ -142,8 +147,8 @@ class _AjustesTemaState extends State<AjustesTema> {
       padding: const EdgeInsets.only(left: 8, bottom: 8, top: 16),
       child: Text(
         titulo.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 12,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,

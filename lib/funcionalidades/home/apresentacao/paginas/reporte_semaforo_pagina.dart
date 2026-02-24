@@ -48,6 +48,8 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   }
 
   Future<void> _submitReport() async {
+    final theme = Theme.of(context);
+
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -73,11 +75,14 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
           context: context,
           barrierDismissible: false,
           builder: (ctx) => AlertDialog(
-            backgroundColor: AppCores.lightGray,
-            title: const Text('Sucesso', style: TextStyle(color: Colors.white)),
-            content: const Text(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            title: Text(
+              'Sucesso',
+              style: TextStyle(color: theme.colorScheme.onSurface),
+            ),
+            content: Text(
               'Seu relatório de semáforo foi enviado com sucesso.',
-              style: TextStyle(color: Colors.white70),
+              style: TextStyle(color: theme.colorScheme.onSurface),
             ),
             actions: [
               TextButton(
@@ -85,10 +90,10 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
                   Navigator.pop(ctx);
                   Navigator.pop(context);
                 },
-                child: const Text(
+                child: Text(
                   'OK',
                   style: TextStyle(
-                    color: AppCores.neonBlue,
+                    color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -118,25 +123,33 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   InputDecoration _inputStyle(String label, IconData icon) {
     return InputDecoration(
       labelText: label,
-      labelStyle: const TextStyle(color: Colors.white70),
-      prefixIcon: Icon(icon, color: AppCores.neonBlue),
+      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+      prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.onSurface),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppCores.neonBlue),
+        borderSide: BorderSide(color: Theme.of(context).colorScheme.primary),
       ),
       filled: true,
-      fillColor: AppCores.lightGray,
+      fillColor: AppCores.lightGray.withValues(alpha: 0.2),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Problema no Semáforo')),
+      appBar: AppBar(
+        title: const Text('Problema no Semáforo'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -144,10 +157,10 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 "Descreva abaixo o problema no semáforo",
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -160,45 +173,61 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
 
               TextFormField(
                 controller: _enderecoSemaforoController,
-                style: const TextStyle(color: Colors.white),
-                decoration: _inputStyle(
-                  'Localização (Rua/Cruzamento)',
-                  Icons.location_on,
-                ).copyWith(
-                  suffixIcon: _loadingEndereco
-                      ? const SizedBox(
-                          width: 28,
-                          height: 28,
-                          child: Padding(
-                            padding: EdgeInsets.all(6.0),
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.my_location, color: AppCores.neonBlue),
-                          onPressed: () async {
-                            setState(() => _loadingEndereco = true);
-                            try {
-                              final endereco = await LocalizacaoService.obterEnderecoAtual();
-                              _enderecoSemaforoController.text = endereco;
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Erro ao obter localização: $e')),
-                              );
-                            } finally {
-                              if (mounted) setState(() => _loadingEndereco = false);
-                            }
-                          },
-                        ),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
+                decoration:
+                    _inputStyle(
+                      'Localização (Rua/Cruzamento)',
+                      Icons.location_on,
+                    ).copyWith(
+                      suffixIcon: _loadingEndereco
+                          ? const SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: Padding(
+                                padding: EdgeInsets.all(6.0),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            )
+                          : IconButton(
+                              icon: Icon(
+                                Icons.my_location,
+                                color: Theme.of(context).colorScheme.onSurface,
+                              ),
+                              onPressed: () async {
+                                setState(() => _loadingEndereco = true);
+                                try {
+                                  final endereco =
+                                      await LocalizacaoService.obterEnderecoAtual();
+                                  _enderecoSemaforoController.text = endereco;
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Erro ao obter localização: $e',
+                                      ),
+                                    ),
+                                  );
+                                } finally {
+                                  if (mounted)
+                                    setState(() => _loadingEndereco = false);
+                                }
+                              },
+                            ),
+                    ),
                 validator: (val) => val!.isEmpty ? 'Informe o local' : null,
               ),
               const SizedBox(height: 16),
 
               // Tipo de Problema (Dropdown)
               DropdownButtonFormField<String>(
-                dropdownColor: AppCores.lightGray,
-                style: const TextStyle(color: Colors.white),
+                dropdownColor: Colors.white,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle('Tipo de Problema', Icons.traffic),
                 initialValue: _selecionaTipoProblemaSemaforo,
                 items: _problemTypes
@@ -216,7 +245,9 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
               TextFormField(
                 controller: _pontoReferenciaSemaforoController,
                 maxLines: 2,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle(
                   'Ponto de referência ou observações',
                   Icons.pin_drop,
@@ -228,7 +259,9 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
               TextFormField(
                 controller: _descricaoSemaforoController,
                 maxLines: 4,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle(
                   'Descrição  do problema',
                   Icons.description,
@@ -280,8 +313,8 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   Widget _buildSecaoTitulo(String titulo) {
     return Text(
       titulo,
-      style: const TextStyle(
-        color: AppCores.neonBlue,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
         fontSize: 16,
         fontWeight: FontWeight.bold,
       ),

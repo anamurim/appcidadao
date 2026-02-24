@@ -1,5 +1,5 @@
 import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_cadastro_usuario.dart';
-import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_login.dart';
+//import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_login.dart';
 import 'package:appcidadao/funcionalidades/autenticacao/apresentacao/paginas/tela_recuperar_senha.dart';
 import 'package:appcidadao/funcionalidades/home/apresentacao/paginas/home_pagina.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,6 @@ class AppCidadao extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AutenticacaoController()),
-
         ChangeNotifierProvider(create: (_) => UsuarioController()),
         ChangeNotifierProvider(create: (_) => ReporteController()),
       ],
@@ -42,11 +41,12 @@ class AppCidadao extends StatelessWidget {
             themeMode: modoTema,
             initialRoute: '/',
             routes: {
-              '/': (context) => const TechLoginScreen(),
+              //'/': (context) => const TechLoginScreen(),
               '/signup': (context) => const SignupScreen(),
               '/forgot-password': (context) => const ForgotPasswordScreen(),
               //Adicione a rota da Home se necessário
               '/home': (context) => const HomePagina(),
+              '/': (context) => const HomePagina(),
             },
           );
         },

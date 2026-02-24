@@ -51,23 +51,29 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.white30),
-      labelStyle: const TextStyle(color: Colors.white70),
-      prefixIcon: Icon(icon, color: AppCores.neonBlue),
+      labelStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+      hintStyle: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+      prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.onSurface),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppCores.neonBlue),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       filled: true,
-      fillColor: AppCores.lightGray,
+      fillColor: AppCores.lightGray.withValues(alpha: 0.2),
     );
   }
 
   Future<void> _submitReport() async {
+    final theme = Theme.of(context);
+
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
@@ -99,14 +105,16 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
           context: context,
           barrierDismissible: false,
           builder: (ctx) => AlertDialog(
-            backgroundColor: AppCores.lightGray,
-            title: const Text(
+            backgroundColor: theme.scaffoldBackgroundColor,
+            title: Text(
               'Solicitação Registrada',
-              style: TextStyle(color: Colors.white),
+              style: TextStyle(color: theme.colorScheme.onSurface),
             ),
-            content: const Text(
+            content: Text(
               'Recebemos seu reporte. O prazo para manutenção é de até 72 horas úteis.',
-              style: TextStyle(color: Colors.white70),
+              style: TextStyle(
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+              ),
             ),
             actions: [
               TextButton(
@@ -144,7 +152,13 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Iluminação Pública')),
+      appBar: AppBar(
+        title: const Text('Iluminação Pública'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -158,8 +172,10 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
               _buildSecaoTitulo("O que está acontecendo?"),
               const SizedBox(height: 15),
               DropdownButtonFormField<String>(
-                dropdownColor: AppCores.lightGray,
-                style: const TextStyle(color: Colors.white),
+                dropdownColor: Colors.white,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle(
                   'Selecione o problema',
                   Icons.lightbulb,
@@ -177,41 +193,57 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
               const SizedBox(height: 15),
               TextFormField(
                 controller: _enderecoIluminacaoController,
-                style: const TextStyle(color: Colors.white),
-                decoration: _inputStyle('Endereço completo', Icons.location_on).copyWith(
-                  suffixIcon: _loadingEndereco
-                      ? const SizedBox(
-                          width: 28,
-                          height: 28,
-                          child: Padding(
-                            padding: EdgeInsets.all(6.0),
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.my_location, color: AppCores.neonBlue),
-                          onPressed: () async {
-                            setState(() => _loadingEndereco = true);
-                            try {
-                              final endereco = await LocalizacaoService.obterEnderecoAtual();
-                              _enderecoIluminacaoController.text = endereco;
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Erro ao obter localização: $e')),
-                              );
-                            } finally {
-                              if (mounted) setState(() => _loadingEndereco = false);
-                            }
-                          },
-                        ),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
+                decoration: _inputStyle('Endereço completo', Icons.location_on)
+                    .copyWith(
+                      suffixIcon: _loadingEndereco
+                          ? const SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: Padding(
+                                padding: EdgeInsets.all(6.0),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            )
+                          : IconButton(
+                              icon: Icon(
+                                Icons.my_location,
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                              onPressed: () async {
+                                setState(() => _loadingEndereco = true);
+                                try {
+                                  final endereco =
+                                      await LocalizacaoService.obterEnderecoAtual();
+                                  _enderecoIluminacaoController.text = endereco;
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Erro ao obter localização: $e',
+                                      ),
+                                    ),
+                                  );
+                                } finally {
+                                  if (mounted)
+                                    setState(() => _loadingEndereco = false);
+                                }
+                              },
+                            ),
+                    ),
                 validator: (val) => val!.isEmpty ? 'Informe o endereço' : null,
               ),
               const SizedBox(height: 15),
 
               TextFormField(
                 controller: _numeroPosteController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle(
                   'Nº do Poste',
                   Icons.numbers,
@@ -222,7 +254,9 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
 
               TextFormField(
                 controller: _pontoReferenciaIluminacaoController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle('Ponto de Ref.', Icons.pin_drop),
               ),
               const SizedBox(height: 20),
@@ -232,7 +266,9 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
               TextFormField(
                 controller: _descricaoIluminacaoController,
                 maxLines: 3,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
                 decoration: _inputStyle(
                   'Observações adicionais',
                   Icons.chat_bubble_outline,
@@ -282,18 +318,24 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppCores.neonBlue.withValues(alpha: 0.1),
+        color: AppCores.neonBlue.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppCores.neonBlue.withValues(alpha: 0.3)),
       ),
-      child: const Row(
+      child: Row(
         children: [
-          Icon(Icons.info_outline, color: AppCores.neonBlue),
+          Icon(
+            Icons.info_outline,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
           SizedBox(width: 12),
           Expanded(
             child: Text(
               "Dica: O número do poste geralmente está gravado em uma placa metálica na altura dos olhos.",
-              style: TextStyle(color: Colors.white70, fontSize: 13),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 13,
+              ),
             ),
           ),
         ],
@@ -304,8 +346,8 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   Widget _buildSecaoTitulo(String titulo) {
     return Text(
       titulo,
-      style: const TextStyle(
-        color: AppCores.neonBlue,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
         fontSize: 16,
         fontWeight: FontWeight.bold,
       ),

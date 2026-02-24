@@ -104,13 +104,8 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: AppCores.techGray,
       appBar: AppBar(
-        title: Text(
-          'Criar Conta',
-          //style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        //backgroundColor: AppCores.techGray,
+        title: Text('Criar Conta'),
         elevation: 0,
         centerTitle: false,
         leading: IconButton(

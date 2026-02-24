@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/constantes/cores.dart';
 
 class TelaPerfil extends StatelessWidget {
   const TelaPerfil({super.key});
@@ -6,7 +7,13 @@ class TelaPerfil extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Meu Perfil'), centerTitle: true),
+      appBar: AppBar(
+        title: const Text('Meu Perfil'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: AppCores.neonBlue),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -17,16 +24,18 @@ class TelaPerfil extends StatelessWidget {
                 CircleAvatar(
                   radius: 60,
                   backgroundImage: const AssetImage('assets/images/avatar.jpg'),
-                  backgroundColor: Colors.grey[300],
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                 ),
                 const SizedBox(height: 12),
                 const Text(
                   'Nome do Usuário',
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 ),
-                const Text(
+                Text(
                   'usuario@email.com',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               ],
             ),
