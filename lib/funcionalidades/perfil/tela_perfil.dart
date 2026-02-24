@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constantes/cores.dart';
 import '../home/controladores/usuario_controller.dart';
-import '../../core/modelos/usuario.dart';
+//import '../../core/modelos/usuario.dart';
 
 class TelaPerfil extends StatefulWidget {
   const TelaPerfil({super.key});
@@ -91,7 +91,15 @@ class _TelaPerfilState extends State<TelaPerfil> {
         final usuario = controller.usuario;
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Meu Perfil'), centerTitle: true),
+          appBar: AppBar(
+            title: const Text('Meu Perfil'),
+            elevation: 0,
+            centerTitle: false,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: AppCores.neonBlue),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
           body: controller.isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
