@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
+import '../../../home/apresentacao/paginas/pagamentos_pagina.dart';
 
 class ResumoContaWidget extends StatelessWidget {
   const ResumoContaWidget({super.key});
@@ -56,7 +57,7 @@ class ResumoContaWidget extends StatelessWidget {
           Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              gradient: LinearGradient(
+              gradient: const LinearGradient(
                 colors: [AppCores.electricBlue, AppCores.neonBlue],
               ),
               borderRadius: BorderRadius.circular(12),
@@ -66,7 +67,12 @@ class ResumoContaWidget extends StatelessWidget {
               borderRadius: BorderRadius.circular(12),
               child: InkWell(
                 onTap: () {
-                  // Ação de pagar fatura
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const HistoricoPagamentosPagina(),
+                    ),
+                  );
                 },
                 borderRadius: BorderRadius.circular(12),
                 child: const Padding(
