@@ -100,7 +100,35 @@ class AjustesPagina extends StatelessWidget {
             _buildCardItem(
               icon: Icons.info_outline,
               titulo: 'Sobre o App',
-              onTap: () {},
+              subtitulo: 'Versão e informações',
+              onTap: () {
+                showAboutDialog(
+                  context: context,
+                  applicationName: 'App Cidadão',
+                  applicationVersion: '1.0.0',
+                  applicationIcon: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: AppCores.electricBlue,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(
+                      Icons.location_city,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                  ),
+                  children: const [
+                    Text(
+                      'App Cidadão é uma plataforma para reportar problemas '
+                      'urbanos e contribuir para a melhoria da sua cidade. '
+                      'Relate interferências na via, semáforos, veículos '
+                      'quebrados e muito mais.',
+                    ),
+                  ],
+                );
+              },
             ),
             const SizedBox(height: 32),
             Center(

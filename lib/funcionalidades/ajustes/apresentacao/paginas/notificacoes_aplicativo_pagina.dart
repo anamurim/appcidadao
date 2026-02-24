@@ -96,7 +96,19 @@ class _TelaNotificacoesAplicativosState
                   ),
                 ),
                 onPressed: () {
-                  // Lógica para restaurar padrão de fábrica
+                  setState(() {
+                    _alertasGerais = true;
+                    _notificacoesEmail = false;
+                    _notificacoesSMS = true;
+                    _alertasSeguranca = true;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Preferências restauradas para o padrão.'),
+                      backgroundColor: AppCores.electricBlue,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
                 },
                 child: Text(
                   'Restaurar padrões',
