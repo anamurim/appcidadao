@@ -146,6 +146,7 @@ class NotificacoesLista extends StatelessWidget {
           minChildSize: 0.5,
           builder: (context, scrollController) {
             return Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
@@ -201,7 +202,7 @@ class NotificacoesLista extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLow,
+        color: colorScheme.onSurface.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -211,7 +212,7 @@ class NotificacoesLista extends StatelessWidget {
             Icons.notifications,
             color: !(notification['read'] ?? true)
                 ? AppCores.neonBlue
-                : colorScheme.onSurface.withValues(alpha: 0.3),
+                : colorScheme.onSurface.withValues(alpha: 0.5),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -260,20 +261,20 @@ class NotificacoesLista extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: colorScheme.onSurface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
             // Lógica para marcar como lidas
           },
           borderRadius: BorderRadius.circular(12),
-          child: const Padding(
+          child: Padding(
             padding: EdgeInsets.all(16),
             child: Center(
               child: Text(
                 'MARCAR TODAS COMO LIDAS',
                 style: TextStyle(
-                  color: AppCores.neonBlue,
+                  color: colorScheme.secondary,
                   fontWeight: FontWeight.w700,
                 ),
               ),
