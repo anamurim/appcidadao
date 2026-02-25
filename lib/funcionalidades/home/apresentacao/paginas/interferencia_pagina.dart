@@ -182,7 +182,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                 const SizedBox(height: 10),
 
                 DropdownButtonFormField<String>(
-                  dropdownColor: theme.colorScheme.onSurface,
+                  dropdownColor: theme.scaffoldBackgroundColor,
                   style: TextStyle(color: theme.colorScheme.onSurface),
                   decoration: _inputStyle(
                     'Tipo de Interferência *',

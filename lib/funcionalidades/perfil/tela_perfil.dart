@@ -5,7 +5,9 @@ import '../home/controladores/usuario_controller.dart';
 //import '../../core/modelos/usuario.dart';
 
 class TelaPerfil extends StatefulWidget {
-  const TelaPerfil({super.key});
+  final VoidCallback? onBackToHome;
+
+  const TelaPerfil({super.key, this.onBackToHome});
 
   @override
   State<TelaPerfil> createState() => _TelaPerfilState();
