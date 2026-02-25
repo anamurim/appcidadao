@@ -155,7 +155,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
       appBar: AppBar(
         title: const Text('Iluminação Pública'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: AppCores.neonBlue),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -172,7 +172,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
               _buildSecaoTitulo("O que está acontecendo?"),
               const SizedBox(height: 15),
               DropdownButtonFormField<String>(
-                dropdownColor: Colors.white,
+                dropdownColor: Theme.of(context).scaffoldBackgroundColor,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),

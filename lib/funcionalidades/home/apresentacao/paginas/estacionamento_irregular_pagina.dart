@@ -172,7 +172,7 @@ class _TelaEstacionamentoIrregularState
 
               // Dropdown de Infração
               DropdownButtonFormField<String>(
-                dropdownColor: Colors.white,
+                dropdownColor: Theme.of(context).scaffoldBackgroundColor,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),

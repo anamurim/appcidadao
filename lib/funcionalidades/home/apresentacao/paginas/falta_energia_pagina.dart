@@ -30,7 +30,7 @@ class _FaltaEnergiaPaginaState extends State<FaltaEnergiaPagina> {
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: const Text('Falta de Energia'),
-        centerTitle: true,
+
         leading: IconButton(
           icon: Icon(
             Icons.arrow_back,

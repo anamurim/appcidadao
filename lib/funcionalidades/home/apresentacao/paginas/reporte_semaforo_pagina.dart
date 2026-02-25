@@ -224,7 +224,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
 
               // Tipo de Problema (Dropdown)
               DropdownButtonFormField<String>(
-                dropdownColor: Colors.white,
+                dropdownColor: Theme.of(context).scaffoldBackgroundColor,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),

@@ -190,7 +190,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
       appBar: AppBar(
         title: const Text('Veículo Quebrado'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: AppCores.neonBlue),
           onPressed: () => Navigator.pop(context),
         ),
       ),
