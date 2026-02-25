@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
+import '../../../../core/utilitarios/fatura_service.dart';
 
 class HistoricoPagamentosPagina extends StatelessWidget {
   const HistoricoPagamentosPagina({super.key});
@@ -199,7 +200,20 @@ class HistoricoPagamentosPagina extends StatelessWidget {
                   fontSize: 16,
                 ),
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
+              IconButton(
+                icon: const Icon(
+                  Icons.picture_as_pdf,
+                  color: AppCores.neonBlue,
+                ),
+                onPressed: () {
+                  FaturaService.gerarEBaixarFatura(
+                    mes: fatura['mes'],
+                    valor: fatura['valor'].toString(),
+                    status: fatura['status'],
+                  );
+                },
+              ),
               Text(
                 fatura['status'].toUpperCase(),
                 style: TextStyle(
