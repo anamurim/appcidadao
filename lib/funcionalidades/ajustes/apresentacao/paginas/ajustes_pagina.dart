@@ -20,7 +20,7 @@ class AjustesPagina extends StatelessWidget {
           'Configurações',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: AppCores.deepBlue,
+        //backgroundColor: AppCores.deepBlue,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
         leading: IconButton(
@@ -29,11 +29,11 @@ class AjustesPagina extends StatelessWidget {
         ),
       ),
       body: Container(
-        color: AppCores.techGray,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            _buildSecao('Minha Conta'),
+            _buildSecao(context, 'Minha Conta'),
             _buildCardItem(
               icon: Icons.person_outline,
               titulo: 'Perfil',
@@ -59,7 +59,7 @@ class AjustesPagina extends StatelessWidget {
               },
             ),
             const SizedBox(height: 24),
-            _buildSecao('Preferências'),
+            _buildSecao(context, 'Preferências'),
             _buildCardItem(
               icon: Icons.notifications_none_outlined,
               titulo: 'Notificações',
@@ -85,7 +85,7 @@ class AjustesPagina extends StatelessWidget {
               },
             ),
             const SizedBox(height: 24),
-            _buildSecao('Suporte'),
+            _buildSecao(context, 'Suporte'),
             _buildCardItem(
               icon: Icons.help_outline_rounded,
               titulo: 'Ajuda e Suporte',
@@ -102,31 +102,52 @@ class AjustesPagina extends StatelessWidget {
               titulo: 'Sobre o App',
               subtitulo: 'Versão e informações',
               onTap: () {
-                showAboutDialog(
+                showDialog(
                   context: context,
-                  applicationName: 'App Cidadão',
-                  applicationVersion: '1.0.0',
-                  applicationIcon: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      color: AppCores.electricBlue,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(
-                      Icons.location_city,
-                      color: Colors.white,
-                      size: 30,
-                    ),
-                  ),
-                  children: const [
-                    Text(
-                      'App Cidadão é uma plataforma para reportar problemas '
-                      'urbanos e contribuir para a melhoria da sua cidade. '
-                      'Relate interferências na via, semáforos, veículos '
-                      'quebrados e muito mais.',
-                    ),
-                  ],
+                  builder: (BuildContext context) {
+                    final theme = Theme.of(context);
+
+                    return Theme(
+                      data: theme.copyWith(
+                        // CORREÇÃO: Substituímos o membro descontinuado pelo DialogTheme
+                        dialogTheme: theme.dialogTheme.copyWith(
+                          backgroundColor: theme.scaffoldBackgroundColor,
+                          surfaceTintColor: Colors
+                              .transparent, // Evita a tonalidade roxa do Material 3
+                        ),
+                      ),
+                      child: AboutDialog(
+                        applicationName: 'App Cidadão',
+                        applicationVersion: '1.0.0',
+                        applicationIcon: Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            color: AppCores.electricBlue,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: const Icon(
+                            Icons.location_city,
+                            color: Colors.white,
+                            size: 30,
+                          ),
+                        ),
+                        children: [
+                          Text(
+                            'App Cidadão é uma plataforma para reportar problemas '
+                            'urbanos e contribuir para a melhoria da sua cidade. '
+                            'Relate interferências na via, semáforos, veículos '
+                            'quebrados e muito mais.',
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface.withValues(
+                                alpha: 0.8,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
                 );
               },
             ),
@@ -149,13 +170,13 @@ class AjustesPagina extends StatelessWidget {
     );
   }
 
-  Widget _buildSecao(String titulo) {
+  Widget _buildSecao(BuildContext context, String titulo) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 8),
       child: Text(
         titulo.toUpperCase(),
         style: TextStyle(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 12,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
@@ -178,7 +199,7 @@ class AjustesPagina extends StatelessWidget {
         side: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
       ),
       child: ListTile(
-        leading: Icon(icon, color: AppCores.electricBlue),
+        leading: Icon(icon, color: AppCores.neonBlue),
         title: Text(
           titulo,
           style: const TextStyle(fontWeight: FontWeight.w600),

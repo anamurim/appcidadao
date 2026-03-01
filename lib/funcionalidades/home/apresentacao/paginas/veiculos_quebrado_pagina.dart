@@ -160,26 +160,40 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      prefixIcon: Icon(icon, color: AppCores.neonBlue),
-      labelStyle: const TextStyle(color: Colors.white70),
-      hintStyle: const TextStyle(color: Colors.white38),
+      prefixIcon: Icon(icon, color: Theme.of(context).colorScheme.onSurface),
+      labelStyle: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
+      ),
+      hintStyle: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
+      ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: Colors.white.withValues(alpha: 0.1)),
+        borderSide: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: const BorderSide(color: AppCores.neonBlue),
       ),
       filled: true,
-      fillColor: AppCores.lightGray,
+      fillColor: AppCores.lightGray.withValues(alpha: 0.2),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      appBar: AppBar(title: const Text('Veículo Quebrado')),
+      appBar: AppBar(
+        title: const Text('Veículo Quebrado'),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: AppCores.neonBlue),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Form(
@@ -193,7 +207,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               //Placa e Tipo
               TextFormField(
                 controller: _placaController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle('Placa', Icons.badge),
                 textCapitalization: TextCapitalization.characters,
                 inputFormatters: [LengthLimitingTextInputFormatter(7)],
@@ -202,8 +216,8 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               const SizedBox(height: 15),
 
               DropdownButtonFormField<String>(
-                dropdownColor: AppCores.lightGray,
-                style: const TextStyle(color: Colors.white),
+                dropdownColor: theme.scaffoldBackgroundColor,
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle('Tipo', Icons.car_crash_outlined),
                 items: _tiposVeiculo
                     .map((t) => DropdownMenuItem(value: t, child: Text(t)))
@@ -216,14 +230,14 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               //Marca e Modelo
               TextFormField(
                 controller: _marcaController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle('Marca', Icons.factory),
               ),
               const SizedBox(height: 15),
 
               TextFormField(
                 controller: _modeloController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle('Modelo', Icons.directions_car),
               ),
               const SizedBox(height: 15),
@@ -231,7 +245,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               // Cor e Endereço
               TextFormField(
                 controller: _corController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle('Cor do Veículo', Icons.palette),
               ),
               const SizedBox(height: 15),
@@ -241,37 +255,49 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
 
               TextFormField(
                 controller: _enderecoController,
-                style: const TextStyle(color: Colors.white),
-                decoration: _inputStyle(
-                  'Endereço onde o veículo está',
-                  Icons.location_on,
-                ).copyWith(
-                  suffixIcon: _loadingEndereco
-                      ? const SizedBox(
-                          width: 28,
-                          height: 28,
-                          child: Padding(
-                            padding: EdgeInsets.all(6.0),
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        )
-                      : IconButton(
-                          icon: const Icon(Icons.my_location, color: AppCores.neonBlue),
-                          onPressed: () async {
-                            setState(() => _loadingEndereco = true);
-                            try {
-                              final endereco = await LocalizacaoService.obterEnderecoAtual();
-                              _enderecoController.text = endereco;
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Erro ao obter localização: $e')),
-                              );
-                            } finally {
-                              if (mounted) setState(() => _loadingEndereco = false);
-                            }
-                          },
-                        ),
-                ),
+                style: TextStyle(color: theme.colorScheme.onSurface),
+                decoration:
+                    _inputStyle(
+                      'Endereço onde o veículo está',
+                      Icons.location_on,
+                    ).copyWith(
+                      suffixIcon: _loadingEndereco
+                          ? const SizedBox(
+                              width: 28,
+                              height: 28,
+                              child: Padding(
+                                padding: EdgeInsets.all(6.0),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              ),
+                            )
+                          : IconButton(
+                              icon: Icon(
+                                Icons.my_location,
+                                color: theme.colorScheme.onSurface,
+                              ),
+                              onPressed: () async {
+                                setState(() => _loadingEndereco = true);
+                                try {
+                                  final endereco =
+                                      await LocalizacaoService.obterEnderecoAtual();
+                                  _enderecoController.text = endereco;
+                                } catch (e) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text(
+                                        'Erro ao obter localização: $e',
+                                      ),
+                                    ),
+                                  );
+                                } finally {
+                                  if (mounted)
+                                    setState(() => _loadingEndereco = false);
+                                }
+                              },
+                            ),
+                    ),
                 validator: (val) => val!.isEmpty ? 'Informe o local' : null,
               ),
               const SizedBox(height: 15),
@@ -279,7 +305,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               TextFormField(
                 controller: _pontoReferenciaController,
                 maxLines: 2,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle(
                   'Ponto de referência ou observações',
                   Icons.pin_drop,
@@ -291,7 +317,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               TextFormField(
                 controller: _descricaoController,
                 maxLines: 3,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle(
                   'Descrição do problema',
                   Icons.description,
@@ -313,14 +339,14 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               const SizedBox(height: 15),
               TextFormField(
                 controller: _nomeController,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle('Seu Nome', Icons.person),
               ),
               const SizedBox(height: 10),
               TextFormField(
                 controller: _telefoneController,
                 keyboardType: TextInputType.phone,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle('Telefone', Icons.phone),
                 textCapitalization: TextCapitalization.characters,
                 inputFormatters: [LengthLimitingTextInputFormatter(7)],
@@ -329,7 +355,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               TextFormField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
-                style: const TextStyle(color: Colors.white),
+                style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle('E-mail', Icons.email),
               ),
 
@@ -359,10 +385,11 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   }
 
   Widget _buildSecaoTitulo(String titulo) {
+    final theme = Theme.of(context);
     return Text(
       titulo,
-      style: const TextStyle(
-        color: AppCores.neonBlue,
+      style: TextStyle(
+        color: theme.colorScheme.onSurface,
         fontSize: 16,
         fontWeight: FontWeight.bold,
       ),

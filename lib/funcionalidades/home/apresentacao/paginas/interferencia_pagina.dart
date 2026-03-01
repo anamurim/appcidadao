@@ -106,33 +106,49 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
 
   // Helper para criar o estilo dos campos de texto consistente com o tema escuro
   InputDecoration _inputStyle(String label, IconData icon, {String? hint}) {
+    final theme = Theme.of(context);
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      prefixIcon: Icon(icon, color: AppCores.neonBlue), // Adiciona o ícone aqui
-      labelStyle: const TextStyle(color: Colors.white70),
-      hintStyle: const TextStyle(color: Colors.white38),
+      prefixIcon: Icon(
+        icon,
+        color: theme.colorScheme.onSurface,
+      ), // Adiciona o ícone aqui
+      labelStyle: TextStyle(
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+      ),
+      hintStyle: TextStyle(
+        color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+      ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: AppCores.neonBlue.withValues(alpha: 0.1)),
+        borderSide: BorderSide(
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: AppCores.neonBlue),
+        borderSide: BorderSide(color: theme.colorScheme.primary),
       ),
       filled: true,
-      fillColor: AppCores.lightGray,
+      fillColor: AppCores.lightGray.withValues(alpha: 0.2),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppCores.techGray, // Cor de fundo do app
+      backgroundColor: theme.scaffoldBackgroundColor, // Cor de fundo do app
       appBar: AppBar(
         title: const Text('Interferência na Via'),
-        backgroundColor: AppCores.deepBlue, // Cor da AppBar
+        //backgroundColor: AppCores.deepBlue, // Cor da AppBar
         elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -142,10 +158,10 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
+                Text(
                   'Relate as interferências encontradas na Via.',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: theme.colorScheme.onSurface,
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
                   ),
@@ -154,9 +170,10 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                 const Text(
                   'Campos com * são obrigatórios.',
                   style: TextStyle(
-                    color: AppCores.accentGreen,
+                    color: AppCores.neonBlue,
                     fontSize: 14,
                     fontStyle: FontStyle.italic,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(height: 15),
@@ -165,8 +182,8 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                 const SizedBox(height: 10),
 
                 DropdownButtonFormField<String>(
-                  dropdownColor: AppCores.lightGray,
-                  style: const TextStyle(color: Colors.white),
+                  dropdownColor: theme.scaffoldBackgroundColor,
+                  style: TextStyle(color: theme.colorScheme.onSurface),
                   decoration: _inputStyle(
                     'Tipo de Interferência *',
                     Icons.merge_type,
@@ -189,38 +206,51 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
 
                 TextFormField(
                   controller: _enderecoInterferenciaController,
-                  style: const TextStyle(color: Colors.white),
-                  decoration: _inputStyle(
-                    'Endereço *',
-                    Icons.location_on,
-                    hint: 'Ex: Rua das Flores',
-                  ).copyWith(
-                    suffixIcon: _loadingEndereco
-                        ? const SizedBox(
-                            width: 28,
-                            height: 28,
-                            child: Padding(
-                              padding: EdgeInsets.all(6.0),
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                          )
-                        : IconButton(
-                            icon: const Icon(Icons.my_location, color: AppCores.neonBlue),
-                            onPressed: () async {
-                              setState(() => _loadingEndereco = true);
-                              try {
-                                final endereco = await LocalizacaoService.obterEnderecoAtual();
-                                _enderecoInterferenciaController.text = endereco;
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Erro ao obter localização: $e')),
-                                );
-                              } finally {
-                                if (mounted) setState(() => _loadingEndereco = false);
-                              }
-                            },
-                          ),
-                  ),
+                  style: TextStyle(color: theme.colorScheme.onSurface),
+                  decoration:
+                      _inputStyle(
+                        'Endereço *',
+                        Icons.location_on,
+                        hint: 'Ex: Rua das Flores',
+                      ).copyWith(
+                        suffixIcon: _loadingEndereco
+                            ? const SizedBox(
+                                width: 28,
+                                height: 28,
+                                child: Padding(
+                                  padding: EdgeInsets.all(6.0),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              )
+                            : IconButton(
+                                icon: Icon(
+                                  Icons.my_location,
+                                  color: theme.colorScheme.onSurface,
+                                ),
+                                onPressed: () async {
+                                  setState(() => _loadingEndereco = true);
+                                  try {
+                                    final endereco =
+                                        await LocalizacaoService.obterEnderecoAtual();
+                                    _enderecoInterferenciaController.text =
+                                        endereco;
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Erro ao obter localização: $e',
+                                        ),
+                                      ),
+                                    );
+                                  } finally {
+                                    if (mounted)
+                                      setState(() => _loadingEndereco = false);
+                                  }
+                                },
+                              ),
+                      ),
                   validator: (val) =>
                       val!.isEmpty ? 'Informe o endereço' : null,
                 ),
@@ -229,7 +259,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                 TextFormField(
                   controller: _pontoReferenciaInterferenciaController,
                   maxLines: 2,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: theme.colorScheme.onSurface),
                   decoration: _inputStyle(
                     'Ponto de referência ou observações',
                     Icons.pin_drop,
@@ -239,7 +269,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
 
                 TextFormField(
                   controller: _descricaoInterferenciaController,
-                  style: const TextStyle(color: Colors.white),
+                  style: TextStyle(color: theme.colorScheme.onSurface),
                   decoration: _inputStyle(
                     'Descrição do problema',
                     Icons.description,
@@ -267,7 +297,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                     onPressed: _submitReport,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppCores.electricBlue, // Destaque visual
-                      foregroundColor: AppCores.deepBlue,
+                      foregroundColor: theme.colorScheme.onSurface,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -301,10 +331,11 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
   }
 
   Widget _buildSecaoTitulo(String titulo) {
+    final theme = Theme.of(context);
     return Text(
       titulo,
-      style: const TextStyle(
-        color: AppCores.neonBlue,
+      style: TextStyle(
+        color: theme.colorScheme.onSurface,
         fontSize: 16,
         fontWeight: FontWeight.bold,
       ),

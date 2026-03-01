@@ -7,18 +7,21 @@ class FuncoesAuxiliares {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        backgroundColor: AppCores.lightGray,
-        title: const Text('Sair do App', style: TextStyle(color: Colors.white)),
-        content: const Text(
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        title: Text(
+          'Sair do App',
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        ),
+        content: Text(
           'Tem certeza que deseja sair?',
-          style: TextStyle(color: Colors.white70),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text(
+            child: Text(
               'CANCELAR',
-              style: TextStyle(color: AppCores.neonBlue),
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
             ),
           ),
           ElevatedButton(

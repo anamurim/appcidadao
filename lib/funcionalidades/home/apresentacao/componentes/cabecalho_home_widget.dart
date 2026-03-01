@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../ajustes/apresentacao/paginas/ajustes_pagina.dart';
+import '../../../perfil/tela_perfil.dart';
 
 class CabecalhoHome extends StatelessWidget {
   final String nome;
@@ -59,7 +59,7 @@ class CabecalhoHome extends StatelessWidget {
                       onPressed: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => AjustesPagina(
+                          builder: (context) => TelaPerfil(
                             onBackToHome: () => Navigator.pop(
                               context,
                             ), // Nesse trecho o "voltar" apenas fecha a tela sobreposta

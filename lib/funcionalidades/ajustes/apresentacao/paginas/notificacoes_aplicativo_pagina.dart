@@ -25,13 +25,17 @@ class _TelaNotificacoesAplicativosState
           'Notificações',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: AppCores
-            .deepBlue, // Consistência com configuracoes.dart e seguranca_pagina.dart
-        iconTheme: const IconThemeData(color: Colors.white),
+        //backgroundColor: AppCores
+        // .deepBlue, // Consistência com configuracoes.dart e seguranca_pagina.dart
+        iconTheme: const IconThemeData(
+          color: AppCores.neonBlue,
+        ), // Ícones em neon azul para manter o padrão
         elevation: 0,
       ),
       body: Container(
-        color: AppCores.techGray, // Fundo padrão do seu app
+        color: Theme.of(
+          context,
+        ).scaffoldBackgroundColor, // Fundo padrão do seu app
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -106,10 +110,10 @@ class _TelaNotificacoesAplicativosState
                     ),
                   );
                 },
-                child: const Text(
+                child: Text(
                   'Restaurar padrões',
                   style: TextStyle(
-                    color: AppCores.neonBlue,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -127,8 +131,8 @@ class _TelaNotificacoesAplicativosState
       padding: const EdgeInsets.only(left: 8, bottom: 8),
       child: Text(
         titulo.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 12,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
@@ -153,7 +157,7 @@ class _TelaNotificacoesAplicativosState
         side: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
       ),
       child: ListTile(
-        leading: Icon(icon, color: AppCores.electricBlue),
+        leading: Icon(icon, color: AppCores.neonBlue),
         title: Text(
           titulo,
           style: const TextStyle(fontWeight: FontWeight.w600),

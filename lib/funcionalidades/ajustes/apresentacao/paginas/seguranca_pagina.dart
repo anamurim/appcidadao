@@ -22,12 +22,12 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
           'Ajustes de segurança',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: AppCores.deepBlue,
+        //backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         iconTheme: const IconThemeData(color: AppCores.neonBlue),
         elevation: 0,
       ),
       body: Container(
-        color: AppCores.techGray,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
@@ -124,8 +124,8 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
       padding: const EdgeInsets.only(left: 8, bottom: 8),
       child: Text(
         titulo.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 12,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
@@ -149,7 +149,7 @@ class _TelaSegurancaState extends State<TelaSeguranca> {
         side: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
       ),
       child: ListTile(
-        leading: Icon(icon, color: AppCores.electricBlue),
+        leading: Icon(icon, color: AppCores.neonBlue),
         title: Text(
           titulo,
           style: const TextStyle(fontWeight: FontWeight.w600),

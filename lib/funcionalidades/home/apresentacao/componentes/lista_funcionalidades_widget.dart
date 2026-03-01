@@ -1,8 +1,14 @@
-import 'package:appcidadao/funcionalidades/ajustes/apresentacao/paginas/ajustes_pagina.dart';
+//import 'package:appcidadao/funcionalidades/ajustes/apresentacao/paginas/ajustes_pagina.dart';
+import 'package:appcidadao/funcionalidades/home/apresentacao/paginas/suporte_energia_pagina.dart';
 import 'package:flutter/material.dart';
 import '../../dados/fonte_dados/home_local_datasource.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../perfil/tela_perfil.dart';
+import '../../../home/apresentacao/paginas/consumo_pagina.dart';
+import '../../../home/apresentacao/paginas/pagamentos_pagina.dart';
+import '../../../home/apresentacao/paginas/falta_energia_pagina.dart';
+import '../../../home/apresentacao/paginas/economia_pagina.dart';
+//import '../../../home/apresentacao/paginas/suporte_energia_pagina.dart';
 import '../paginas/interferencia_pagina.dart';
 //import '../../../ajustes/apresentacao/paginas/ajustes_pagina.dart';
 import '../paginas/reporte_semaforo_pagina.dart';
@@ -22,7 +28,12 @@ class ListaFuncionalidades extends StatefulWidget {
 
 class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
   List<Map<String, dynamic>> get _filteredFeatures {
-    final features = DadosHome.getfuncionalidades;
+    final featuresServicos = DadosHome.getServicosEnergia;
+    if (widget.searchController.text.isEmpty) {
+      return featuresServicos;
+    }
+
+    final features = DadosHome.getProblemasUrbanos;
     if (widget.searchController.text.isEmpty) {
       return features;
     }
@@ -36,53 +47,54 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
 
   // FUNÇÃO DE NAVEGAÇÃO CENTRALIZADA
   void _executarChamadaFuncionalidade(Map<String, dynamic> feature) {
-    Widget? destino;
+    Widget? paginaDestino;
 
     // Mapeamento de títulos para telas
     switch (feature['title']) {
       case 'Minha Conta':
-        destino = const TelaPerfil();
+        paginaDestino = const TelaPerfil();
+        break;
+      case 'Consumo':
+        paginaDestino = const ConsumoEnergiaPagina();
+        break;
+      case 'Pagamentos':
+        paginaDestino = const HistoricoPagamentosPagina();
         break;
       case 'Suporte':
-        destino = AjustesPagina(onBackToHome: () => Navigator.pop(context));
+        paginaDestino = const SuporteEnergiaPagina();
+        break;
+      case 'Falta de Energia':
+        paginaDestino = const FaltaEnergiaPagina();
+        break;
+      case 'Economia':
+        paginaDestino = const DicasEconomiaPagina();
         break;
       case 'Interferência na Via':
-        destino = const TelaReportarInterferencia();
+        paginaDestino = const TelaReportarInterferencia();
         break;
       case 'Semáforo':
-        destino = const TelaReportarSemaforo();
+        paginaDestino = const TelaReportarSemaforo();
         break;
       case 'Veículo Quebrado':
-        destino = const TelaVeiculoQuebrado();
+        paginaDestino = const TelaVeiculoQuebrado();
         break;
       case 'Estacionamento Irregular':
-        destino = const TelaEstacionamentoIrregular();
+        paginaDestino = const TelaEstacionamentoIrregular();
         break;
       case 'Sinalização':
-        destino = const TelaReporteSinalizacao();
+        paginaDestino = const TelaReporteSinalizacao();
         break;
       case 'Iluminação Pública':
-        destino = const TelaReporteIluminacao();
+        paginaDestino = const TelaReporteIluminacao();
         break;
       default:
-        destino = null;
+        paginaDestino = null;
     }
 
-    if (destino != null) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => destino!),
-      );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'Funcionalidade ${feature['title']} em desenvolvimento',
-          ),
-          backgroundColor: AppCores.electricBlue,
-        ),
-      );
-    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => paginaDestino!),
+    );
   }
 
   /* // FUNÇÃO DE NAVEGAÇÃO CENTRALIZADA - VERSÃO USANDO ROTAS
@@ -121,10 +133,10 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
 
   Widget _buildFeaturesGrid() {
     final filtered = _filteredFeatures;
-    final problemasUrbanos = filtered
-        .where((feature) => feature['category'] == 'problemas_urbanos')
-        .toList();
     final listafuncionalidades = filtered
+        .where((feature) => feature['category'] == 'funcionalidades_principais')
+        .toList();
+    final problemasUrbanos = filtered
         .where((feature) => feature['category'] != 'problemas_urbanos')
         .toList();
 
@@ -132,15 +144,15 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (listafuncionalidades.isNotEmpty) ...[
-          _buildSecaoTitulo('Funcionalidades Principais'),
+          _buildSecaoTitulo('Serviços de Energia'),
           const SizedBox(height: 16),
-          _buildGrid(listafuncionalidades),
+          _buildGrid(DadosHome.getServicosEnergia),
         ],
         if (problemasUrbanos.isNotEmpty) ...[
           const SizedBox(height: 24),
           _buildSecaoTitulo('Problemas Urbanos'),
           const SizedBox(height: 16),
-          _buildGrid(problemasUrbanos),
+          _buildGrid(DadosHome.getProblemasUrbanos),
         ],
       ],
     );
@@ -149,8 +161,8 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
   Widget _buildSecaoTitulo(String titulo) {
     return Text(
       titulo,
-      style: const TextStyle(
-        color: Colors.white,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
         fontSize: 20,
         fontWeight: FontWeight.w700,
       ),
@@ -175,12 +187,12 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
   Widget _buildFeatureCard(Map<String, dynamic> feature) {
     return Container(
       decoration: BoxDecoration(
-        color: AppCores.lightGray,
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(color: AppCores.neonBlue.withValues(alpha: 0.1)),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05),
         child: InkWell(
           onTap: () => _showFeatureDetails(feature),
           borderRadius: BorderRadius.circular(15),
@@ -192,7 +204,11 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
               Text(
                 feature['title'],
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.white, fontSize: 11),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ],
           ),
@@ -204,7 +220,7 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
   void _showFeatureDetails(Map<String, dynamic> feature) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppCores.lightGray,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
@@ -217,8 +233,8 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
             const SizedBox(height: 16),
             Text(
               feature['title'],
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
               ),
@@ -226,7 +242,10 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
             const SizedBox(height: 12),
             Text(
               feature['description'] ?? '',
-              style: const TextStyle(color: Colors.white70, fontSize: 16),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontSize: 16,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 24),
@@ -259,10 +278,12 @@ class _ListaFuncionalidadesState extends State<ListaFuncionalidades> {
               onPressed: () {
                 Navigator.pop(context); // Apenas fecha o modal
               },
-              child: const Text(
+              child: Text(
                 'CANCELAR',
                 style: TextStyle(
-                  color: Colors.white54, // Cor mais discreta
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface, // Cor mais discreta
                   fontWeight: FontWeight.w500,
                 ),
               ),
