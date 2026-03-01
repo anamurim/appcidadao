@@ -70,16 +70,13 @@ class _TelaAlterarSenhaState extends State<TelaAlterarSenha> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Alterar Senha',
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: AppCores.deepBlue,
+        title: Text('Alterar Senha', style: TextStyle(color: Colors.white)),
+        //backgroundColor: AppCores.deepBlue,
         iconTheme: const IconThemeData(color: Colors.white),
         elevation: 0,
       ),
       body: Container(
-        color: AppCores.techGray,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Form(
@@ -87,9 +84,12 @@ class _TelaAlterarSenhaState extends State<TelaAlterarSenha> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Sua nova senha deve seguir os critérios de segurança para proteger sua conta.',
-                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 14,
+                  ),
                 ),
                 const SizedBox(height: 25),
 
@@ -155,7 +155,7 @@ class _TelaAlterarSenhaState extends State<TelaAlterarSenha> {
                     borderRadius: BorderRadius.circular(15),
                     boxShadow: [
                       BoxShadow(
-                        color: AppCores.electricBlue.withValues(alpha: 0.4),
+                        color: AppCores.neonBlue.withValues(alpha: 0.4),
                         blurRadius: 15,
                         offset: const Offset(0, 4),
                       ),
@@ -202,14 +202,11 @@ class _TelaAlterarSenhaState extends State<TelaAlterarSenha> {
       style: const TextStyle(fontSize: 14),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: const Icon(
-          Icons.lock_outline,
-          color: AppCores.electricBlue,
-        ),
+        prefixIcon: const Icon(Icons.lock_outline, color: AppCores.neonBlue),
         suffixIcon: IconButton(
           icon: Icon(
             isObscured ? Icons.visibility_off : Icons.visibility,
-            color: Colors.grey,
+            color: Theme.of(context).colorScheme.onSurface,
           ),
           onPressed: onToggleVisibility,
         ),

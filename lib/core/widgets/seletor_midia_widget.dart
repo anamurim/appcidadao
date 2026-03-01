@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../constantes/cores.dart';
 import '../../funcionalidades/reportes/dominio/entidades/media_item.dart';
+//import '../../../../../../core/widgets/seletor_midia_widget.dart';
 
 /// Widget reutilizável para seleção de mídias (fotos e vídeos) em formulários
 /// de reporte.
@@ -43,6 +44,7 @@ class SeletorMidiaWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -52,8 +54,8 @@ class SeletorMidiaWidget extends StatelessWidget {
           children: [
             Text(
               titulo,
-              style: const TextStyle(
-                color: AppCores.neonBlue,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),
@@ -170,12 +172,13 @@ class SeletorMidiaWidget extends StatelessWidget {
   }
 
   Future<void> _selecionarVideo(BuildContext context) async {
+    final theme = Theme.of(context);
     final picker = ImagePicker();
 
     // Mostra bottom sheet para escolher origem do vídeo
     final ImageSource? source = await showModalBottomSheet<ImageSource>(
       context: context,
-      backgroundColor: AppCores.lightGray,
+      backgroundColor: theme.scaffoldBackgroundColor,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -190,14 +193,14 @@ class SeletorMidiaWidget extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: 16),
                 decoration: BoxDecoration(
-                  color: Colors.white24,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const Text(
+              Text(
                 'Selecionar vídeo',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: theme.colorScheme.onSurface,
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -205,20 +208,20 @@ class SeletorMidiaWidget extends StatelessWidget {
               const SizedBox(height: 16),
               ListTile(
                 leading: const Icon(Icons.videocam, color: AppCores.neonBlue),
-                title: const Text(
+                title: Text(
                   'Gravar vídeo',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: theme.colorScheme.onSurface),
                 ),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
               ListTile(
-                leading: const Icon(
+                leading: Icon(
                   Icons.video_library,
-                  color: AppCores.neonBlue,
+                  color: theme.colorScheme.onSurface,
                 ),
-                title: const Text(
+                title: Text(
                   'Escolher da galeria',
-                  style: TextStyle(color: Colors.white),
+                  style: TextStyle(color: theme.colorScheme.onSurface),
                 ),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
@@ -265,18 +268,22 @@ class SeletorMidiaWidget extends StatelessWidget {
         onPressed: onPressed,
         icon: Icon(
           icon,
-          color: desabilitado ? Colors.white24 : AppCores.neonBlue,
+          color: desabilitado
+              ? Colors.white24
+              : Theme.of(context).colorScheme.onSurface,
           size: 20,
         ),
         label: Text(
           label,
           style: TextStyle(
-            color: desabilitado ? Colors.white24 : AppCores.neonBlue,
+            color: desabilitado
+                ? Colors.white24
+                : Theme.of(context).colorScheme.onSurface,
             fontSize: 13,
           ),
         ),
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppCores.lightGray,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           padding: const EdgeInsets.symmetric(vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
@@ -294,6 +301,7 @@ class SeletorMidiaWidget extends StatelessWidget {
   Widget _buildThumbnail(BuildContext context, int index) {
     final item = midias[index];
     final bool isImage = item.type == MediaType.image;
+    final theme = Theme.of(context);
 
     return Stack(
       children: [
@@ -325,7 +333,7 @@ class SeletorMidiaWidget extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.black87,
+              color: theme.colorScheme.onSurface,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Row(
@@ -333,13 +341,16 @@ class SeletorMidiaWidget extends StatelessWidget {
               children: [
                 Icon(
                   isImage ? Icons.image : Icons.play_circle_fill,
-                  color: AppCores.neonBlue,
+                  color: theme.colorScheme.onSurface,
                   size: 12,
                 ),
                 const SizedBox(width: 3),
                 Text(
                   isImage ? 'IMG' : 'VID',
-                  style: const TextStyle(color: Colors.white70, fontSize: 10),
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    fontSize: 10,
+                  ),
                 ),
               ],
             ),
@@ -363,13 +374,17 @@ class SeletorMidiaWidget extends StatelessWidget {
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.3),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
                     blurRadius: 4,
                     offset: const Offset(0, 2),
                   ),
                 ],
               ),
-              child: const Icon(Icons.close, color: Colors.white, size: 14),
+              child: Icon(
+                Icons.close,
+                color: theme.colorScheme.onSurface,
+                size: 14,
+              ),
             ),
           ),
         ),

@@ -12,24 +12,24 @@ class TelaDispositivosConectados extends StatelessWidget {
           'Dispositivos Conectados',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor:
-            AppCores.deepBlue, // Padrão da sua tela de configurações
+        //backgroundColor:
+        //  AppCores.deepBlue, // Padrão da sua tela de configurações
         iconTheme: const IconThemeData(
           color: AppCores.neonBlue,
         ), // Ícones em neon azul para consistência
         elevation: 0,
       ),
       body: Container(
-        color: AppCores.techGray, // Padrão do seu app
+        color: Theme.of(context).scaffoldBackgroundColor, // Padrão do seu app
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               child: Text(
                 'ONDE VOCÊ ESTÁ CONECTADO',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
@@ -48,12 +48,12 @@ class TelaDispositivosConectados extends StatelessWidget {
             ),
 
             const SizedBox(height: 24),
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
               child: Text(
                 'OUTRAS SESSÕES ATIVAS',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
@@ -124,10 +124,10 @@ class TelaDispositivosConectados extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: AppCores.electricBlue.withValues(alpha: 0.1),
+            color: AppCores.neonBlue.withValues(alpha: 0.1),
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: AppCores.electricBlue),
+          child: Icon(icon, color: AppCores.neonBlue),
         ),
         title: Text(
           aparelho,
@@ -159,25 +159,31 @@ class TelaDispositivosConectados extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor:
-              AppCores.lightGray, // Padrão do seu diálogo de carregamento
+          backgroundColor: Theme.of(
+            context,
+          ).scaffoldBackgroundColor, // Padrão do seu diálogo de carregamento
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          title: const Text(
+          title: Text(
             'Encerrar Sessão?',
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           content: Text(
             'Deseja realmente desconectar sua conta do dispositivo $aparelho?',
-            style: const TextStyle(color: Colors.white70),
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
+              child: Text(
                 'CANCELAR',
-                style: TextStyle(color: Colors.white54),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
               ),
             ),
             ElevatedButton(

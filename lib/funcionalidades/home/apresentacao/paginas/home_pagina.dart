@@ -62,7 +62,7 @@ class _HomePaginaState extends State<HomePagina> {
     ];
 
     return Scaffold(
-      backgroundColor: AppCores.techGray,
+      //backgroundColor: AppCores.techGray,
       appBar: _selectedIndex == 2
           ? null // Ajustes costuma ter sua própria AppBar ou design
           : AppBar(
@@ -73,19 +73,20 @@ class _HomePaginaState extends State<HomePagina> {
                       onChanged: (value) => setState(() {}),
                     )
                   : Text(
-                      _selectedIndex == 0 ? 'APP CIDADÃO' : 'Histórico',
+                      _selectedIndex == 0
+                          ? 'APP CIDADÃO'
+                          : 'Histórico de reportes',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 22,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-              backgroundColor: AppCores.deepBlue,
+              //backgroundColor: AppCores.deepBlue,
               actions: _selectedIndex == 0 ? _buildAppBarActions() : null,
             ),
       body: IndexedStack(index: _selectedIndex, children: paginas),
-      bottomNavigationBar:
-          _buildBottomNav(), // Nome corrigido para coincidir com o método
+      bottomNavigationBar: _buildBottomNav(),
     );
   }
 
@@ -98,7 +99,6 @@ class _HomePaginaState extends State<HomePagina> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 24),
-              // Corrigido: Passando os parâmetros obrigatórios em vez do objeto 'user' inexistente
               CabecalhoHome(
                 nome: usuarioCtrl.nome,
                 email: usuarioCtrl.email,
@@ -135,12 +135,17 @@ class _HomePaginaState extends State<HomePagina> {
                 Icon(
                   Icons.history_outlined,
                   size: 80,
-                  color: Colors.white.withValues(alpha: 0.3),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.3),
                 ),
                 const SizedBox(height: 16),
-                const Text(
+                Text(
                   'Nenhum reporte enviado ainda',
-                  style: TextStyle(color: Colors.white54, fontSize: 16),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 16,
+                  ),
                 ),
               ],
             ),
@@ -175,13 +180,15 @@ class _HomePaginaState extends State<HomePagina> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppCores.lightGray,
+        color: Theme.of(context).colorScheme.onSurface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppCores.neonBlue.withValues(alpha: 0.2)),
+        border: Border.all(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+        ),
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppCores.neonBlue, size: 30),
+          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 30),
           const SizedBox(width: 16),
           Expanded(
             child: Column(
@@ -189,15 +196,15 @@ class _HomePaginaState extends State<HomePagina> {
               children: [
                 Text(
                   reporte.endereco,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
                   reporte.status.rotulo,
-                  style: const TextStyle(
-                    color: AppCores.accentGreen,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
                     fontSize: 12,
                   ),
                 ),
@@ -247,15 +254,15 @@ class _HomePaginaState extends State<HomePagina> {
     if (_showSearchBar) return [];
     return [
       IconButton(
-        icon: const Icon(Icons.search_outlined),
+        icon: const Icon(Icons.search_outlined, color: Colors.white),
         onPressed: _toggleSearchBar,
       ),
       IconButton(
-        icon: const Icon(Icons.notifications),
+        icon: const Icon(Icons.notifications, color: Colors.white),
         onPressed: () => NotificacoesLista.exibirTodasNotificacoes(context),
       ),
       IconButton(
-        icon: const Icon(Icons.logout_outlined),
+        icon: const Icon(Icons.logout_outlined, color: Colors.white),
         onPressed: () => FuncoesAuxiliares.exibirLogout(context),
       ),
     ];

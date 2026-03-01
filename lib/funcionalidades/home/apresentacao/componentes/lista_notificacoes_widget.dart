@@ -14,7 +14,8 @@ class NotificacoesLista extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Pegamos a fonte de dados centralizada
+    final colorScheme = Theme.of(context).colorScheme;
+    // Pega a fonte de dados centralizada
     final lista = DadosHome.notifications;
 
     return Column(
@@ -24,19 +25,19 @@ class NotificacoesLista extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               'Notificações',
               style: TextStyle(
-                color: Colors.white,
+                color: colorScheme.onSurface,
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
               ),
             ),
             TextButton(
               onPressed: () => exibirTodasNotificacoes(context),
-              child: const Text(
+              child: Text(
                 'Ver todas',
-                style: TextStyle(color: AppCores.neonBlue),
+                style: TextStyle(color: colorScheme.primary),
               ),
             ),
           ],
@@ -54,7 +55,7 @@ class NotificacoesLista extends StatelessWidget {
               : lista.length,
           itemBuilder: (context, index) {
             final notification = lista[index];
-            return _buildNotificationItem(notification);
+            return _buildNotificationItem(context, notification);
           },
         ),
       ],
@@ -65,19 +66,21 @@ class NotificacoesLista extends StatelessWidget {
     _exibirNotificacoes(context);
   }
 
-  Widget _buildNotificationItem(Map<String, dynamic> notification) {
+  Widget _buildNotificationItem(
+    BuildContext context,
+    Map<String, dynamic> notification,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
     final bool isUnread = notification['read'] == false;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppCores.lightGray,
+        color: colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isUnread
-              ? AppCores.neonBlue.withValues(alpha: 0.3)
-              : Colors.transparent,
+          color: isUnread ? colorScheme.primary : Colors.transparent,
           width: isUnread ? 2 : 0,
         ),
       ),
@@ -86,7 +89,9 @@ class NotificacoesLista extends StatelessWidget {
           Icon(
             Icons.circle,
             size: 8,
-            color: isUnread ? AppCores.neonBlue : Colors.transparent,
+            color: isUnread
+                ? AppCores.neonBlue
+                : colorScheme.onSurface.withValues(alpha: 0.3),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -95,8 +100,8 @@ class NotificacoesLista extends StatelessWidget {
               children: [
                 Text(
                   notification['title'] ?? 'Sem título',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -104,7 +109,7 @@ class NotificacoesLista extends StatelessWidget {
                 Text(
                   notification['message'] ?? '',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: colorScheme.onSurfaceVariant,
                     fontSize: 12,
                   ),
                 ),
@@ -114,7 +119,7 @@ class NotificacoesLista extends StatelessWidget {
           Text(
             notification['time'] ?? '',
             style: TextStyle(
-              color: Colors.white.withValues(alpha: 0.5),
+              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
               fontSize: 11,
             ),
           ),
@@ -128,7 +133,7 @@ class NotificacoesLista extends StatelessWidget {
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: AppCores.lightGray,
+      //backgroundColor: AppCores.lightGray,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
@@ -141,22 +146,26 @@ class NotificacoesLista extends StatelessWidget {
           minChildSize: 0.5,
           builder: (context, scrollController) {
             return Container(
+              color: Theme.of(context).scaffoldBackgroundColor,
               padding: const EdgeInsets.all(24),
               child: Column(
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
+                      Text(
                         'Notificações',
                         style: TextStyle(
-                          color: Colors.white,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: 24,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.close, color: Colors.white),
+                        icon: Icon(
+                          Icons.close,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                         onPressed: () => Navigator.pop(context),
                       ),
                     ],
@@ -168,12 +177,12 @@ class NotificacoesLista extends StatelessWidget {
                       itemCount: lista.length,
                       itemBuilder: (context, index) {
                         final notification = lista[index];
-                        return _buildModalItem(notification);
+                        return _buildModalItem(context, notification);
                       },
                     ),
                   ),
                   const SizedBox(height: 16),
-                  _buildMarcarLidasButton(),
+                  _buildMarcarLidasButton(context),
                 ],
               ),
             );
@@ -183,12 +192,17 @@ class NotificacoesLista extends StatelessWidget {
     );
   }
 
-  static Widget _buildModalItem(Map<String, dynamic> notification) {
+  static Widget _buildModalItem(
+    BuildContext context,
+    Map<String, dynamic> notification,
+  ) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: AppCores.techGray,
+        color: colorScheme.onSurface.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -198,7 +212,7 @@ class NotificacoesLista extends StatelessWidget {
             Icons.notifications,
             color: !(notification['read'] ?? true)
                 ? AppCores.neonBlue
-                : Colors.white.withValues(alpha: 0.3),
+                : colorScheme.onSurface.withValues(alpha: 0.5),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -207,8 +221,8 @@ class NotificacoesLista extends StatelessWidget {
               children: [
                 Text(
                   notification['title'] ?? '',
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: colorScheme.onSurface,
                     fontWeight: FontWeight.w600,
                     fontSize: 16,
                   ),
@@ -217,7 +231,7 @@ class NotificacoesLista extends StatelessWidget {
                 Text(
                   notification['message'] ?? '',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7),
+                    color: colorScheme.onSurface.withValues(alpha: 0.7),
                     fontSize: 14,
                   ),
                 ),
@@ -225,7 +239,7 @@ class NotificacoesLista extends StatelessWidget {
                 Text(
                   notification['time'] ?? '',
                   style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.5),
+                    color: colorScheme.onSurface.withValues(alpha: 0.5),
                     fontSize: 12,
                   ),
                 ),
@@ -237,28 +251,30 @@ class NotificacoesLista extends StatelessWidget {
     );
   }
 
-  static Widget _buildMarcarLidasButton() {
+  static Widget _buildMarcarLidasButton(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        color: AppCores.techGray,
+        color: colorScheme.onSurface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Material(
-        color: Colors.transparent,
+        color: colorScheme.onSurface.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(12),
         child: InkWell(
           onTap: () {
             // Lógica para marcar como lidas
           },
           borderRadius: BorderRadius.circular(12),
-          child: const Padding(
+          child: Padding(
             padding: EdgeInsets.all(16),
             child: Center(
               child: Text(
                 'MARCAR TODAS COMO LIDAS',
                 style: TextStyle(
-                  color: AppCores.neonBlue,
+                  color: colorScheme.secondary,
                   fontWeight: FontWeight.w700,
                 ),
               ),

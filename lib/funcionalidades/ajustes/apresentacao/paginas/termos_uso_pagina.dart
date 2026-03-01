@@ -12,21 +12,21 @@ class TelaTermosUso extends StatelessWidget {
           'Termos de Uso',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: AppCores.deepBlue,
-        iconTheme: const IconThemeData(color: Colors.white),
+        //backgroundColor: AppCores.deepBlue,
+        iconTheme: const IconThemeData(color: AppCores.neonBlue),
         elevation: 0,
       ),
       body: Container(
-        color: AppCores.techGray,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+              Text(
                 'Termos de Uso do App Cidadão',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
@@ -35,12 +35,15 @@ class TelaTermosUso extends StatelessWidget {
               Text(
                 'Última atualização: 23 de Fevereiro de 2026',
                 style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.5),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.5),
                   fontSize: 13,
                 ),
               ),
               const SizedBox(height: 24),
               _buildSecao(
+                context,
                 '1. Aceitação dos Termos',
                 'Ao utilizar o App Cidadão, você concorda com estes Termos de Uso. '
                     'Caso não concorde com alguma disposição, não utilize o aplicativo. '
@@ -48,6 +51,7 @@ class TelaTermosUso extends StatelessWidget {
                     'posteriores destes termos.',
               ),
               _buildSecao(
+                context,
                 '2. Descrição do Serviço',
                 'O App Cidadão é uma plataforma digital que permite aos cidadãos reportar '
                     'problemas urbanos como interferências na via, semáforos com defeito, '
@@ -56,6 +60,7 @@ class TelaTermosUso extends StatelessWidget {
                     'para providências.',
               ),
               _buildSecao(
+                context,
                 '3. Cadastro e Conta',
                 'Para utilizar o aplicativo, é necessário criar uma conta fornecendo '
                     'informações pessoais verdadeiras e atualizadas. Você é responsável '
@@ -63,6 +68,7 @@ class TelaTermosUso extends StatelessWidget {
                     'realizadas em sua conta.',
               ),
               _buildSecao(
+                context,
                 '4. Uso Adequado',
                 'O usuário se compromete a utilizar o aplicativo apenas para reportar '
                     'problemas reais e legítimos. É proibido enviar relatos falsos, '
@@ -70,18 +76,21 @@ class TelaTermosUso extends StatelessWidget {
                     'O uso indevido pode resultar no bloqueio ou exclusão da conta.',
               ),
               _buildSecao(
+                context,
                 '5. Propriedade Intelectual',
                 'Todo o conteúdo do App Cidadão, incluindo design, textos, gráficos, '
                     'logotipos e software, é protegido por direitos autorais e não pode '
                     'ser reproduzido sem autorização prévia.',
               ),
               _buildSecao(
+                context,
                 '6. Limitação de Responsabilidade',
                 'O App Cidadão atua como intermediário entre cidadãos e órgãos públicos. '
                     'Não garantimos prazos de resolução dos problemas reportados. '
                     'O aplicativo é fornecido "como está", sem garantias de qualquer tipo.',
               ),
               _buildSecao(
+                context,
                 '7. Contato',
                 'Para dúvidas ou esclarecimentos sobre estes Termos de Uso, '
                     'entre em contato pelo e-mail suporte@appcidadao.com.br.',
@@ -94,7 +103,7 @@ class TelaTermosUso extends StatelessWidget {
     );
   }
 
-  Widget _buildSecao(String titulo, String conteudo) {
+  Widget _buildSecao(BuildContext context, String titulo, String conteudo) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(
@@ -102,8 +111,8 @@ class TelaTermosUso extends StatelessWidget {
         children: [
           Text(
             titulo,
-            style: const TextStyle(
-              color: AppCores.neonBlue,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurface,
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),
@@ -111,8 +120,10 @@ class TelaTermosUso extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             conteudo,
-            style: const TextStyle(
-              color: Colors.white70,
+            style: TextStyle(
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 14,
               height: 1.6,
             ),

@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../core/constantes/cores.dart';
 import '../home/controladores/usuario_controller.dart';
-import '../../core/modelos/usuario.dart';
+//import '../../core/modelos/usuario.dart';
 
 class TelaPerfil extends StatefulWidget {
-  const TelaPerfil({super.key});
+  final VoidCallback? onBackToHome;
+
+  const TelaPerfil({super.key, this.onBackToHome});
 
   @override
   State<TelaPerfil> createState() => _TelaPerfilState();
@@ -91,7 +93,15 @@ class _TelaPerfilState extends State<TelaPerfil> {
         final usuario = controller.usuario;
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Meu Perfil'), centerTitle: true),
+          appBar: AppBar(
+            title: const Text('Meu Perfil'),
+            elevation: 0,
+            centerTitle: false,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: AppCores.neonBlue),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ),
           body: controller.isLoading
               ? const Center(child: CircularProgressIndicator())
               : SingleChildScrollView(
@@ -105,15 +115,17 @@ class _TelaPerfilState extends State<TelaPerfil> {
                           children: [
                             CircleAvatar(
                               radius: 60,
-                              backgroundImage: usuario != null &&
-                                      usuario.avatar.isNotEmpty
+                              backgroundImage:
+                                  usuario != null && usuario.avatar.isNotEmpty
                                   ? NetworkImage(usuario.avatar)
                                   : null,
                               backgroundColor: Colors.grey[300],
-                              child: usuario == null ||
-                                      usuario.avatar.isEmpty
-                                  ? const Icon(Icons.person,
-                                      size: 60, color: Colors.grey)
+                              child: usuario == null || usuario.avatar.isEmpty
+                                  ? const Icon(
+                                      Icons.person,
+                                      size: 60,
+                                      color: Colors.grey,
+                                    )
                                   : null,
                             ),
                             const SizedBox(height: 12),
@@ -187,9 +199,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                                   )
                                 : const Icon(Icons.save),
                             label: Text(
-                              _salvando
-                                  ? 'Salvando...'
-                                  : 'Salvar alterações',
+                              _salvando ? 'Salvando...' : 'Salvar alterações',
                             ),
                             onPressed: _salvando ? null : _salvarAlteracoes,
                           ),
@@ -218,10 +228,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
           children: [
             Text(
               titulo,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
             ...children,

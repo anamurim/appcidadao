@@ -53,21 +53,22 @@ class TelaSuporte extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Suporte e Ajuda',
+          'Ajuda e Suporte',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: AppCores.deepBlue,
-        iconTheme: const IconThemeData(color: Colors.white),
+        //backgroundColor: AppCores.deepBlue,
+        iconTheme: const IconThemeData(color: AppCores.neonBlue),
         elevation: 0,
       ),
       body: Container(
-        color: AppCores.techGray,
+        color: Theme.of(context).scaffoldBackgroundColor,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            _buildSecao('Canais de Atendimento'),
+            _buildSecao(context, 'Canais de Atendimento'),
 
             _buildCardSuporte(
+              context: context,
               icon: Icons.chat_outlined,
               titulo: 'Chat via WhatsApp',
               subtitulo: 'Atendimento rápido em horário comercial',
@@ -75,6 +76,7 @@ class TelaSuporte extends StatelessWidget {
             ),
 
             _buildCardSuporte(
+              context: context,
               icon: Icons.email_outlined,
               titulo: 'Enviar E-mail',
               subtitulo: 'suporte@appcidadao.com.br',
@@ -82,7 +84,7 @@ class TelaSuporte extends StatelessWidget {
             ),
 
             const SizedBox(height: 24),
-            _buildSecao('Perguntas Frequentes'),
+            _buildSecao(context, 'Perguntas Frequentes'),
 
             _buildFAQItem(
               pergunta: 'Como alterar meus dados?',
@@ -101,8 +103,9 @@ class TelaSuporte extends StatelessWidget {
             ),
 
             const SizedBox(height: 24),
-            _buildSecao('Documentos Legais'),
+            _buildSecao(context, 'Documentos Legais'),
             _buildCardSuporte(
+              context: context,
               icon: Icons.description_outlined,
               titulo: 'Termos de Uso',
               subtitulo: 'Regras e condições de uso do aplicativo',
@@ -117,6 +120,7 @@ class TelaSuporte extends StatelessWidget {
             ),
 
             _buildCardSuporte(
+              context: context,
               icon: Icons.privacy_tip_outlined,
               titulo: 'Política de Privacidade',
               subtitulo: 'Como cuidamos dos seus dados pessoais',
@@ -132,10 +136,13 @@ class TelaSuporte extends StatelessWidget {
 
             const SizedBox(height: 40),
 
-            const Center(
+            Center(
               child: Text(
                 'App Cidadão v1.0.0',
-                style: TextStyle(color: Colors.white38, fontSize: 12),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontSize: 12,
+                ),
               ),
             ),
           ],
@@ -150,25 +157,28 @@ class TelaSuporte extends StatelessWidget {
     required String titulo,
     required String subtitulo,
     required VoidCallback onTap,
+    required BuildContext context,
   }) {
     return Card(
       elevation: 0,
       margin: const EdgeInsets.symmetric(vertical: 4),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
-        side: BorderSide(color: Colors.grey.withValues(alpha: 0.1)),
+        side: BorderSide(
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.1),
+        ),
       ),
       child: ListTile(
-        leading: Icon(icon, color: AppCores.electricBlue),
+        leading: Icon(icon, color: AppCores.neonBlue),
         title: Text(
           titulo,
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(subtitulo, style: const TextStyle(fontSize: 12)),
-        trailing: const Icon(
+        trailing: Icon(
           Icons.arrow_forward_ios,
           size: 14,
-          color: Colors.grey,
+          color: Theme.of(context).colorScheme.onSurface,
         ),
         onTap: onTap,
       ),
@@ -183,7 +193,7 @@ class TelaSuporte extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: ExpansionTile(
         iconColor: AppCores.neonBlue,
-        collapsedIconColor: AppCores.electricBlue,
+        collapsedIconColor: AppCores.neonBlue,
         title: Text(
           pergunta,
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
@@ -201,13 +211,13 @@ class TelaSuporte extends StatelessWidget {
     );
   }
 
-  Widget _buildSecao(String titulo) {
+  Widget _buildSecao(BuildContext context, String titulo) {
     return Padding(
       padding: const EdgeInsets.only(left: 8, bottom: 8),
       child: Text(
         titulo.toUpperCase(),
-        style: const TextStyle(
-          color: Colors.white,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
           fontSize: 12,
           fontWeight: FontWeight.bold,
           letterSpacing: 1.2,
