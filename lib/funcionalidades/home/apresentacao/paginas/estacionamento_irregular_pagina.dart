@@ -243,8 +243,9 @@ class _TelaEstacionamentoIrregularState
                                 ),
                               );
                             } finally {
-                              if (mounted)
+                              if (mounted) {
                                 setState(() => _loadingEndereco = false);
+                              }
                             }
                           },
                         ),

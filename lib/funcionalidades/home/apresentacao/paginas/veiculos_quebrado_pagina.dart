@@ -292,8 +292,9 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
                                     ),
                                   );
                                 } finally {
-                                  if (mounted)
+                                  if (mounted) {
                                     setState(() => _loadingEndereco = false);
+                                  }
                                 }
                               },
                             ),

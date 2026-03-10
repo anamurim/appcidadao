@@ -229,8 +229,9 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
                                     ),
                                   );
                                 } finally {
-                                  if (mounted)
+                                  if (mounted) {
                                     setState(() => _loadingEndereco = false);
+                                  }
                                 }
                               },
                             ),
