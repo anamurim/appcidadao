@@ -5,12 +5,10 @@ import 'package:appcidadao/funcionalidades/home/apresentacao/paginas/home_pagina
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// Importe seus controllers (ajuste os caminhos conforme seu projeto)
 import 'core/tema/app_tema.dart';
 import 'core/tema/tema_controller.dart';
 import 'funcionalidades/autenticacao/controladores/autenticacao_controller.dart';
 
-// Certifique-se de importar estes abaixo:
 import 'funcionalidades/home/controladores/usuario_controller.dart';
 import 'funcionalidades/home/controladores/reporte_controller.dart';
 
@@ -44,7 +42,6 @@ class AppCidadao extends StatelessWidget {
               '/': (context) => const TechLoginScreen(),
               '/signup': (context) => const SignupScreen(),
               '/forgot-password': (context) => const ForgotPasswordScreen(),
-              //Adicione a rota da Home se necessário
               '/home': (context) => const HomePagina(),
             },
           );
