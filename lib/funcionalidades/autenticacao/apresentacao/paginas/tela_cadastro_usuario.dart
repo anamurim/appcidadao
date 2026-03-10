@@ -19,8 +19,10 @@ class _SignupScreenState extends State<SignupScreen> {
   final _cpfController = TextEditingController();
   final _phoneController = TextEditingController();
   final _cepController = TextEditingController();
+  final _enderecoController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+
   // Máscaras de input
   final _cpfMask = MaskTextInputFormatter(
     mask: '###.###.###-##',
@@ -48,6 +50,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final _cpfFocus = FocusNode();
   final _phoneFocus = FocusNode();
   final _cepFocus = FocusNode();
+  final _enderecoFocus = FocusNode();
   final _passwordFocus = FocusNode();
   final _confirmPasswordFocus = FocusNode();
 
@@ -69,6 +72,7 @@ class _SignupScreenState extends State<SignupScreen> {
     _cpfController.dispose();
     _phoneController.dispose();
     _cepController.dispose();
+    _enderecoController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
 
@@ -77,6 +81,7 @@ class _SignupScreenState extends State<SignupScreen> {
     _cpfFocus.dispose();
     _phoneFocus.dispose();
     _cepFocus.dispose();
+    _enderecoFocus.dispose();
     _passwordFocus.dispose();
     _confirmPasswordFocus.dispose();
     super.dispose();
@@ -210,9 +215,19 @@ class _SignupScreenState extends State<SignupScreen> {
                       label: 'CEP',
                       icon: Icons.location_on_outlined,
                       focusNode: _cepFocus,
-                      nextFocus: _passwordFocus,
+                      nextFocus: _enderecoFocus,
                       keyboardType: TextInputType.number,
                       inputFormatters: [_cepMask],
+                    ),
+                    const SizedBox(height: 16),
+
+                    // Campo Endereço
+                    _buildTextField(
+                      controller: _enderecoController,
+                      label: 'Endereço',
+                      icon: Icons.location_on_outlined,
+                      focusNode: _enderecoFocus,
+                      nextFocus: _passwordFocus,
                     ),
                     const SizedBox(height: 16),
 
