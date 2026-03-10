@@ -6,6 +6,8 @@ class Usuario {
   final String avatar;
   final String? telefone;
   final String? cpf;
+  final String? cep;
+  final String? endereco; // Novo campo
 
   const Usuario({
     required this.nome,
@@ -14,6 +16,8 @@ class Usuario {
     required this.avatar,
     this.telefone,
     this.cpf,
+    this.cep,
+    this.endereco, // Novo campo
   });
 
   /// Cria uma cópia do usuário com os campos alterados.
@@ -24,6 +28,8 @@ class Usuario {
     String? avatar,
     String? telefone,
     String? cpf,
+    String? cep,
+    String? endereco, // Novo campo
   }) {
     return Usuario(
       nome: nome ?? this.nome,
@@ -32,6 +38,8 @@ class Usuario {
       avatar: avatar ?? this.avatar,
       telefone: telefone ?? this.telefone,
       cpf: cpf ?? this.cpf,
+      cep: cep ?? this.cep,
+      endereco: endereco ?? this.endereco, // Novo campo
     );
   }
 
@@ -43,6 +51,8 @@ class Usuario {
       'avatar': avatar,
       'telefone': telefone,
       'cpf': cpf,
+      'cep': cep,
+      'endereco': endereco, // Novo campo
     };
   }
 
@@ -54,6 +64,8 @@ class Usuario {
       avatar: map['avatar'] as String,
       telefone: map['telefone'] as String?,
       cpf: map['cpf'] as String?,
+      cep: map['cep'] as String?,
+      endereco: map['endereco'] as String?, // Novo campo
     );
   }
 }

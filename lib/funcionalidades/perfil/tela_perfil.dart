@@ -23,7 +23,8 @@ class _TelaPerfilState extends State<TelaPerfil> {
   final _telefoneController = TextEditingController();
   final _cpfController = TextEditingController();
   final _cepController = TextEditingController(); // Novo
-  final _passwordController = TextEditingController(); // Novo
+  final _enderecoController = TextEditingController(); // Novo
+  //final _passwordController = TextEditingController(); // Senha será alterada em outra tela.
 
   // Máscaras sincronizadas com SignupScreen
   final _cpfMask = MaskTextInputFormatter(
@@ -41,7 +42,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
 
   bool _dadosCarregados = false;
   bool _salvando = false;
-  bool _obscurePassword = true; // Para o novo campo de senha
+  //bool _obscurePassword = true; // Para o novo campo de senha
 
   @override
   void didChangeDependencies() {
@@ -53,6 +54,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
         _emailController.text = usuario.email;
         _telefoneController.text = _phoneMask.maskText(usuario.telefone ?? '');
         _cpfController.text = _cpfMask.maskText(usuario.cpf ?? '');
+        _enderecoController.text = usuario.endereco!;
         // Caso seu modelo de usuário já tenha estes campos:
         // _cepController.text = _cepMask.maskText(usuario.cep ?? '');
       }
@@ -67,7 +69,8 @@ class _TelaPerfilState extends State<TelaPerfil> {
     _telefoneController.dispose();
     _cpfController.dispose();
     _cepController.dispose();
-    _passwordController.dispose();
+    _enderecoController.dispose();
+    //_passwordController.dispose();
     super.dispose();
   }
 
@@ -177,10 +180,20 @@ class _TelaPerfilState extends State<TelaPerfil> {
                               keyboardType: TextInputType.number,
                               inputFormatters: [_cepMask],
                             ),
+                            _campo(
+                              'Endereço',
+                              Icons.location_on_outlined,
+                              _enderecoController,
+                              //keyboardType: TextInputType.number,
+                            ),
                           ],
                         ),
 
                         const SizedBox(height: 20),
+
+                        /*A senha será alterada em outra tela (AlterarSenhaPagina 
+                        em Configurações) para seguir boas práticas de segurança, 
+                        mas aqui está um exemplo de como poderia ser adicionado:
 
                         _buildSecao(
                           titulo: 'Segurança',
@@ -197,8 +210,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                               helperText: 'Deixe em branco para não alterar',
                             ),
                           ],
-                        ),
-
+                        ),*/
                         const SizedBox(height: 30),
 
                         _buildBotaoSalvar(),
