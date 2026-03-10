@@ -146,7 +146,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
         //backgroundColor: AppCores.deepBlue, // Cor da AppBar
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: AppCores.neonBlue),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -245,8 +245,9 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                                       ),
                                     );
                                   } finally {
-                                    if (mounted)
+                                    if (mounted) {
                                       setState(() => _loadingEndereco = false);
+                                    }
                                   }
                                 },
                               ),

@@ -146,7 +146,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
       appBar: AppBar(
         title: const Text('Problema no Semáforo'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: AppCores.neonBlue),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -212,8 +212,9 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
                                     ),
                                   );
                                 } finally {
-                                  if (mounted)
+                                  if (mounted) {
                                     setState(() => _loadingEndereco = false);
+                                  }
                                 }
                               },
                             ),

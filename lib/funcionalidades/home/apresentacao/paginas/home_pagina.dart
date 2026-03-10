@@ -243,7 +243,7 @@ class _HomePaginaState extends State<HomePagina> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
-            label: 'Ajustes',
+            label: 'Configurações',
           ),
         ],
       ),

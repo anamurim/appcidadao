@@ -149,7 +149,7 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
       appBar: AppBar(
         title: const Text('Problema na Sinalização'),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: Icon(Icons.arrow_back, color: AppCores.neonBlue),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -224,8 +224,9 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
                                     ),
                                   );
                                 } finally {
-                                  if (mounted)
+                                  if (mounted) {
                                     setState(() => _loadingEndereco = false);
+                                  }
                                 }
                               },
                             ),
