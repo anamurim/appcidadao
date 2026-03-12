@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
-//import '../../../../core/tema/app_tema.dart';
-//import '../../../../core/tema/tema_controller.dart';
+import '../../../../core/modelos/usuario.dart';
+import '../../../../core/repositorios/usuario_repositorio_com_fallback.dart';
+import '../../../../core/repositorios/usuario_repositorio_firebase.dart';
+import '../../controladores/autenticacao_controller.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -470,56 +473,86 @@ class _SignupScreenState extends State<SignupScreen> {
         return;
       }
 
+      if (_passwordController.text != _confirmPasswordController.text) {
+        setState(() => _errorMessage = 'As senhas não correspondem');
+        return;
+      }
+
       setState(() {
         _isLoading = true;
         _errorMessage = null;
       });
 
-      try {
-        // Simulação de cadastro
-        // Exibe o diálogo de carregamento
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            backgroundColor: AppCores.lightGray,
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppCores.neonBlue,
-                    ),
+      if (!mounted) return;
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          backgroundColor: AppCores.lightGray,
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const SizedBox(
+                width: 50,
+                height: 50,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    AppCores.neonBlue,
                   ),
                 ),
-                const SizedBox(height: 20),
-                Text(
-                  'Criando sua conta...',
-                  style: TextStyle(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.7),
-                    fontSize: 16,
-                  ),
+              ),
+              const SizedBox(height: 20),
+              Text(
+                'Criando sua conta...',
+                style: TextStyle(
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.7),
+                  fontSize: 16,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
+        ),
+      );
+
+      try {
+        final authController = context.read<AutenticacaoController>();
+
+        // 1. Cria conta no Firebase Auth
+        final cadastroSucesso = await authController.cadastrar(
+          _emailController.text,
+          _passwordController.text,
+          nome: _nameController.text,
         );
 
-        await Future.delayed(const Duration(seconds: 2));
+        if (!cadastroSucesso) {
+          throw authController.errorMessage ??
+              'Erro ao criar a conta. Tente novamente.';
+        }
+
+        // 2. Salva dados completos no Firestore
+        final usuarioRepositorio = UsuarioRepositorioComFallback(
+          firebase: UsuarioRepositorioFirebase(),
+        );
+
+        final novoUsuario = Usuario(
+          nome: _nameController.text,
+          email: _emailController.text,
+          conta: authController.uid?.substring(0, 7) ?? 'novo',
+          avatar:
+              'https://ui-avatars.com/api/?name=${Uri.encodeComponent(_nameController.text)}&background=0066FF&color=fff',
+          cpf: _cpfController.text,
+          telefone: _phoneController.text,
+          cep: _cepController.text,
+          endereco: _enderecoController.text,
+        );
+
+        await usuarioRepositorio.atualizarUsuario(novoUsuario);
 
         if (!mounted) return;
         Navigator.pop(context);
-
-        // Simulação de possíveis erros
-        if (_emailController.text.contains('exemplo@teste.com')) {
-          throw 'E-mail já cadastrado';
-        }
 
         setState(() => _errorMessage = null);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -531,6 +564,7 @@ class _SignupScreenState extends State<SignupScreen> {
         Navigator.pop(context);
       } catch (e) {
         if (mounted) {
+          Navigator.pop(context);
           setState(() => _errorMessage = e.toString());
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
