@@ -12,17 +12,8 @@ import 'funcionalidades/autenticacao/controladores/autenticacao_controller.dart'
 import 'funcionalidades/home/controladores/usuario_controller.dart';
 import 'funcionalidades/home/controladores/reporte_controller.dart';
 
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-
-void main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  // Initialize Firebase before running the app.  
-  // Uses the generated options for the current platform.
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
   runApp(const AppCidadao());
 }
 
