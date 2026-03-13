@@ -46,6 +46,7 @@ dependencies:
   pdf: ^3.10.8      # Para gerar o documento
   printing: ^5.11.1 # Para compartilhar/baixar o arquivo
   path_provider: ^2.1.2 # Para gerenciar caminhos de arquivos
+<<<<<<< HEAD
 
   # Recomendação 7: Monitoramento de conectividade
   connectivity_plus: ^6.1.4
@@ -65,6 +66,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   intl: ^0.19.0
+=======
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
 
 
   # The following adds the Cupertino Icons font to your application.

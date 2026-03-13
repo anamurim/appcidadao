@@ -3,7 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import '../constantes/cores.dart';
 import '../../funcionalidades/reportes/dominio/entidades/media_item.dart';
+<<<<<<< HEAD
 import 'media_preview_grid.dart';
+=======
+//import '../../../../../../core/widgets/seletor_midia_widget.dart';
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
 
 /// Widget reutilizável para seleção de mídias (fotos e vídeos) em formulários
 /// de reporte.
@@ -13,8 +17,12 @@ import 'media_preview_grid.dart';
 /// - 🖼️ Galeria — seleciona imagem(ns) da galeria
 /// - 🎥 Vídeo — seleciona ou grava um vídeo
 ///
+<<<<<<< HEAD
 /// Exibe uma grade de thumbnails via [MediaPreviewGrid], com suporte a
 /// visualização em tela cheia ao clicar.
+=======
+/// Exibe uma grade de thumbnails com preview real e botão de remoção.
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
 ///
 /// ```dart
 /// SeletorMidiaWidget(
@@ -107,21 +115,41 @@ class SeletorMidiaWidget extends StatelessWidget {
           ],
         ),
 
+<<<<<<< HEAD
         // ── Grade de thumbnails (delegada ao MediaPreviewGrid) ──
         if (midias.isNotEmpty) ...[
           const SizedBox(height: 16),
           MediaPreviewGrid(
             midias: midias,
             onChanged: onChanged,
+=======
+        // ── Grade de thumbnails ──
+        if (midias.isNotEmpty) ...[
+          const SizedBox(height: 16),
+          SizedBox(
+            height: 100,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: midias.length,
+              separatorBuilder: (_, _) => const SizedBox(width: 10),
+              itemBuilder: (ctx, index) => _buildThumbnail(context, index),
+            ),
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
           ),
         ],
       ],
     );
   }
 
+<<<<<<< HEAD
   // ──────────────────────────────────────────────────────────
   // Ações de captura / seleção
   // ──────────────────────────────────────────────────────────
+=======
+  // ────────────────────────────────────────────────────────────────────────────
+  // Ações de captura / seleção
+  // ────────────────────────────────────────────────────────────────────────────
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
 
   Future<void> _capturarDaCamera(BuildContext context) async {
     final picker = ImagePicker();
@@ -247,9 +275,15 @@ class SeletorMidiaWidget extends StatelessWidget {
     }
   }
 
+<<<<<<< HEAD
   // ──────────────────────────────────────────────────────────
   // Widgets privados
   // ──────────────────────────────────────────────────────────
+=======
+  // ────────────────────────────────────────────────────────────────────────────
+  // Widgets privados
+  // ────────────────────────────────────────────────────────────────────────────
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
 
   Widget _buildBotao({
     required BuildContext context,
@@ -293,4 +327,114 @@ class SeletorMidiaWidget extends StatelessWidget {
       ),
     );
   }
+<<<<<<< HEAD
+=======
+
+  Widget _buildThumbnail(BuildContext context, int index) {
+    final item = midias[index];
+    final bool isImage = item.type == MediaType.image;
+    final theme = Theme.of(context);
+
+    return Stack(
+      children: [
+        // ── Conteúdo do thumbnail ──
+        Container(
+          width: 100,
+          height: 100,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: AppCores.neonBlue.withValues(alpha: 0.5),
+              width: 1.5,
+            ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: isImage && item.filePath != null
+              ? Image.file(
+                  File(item.filePath!),
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => _buildPlaceholderIcon(isImage),
+                )
+              : _buildPlaceholderIcon(isImage),
+        ),
+
+        // ── Badge de tipo (canto inferior esquerdo) ──
+        Positioned(
+          bottom: 4,
+          left: 4,
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.onSurface,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  isImage ? Icons.image : Icons.play_circle_fill,
+                  color: theme.colorScheme.onSurface,
+                  size: 12,
+                ),
+                const SizedBox(width: 3),
+                Text(
+                  isImage ? 'IMG' : 'VID',
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    fontSize: 10,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // ── Botão remover (canto superior direito) ──
+        Positioned(
+          top: -2,
+          right: -2,
+          child: GestureDetector(
+            onTap: () {
+              final novaLista = List<MediaItem>.from(midias)..removeAt(index);
+              onChanged(novaLista);
+            },
+            child: Container(
+              width: 24,
+              height: 24,
+              decoration: BoxDecoration(
+                color: Colors.redAccent.withValues(alpha: 0.9),
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Icon(
+                Icons.close,
+                color: theme.colorScheme.onSurface,
+                size: 14,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPlaceholderIcon(bool isImage) {
+    return Container(
+      color: AppCores.lightGray,
+      child: Center(
+        child: Icon(
+          isImage ? Icons.image_outlined : Icons.videocam_outlined,
+          color: AppCores.neonBlue.withValues(alpha: 0.6),
+          size: 36,
+        ),
+      ),
+    );
+  }
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
 }

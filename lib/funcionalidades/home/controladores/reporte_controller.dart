@@ -2,7 +2,11 @@ import 'package:flutter/foundation.dart';
 import '../../../core/modelos/reporte_base.dart';
 import '../../../core/modelos/reporte_status.dart';
 import '../../../core/repositorios/reporte_repositorio.dart';
+<<<<<<< HEAD
 import '../../../core/repositorios/reporte_repositorio_com_fallback.dart';
+=======
+import '../../../core/repositorios/reporte_repositorio_local.dart';
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
 
 /// Controlador de reportes urbanos.
 ///
@@ -12,7 +16,11 @@ class ReporteController extends ChangeNotifier {
   final ReporteRepositorio _repositorio;
 
   ReporteController({ReporteRepositorio? repositorio})
+<<<<<<< HEAD
       : _repositorio = repositorio ?? ReporteRepositorioComFallback();
+=======
+      : _repositorio = repositorio ?? ReporteRepositorioLocal();
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
 
   List<ReporteBase> _reportes = [];
   bool _isLoading = false;

@@ -1,7 +1,11 @@
 import 'package:flutter/foundation.dart';
 import '../../../core/modelos/usuario.dart';
 import '../../../core/repositorios/usuario_repositorio.dart';
+<<<<<<< HEAD
 import '../../../core/repositorios/usuario_repositorio_com_fallback.dart';
+=======
+import '../../../core/repositorios/usuario_repositorio_local.dart';
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
 
 /// Controlador do perfil do usuário.
 ///
@@ -11,7 +15,11 @@ class UsuarioController extends ChangeNotifier {
   final UsuarioRepositorio _repositorio;
 
   UsuarioController({UsuarioRepositorio? repositorio})
+<<<<<<< HEAD
     : _repositorio = repositorio ?? UsuarioRepositorioComFallback();
+=======
+    : _repositorio = repositorio ?? UsuarioRepositorioLocal();
+>>>>>>> 23606f392c94415bb105836d348e665346fbd86f
 
   Usuario? _usuario;
   bool _isLoading = false;
