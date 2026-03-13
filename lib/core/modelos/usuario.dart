@@ -7,7 +7,7 @@ class Usuario {
   final String? telefone;
   final String? cpf;
   final String? cep;
-  final String? endereco; // Novo campo
+  final String? endereco;
 
   const Usuario({
     required this.nome,
@@ -17,7 +17,7 @@ class Usuario {
     this.telefone,
     this.cpf,
     this.cep,
-    this.endereco, // Novo campo
+    this.endereco,
   });
 
   /// Cria uma cópia do usuário com os campos alterados.
@@ -29,7 +29,7 @@ class Usuario {
     String? telefone,
     String? cpf,
     String? cep,
-    String? endereco, // Novo campo
+    String? endereco,
   }) {
     return Usuario(
       nome: nome ?? this.nome,
@@ -39,7 +39,7 @@ class Usuario {
       telefone: telefone ?? this.telefone,
       cpf: cpf ?? this.cpf,
       cep: cep ?? this.cep,
-      endereco: endereco ?? this.endereco, // Novo campo
+      endereco: endereco ?? this.endereco,
     );
   }
 
@@ -52,7 +52,7 @@ class Usuario {
       'telefone': telefone,
       'cpf': cpf,
       'cep': cep,
-      'endereco': endereco, // Novo campo
+      'endereco': endereco,
     };
   }
 
@@ -65,7 +65,7 @@ class Usuario {
       telefone: map['telefone'] as String?,
       cpf: map['cpf'] as String?,
       cep: map['cep'] as String?,
-      endereco: map['endereco'] as String?, // Novo campo
+      endereco: map['endereco'] as String?,
     );
   }
 }
