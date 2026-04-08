@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../funcionalidades/reportes/dominio/entidades/media_item.dart';
+import '../modelos/media_item.dart';
 import '../../funcionalidades/home/controladores/reporte_controller.dart';
 import '../constantes/cores.dart';
 import '../modelos/reporte_base.dart';

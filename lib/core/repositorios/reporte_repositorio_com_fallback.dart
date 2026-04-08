@@ -9,9 +9,10 @@ import 'reporte_repositorio_local.dart';
 typedef OnFalhaConexao = void Function(String mensagem);
 
 /// Repositório wrapper que tenta usar Firebase e, em caso de falha,
-/// automaticamente troca para o repositório local.
+/// automaticamente troca para o repositório local (fallback).
 ///
-/// Exibe uma mensagem de erro para o usuário quando o fallback acontece.
+/// Implementa tratamento de erro com mais contexto, permitindo
+/// distinguir entre problemas de autenticação, permissão e conexão.
 class ReporteRepositorioComFallback implements ReporteRepositorio {
   final ReporteRepositorioFirebase _firebase;
   final ReporteRepositorioLocal _local;
@@ -30,7 +31,8 @@ class ReporteRepositorioComFallback implements ReporteRepositorio {
         _local = local ?? ReporteRepositorioLocal(),
         _onFalha = onFalhaConexao;
 
-  /// Executa a operação Firebase. Se falhar, troca para local e notifica.
+  /// Executa a operação Firebase com tratamento de erro detalhado.
+  /// Se falhar, troca para local e notifica com mensagem específica.
   Future<T> _executarComFallback<T>(
     Future<T> Function(ReporteRepositorio repo) operacao,
   ) async {
@@ -42,13 +44,64 @@ class ReporteRepositorioComFallback implements ReporteRepositorio {
     try {
       return await operacao(_firebase);
     } catch (e) {
-      debugPrint('⚠️ Firebase falhou, usando repositório local: $e');
-      _usandoLocal = true;
-      _onFalha?.call(
-        'Sem conexão com o servidor. Seus dados estão sendo salvos localmente.',
+      final mensagem = _extrairMensagemErro(e);
+      debugPrint(
+        '⚠️ Firebase falhou: $e\n'
+        'Mensagem extraída: $mensagem\n'
+        'Usando repositório local como fallback.',
       );
-      return operacao(_local);
+
+      _usandoLocal = true;
+      _onFalha?.call(mensagem);
+
+      // Tenta usar local como backup
+      try {
+        return await operacao(_local);
+      } catch (e2) {
+        debugPrint(
+          '❌ Fallback para local também falhou: $e2',
+        );
+        rethrow;
+      }
     }
+  }
+
+  /// Extrai mensagem de erro legível e específica.
+  String _extrairMensagemErro(Object e) {
+    final msg = e.toString();
+
+    // Autenticação
+    if (msg.contains('user-not-authenticated')) {
+      return '❌ Você precisa fazer login para enviar reportes.';
+    }
+
+    // Permissão
+    if (msg.contains('permission-denied')) {
+      return '❌ Permissão negada. Verifique as regras do Firestore ou refaça login.';
+    }
+
+    // Usuário não encontrado
+    if (msg.contains('not-found') || msg.contains('not-authorized')) {
+      return '❌ Usuário não encontrado. Tente fazer login novamente.';
+    }
+
+    // Timeout/Conexão lenta
+    if (msg.contains('deadline-exceeded') || msg.contains('timeout')) {
+      return '⏱️ Conexão lenta. Seus dados serão sincronizados quando a conexão melhorar.';
+    }
+
+    // Sem internet
+    if (msg.contains('network') || msg.contains('no internet')) {
+      return '📡 Sem conexão. Dados salvos localmente.';
+    }
+
+    // Validação
+    if (msg.contains('ArgumentError') || msg.contains('vazio')) {
+      return '❌ Dados incompletos. Verifique o formulário.';
+    }
+
+    // Genérico
+    return '⚠️ Erro ao sincronizar. Tentando novamente...';
   }
 
   @override
@@ -74,5 +127,6 @@ class ReporteRepositorioComFallback implements ReporteRepositorio {
   /// Tenta reconectar ao Firebase. Útil para um botão "Tentar novamente".
   void tentarReconectar() {
     _usandoLocal = false;
+    debugPrint('🔄 Tentando reconectar ao Firebase...');
   }
 }

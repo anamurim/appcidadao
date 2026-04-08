@@ -150,12 +150,14 @@ class _TelaPerfilState extends State<TelaPerfil> {
                               _emailController,
                               keyboardType: TextInputType.emailAddress,
                               validator: (valida) {
-                                if (valida == null || valida.isEmpty)
+                                if (valida == null || valida.isEmpty) {
                                   return 'Informe o e-mail';
+                                }
                                 if (!RegExp(
                                   r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                                ).hasMatch(valida))
+                                ).hasMatch(valida)) {
                                   return 'E-mail inválido';
+                                }
                                 return null;
                               },
                             ),

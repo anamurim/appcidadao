@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import '../../funcionalidades/reportes/dominio/entidades/media_item.dart';
+import '../modelos/media_item.dart';
 import '../constantes/cores.dart';
 
 /// Visualizador de mídia em tela cheia com suporte a zoom e navegação.

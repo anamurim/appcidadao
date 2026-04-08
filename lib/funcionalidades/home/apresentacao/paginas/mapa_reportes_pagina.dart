@@ -163,6 +163,8 @@ class _MapaReportesPaginaState extends State<MapaReportesPagina> {
         return AppCores.electricBlue;
       case ReporteStatus.emAnalise:
         return Colors.amber;
+      case ReporteStatus.rejeitado:
+        return Colors.red;
       case ReporteStatus.resolvido:
         return AppCores.accentGreen;
     }

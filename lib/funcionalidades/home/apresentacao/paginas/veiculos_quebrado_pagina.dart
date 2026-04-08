@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
+import '../../../../core/modelos/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_veiculo.dart';
 import '../../../../core/modelos/reporte_base.dart';

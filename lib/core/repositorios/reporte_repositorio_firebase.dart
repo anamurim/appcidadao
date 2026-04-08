@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import '../modelos/media_item.dart';
 import '../modelos/reporte_base.dart';
 import '../modelos/reporte_status.dart';
@@ -23,21 +24,69 @@ class ReporteRepositorioFirebase implements ReporteRepositorio {
   CollectionReference<Map<String, dynamic>> get _colecao =>
       _firestore.collection('reportes');
 
-  /// UID do usuário logado, ou 'anonimo' se não estiver logado.
-  String get _uid => _auth.currentUser?.uid ?? 'anonimo';
+  /// UID do usuário logado.
+  String get _uid {
+    final user = _auth.currentUser;
+    if (user == null) {
+      throw FirebaseAuthException(
+        code: 'user-not-authenticated',
+        message: 'Usuário não está autenticado. Faça login para enviar reportes.',
+      );
+    }
+    return user.uid;
+  }
 
   @override
   Future<void> salvarReporte(ReporteBase reporte) async {
+    // Validação crítica: usuário deve estar autenticado
+    final userId = _uid; // Lança exceção se não autenticado
+
+    // Validação de dados
+    if (reporte.id.isEmpty) {
+      throw ArgumentError('ID do reporte não pode estar vazio');
+    }
+    if (reporte.endereco.isEmpty) {
+      throw ArgumentError('Endereço do reporte não pode estar vazio');
+    }
+
     final dados = reporte.toMap();
-    dados['userId'] = _uid;
+    dados['userId'] = userId;
     dados['status'] = ReporteStatus.enviado.name;
-    await _colecao.doc(reporte.id).set(dados);
+    dados['dataSincronizacao'] = FieldValue.serverTimestamp();
+
+    try {
+      await _colecao.doc(reporte.id).set(dados);
+      debugPrint(
+        '✅ Reporte ${reporte.id} salvo no Firebase com sucesso.',
+      );
+    } on FirebaseException catch (e) {
+      debugPrint(
+        '❌ Erro Firebase ao salvar reporte: '
+        'Code: ${e.code}, Message: ${e.message}',
+      );
+
+      // Re-lança com mensagem mais clara
+      if (e.code == 'permission-denied') {
+        throw FirebaseException(
+          plugin: e.plugin,
+          code: e.code,
+          message:
+              'Permissão negada ao salvar no Firestore. Verifique as regras de segurança.',
+        );
+      }
+      rethrow;
+    } catch (e) {
+      debugPrint('❌ Erro desconhecido ao salvar reporte: $e');
+      rethrow;
+    }
   }
 
   @override
   Future<List<ReporteBase>> listarReportes() async {
+    final userId = _uid;
+
     final snapshot = await _colecao
-        .where('userId', isEqualTo: _uid)
+        .where('userId', isEqualTo: userId)
         .orderBy('dataCriacao', descending: true)
         .get();
 
@@ -53,11 +102,30 @@ class ReporteRepositorioFirebase implements ReporteRepositorio {
 
   @override
   Future<void> atualizarStatus(String id, ReporteStatus novoStatus) async {
-    await _colecao.doc(id).update({'status': novoStatus.name});
+    final userId = _uid;
+
+    // Verifica se o reporte pertence ao usuário
+    final doc = await _colecao.doc(id).get();
+    if (!doc.exists || doc.data()?['userId'] != userId) {
+      throw Exception('Reporte não encontrado ou sem permissão de acesso');
+    }
+
+    await _colecao.doc(id).update({
+      'status': novoStatus.name,
+      'dataAtualizacao': FieldValue.serverTimestamp(),
+    });
   }
 
   @override
   Future<void> removerReporte(String id) async {
+    final userId = _uid;
+
+    // Verifica se o reporte pertence ao usuário
+    final doc = await _colecao.doc(id).get();
+    if (!doc.exists || doc.data()?['userId'] != userId) {
+      throw Exception('Reporte não encontrado ou sem permissão de acesso');
+    }
+
     await _colecao.doc(id).delete();
   }
 
