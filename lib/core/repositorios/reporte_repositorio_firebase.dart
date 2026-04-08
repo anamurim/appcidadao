@@ -1,24 +1,30 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import '../modelos/media_item.dart';
 import '../modelos/reporte_base.dart';
 import '../modelos/reporte_status.dart';
+import '../servicos/storage_servico.dart';
 import 'reporte_repositorio.dart';
 
 /// Implementação Firebase (Cloud Firestore) do repositório de reportes.
 ///
 /// Salva e lê reportes da coleção 'reportes' no Firestore.
 /// Cada reporte é filtrado pelo UID do usuário logado.
+/// Integra upload automático de mídias para Android e Web.
 class ReporteRepositorioFirebase implements ReporteRepositorio {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
+  final StorageServico _storage;
 
   ReporteRepositorioFirebase({
     FirebaseFirestore? firestore,
     FirebaseAuth? auth,
+    StorageServico? storage,
   })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+        _auth = auth ?? FirebaseAuth.instance,
+        _storage = storage ?? StorageServico();
 
   /// Referência à coleção de reportes no Firestore.
   CollectionReference<Map<String, dynamic>> get _colecao =>
@@ -48,6 +54,59 @@ class ReporteRepositorioFirebase implements ReporteRepositorio {
     if (reporte.endereco.isEmpty) {
       throw ArgumentError('Endereço do reporte não pode estar vazio');
     }
+
+    // ========================= UPLOAD DE MÍDIAS =========================
+    // Faz upload de todas as mídias com filePath local antes de salvar
+    final midiasAtualizadas = <MediaItem>[];
+    
+    for (final media in reporte.midias) {
+      if (media.filePath != null && media.filePath!.isNotEmpty) {
+        final arquivo = File(media.filePath!);
+        
+        // Verifica se arquivo existe (importante para Web)
+        if (kIsWeb || arquivo.existsSync()) {
+          debugPrint('📤 Fazendo upload de ${media.nomeArquivo ?? 'arquivo'}...');
+          
+          final urlRemota = await _storage.uploadArquivo(
+            arquivo: arquivo,
+            reporteId: reporte.id,
+            nomeArquivo: media.nomeArquivo,
+          );
+
+          // Se upload bem-sucedido, atualiza o MediaItem com URL remota
+          if (urlRemota != null) {
+            midiasAtualizadas.add(
+              MediaItem(
+                filePath: media.filePath,
+                url: urlRemota, // ← URL remota agora
+                type: media.type,
+                nomeArquivo: media.nomeArquivo,
+              ),
+            );
+            debugPrint(
+              '✅ Upload bem-sucedido: ${media.nomeArquivo ?? 'arquivo'}',
+            );
+          } else {
+            // Se falhar, mantém o filePath local como fallback
+            midiasAtualizadas.add(media);
+            debugPrint(
+              '⚠️ Upload falhou para ${media.nomeArquivo}, usando fallback local',
+            );
+          }
+        } else {
+          // Arquivo não existe, mantém como está
+          midiasAtualizadas.add(media);
+        }
+      } else {
+        // Sem filePath (já foi feito upload antes), mantém como está
+        midiasAtualizadas.add(media);
+      }
+    }
+
+    // Atualiza as mídias do reporte with URLs remotas
+    reporte.midias.clear();
+    reporte.midias.addAll(midiasAtualizadas);
+    // ========================= FIM UPLOAD DE MÍDIAS =========================
 
     final dados = reporte.toMap();
     dados['userId'] = userId;

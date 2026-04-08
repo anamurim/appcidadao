@@ -62,3 +62,4 @@ android/app/google-services.json
 # Secrets e credenciais
 **/secrets.dart
 **/local.properties
+firebase.json

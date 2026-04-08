@@ -62,6 +62,7 @@ class DefaultFirebaseOptions {
     storageBucket: 'SEU_STORAGE_BUCKET_AQUI',
   );
 
+
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'SUA_API_KEY_AQUI',
     appId: 'SEU_APP_ID_AQUI',

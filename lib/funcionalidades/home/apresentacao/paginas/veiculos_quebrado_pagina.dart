@@ -60,8 +60,6 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
 
   Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
       final reporte = ReporteVeiculo(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         endereco: _enderecoController.text,
@@ -86,50 +84,35 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
         email: _emailController.text.isNotEmpty ? _emailController.text : null,
       );
 
-      await context.read<ReporteController>().submeterReporte(
-        reporte as ReporteBase,
-      );
-      // Logs de depuração
-      debugPrint('--- Relatório de Veículo salvo ---');
-      debugPrint('ID: ${reporte.id}');
-      debugPrint('Placa: ${reporte.placa}');
-      debugPrint('Tipo: ${reporte.tipoVeiculo}');
-
-      if (mounted) {
-        //Remove qualquer SnackBar que esteja aberta no momento
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-
-        //Exibe a SnackBar de sucesso
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 12),
-                Text(
-                  'O reporte do veículo foi enviado!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: AppCores.accentGreen,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            duration: const Duration(seconds: 3),
-            action: SnackBarAction(
-              label: 'OK',
-              textColor: Colors.white,
-              onPressed: () {},
-            ),
-          ),
+      try {
+        await context.read<ReporteController>().submeterReporte(
+          reporte as ReporteBase,
         );
-        // Volta para a Home automaticamente
-        Navigator.pop(context);
+        // Logs de depuração
+        debugPrint('--- Relatório de Veículo salvo ---');
+        debugPrint('ID: ${reporte.id}');
+        debugPrint('Placa: ${reporte.placa}');
+        debugPrint('Tipo: ${reporte.tipoVeiculo}');
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Reporte do veículo enviado com sucesso!'),
+              backgroundColor: AppCores.accentGreen,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao enviar reporte: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
 
       //Limpa o formulário

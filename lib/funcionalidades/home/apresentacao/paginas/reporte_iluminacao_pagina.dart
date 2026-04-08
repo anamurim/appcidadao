@@ -72,11 +72,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   }
 
   Future<void> _submitReport() async {
-    final theme = Theme.of(context);
-
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
       final reporte = ReporteIluminacao(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         endereco: _enderecoIluminacaoController.text,
@@ -91,47 +87,35 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
             : null,
       );
 
-      await context.read<ReporteController>().submeterReporte(
-        reporte as ReporteBase,
-      );
-
-      debugPrint('--- Solicitação de Reparo de Iluminação salva ---');
-      debugPrint('ID: ${reporte.id}');
-      debugPrint('Problema: ${reporte.tipoProblema}');
-      debugPrint('Poste Nº: ${reporte.numeroPoste ?? "Não informado"}');
-
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            title: Text(
-              'Solicitação Registrada',
-              style: TextStyle(color: theme.colorScheme.onSurface),
-            ),
-            content: Text(
-              'Recebemos seu reporte. O prazo para manutenção é de até 72 horas úteis.',
-              style: TextStyle(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  'ENTENDIDO',
-                  style: TextStyle(color: AppCores.accentGreen),
-                ),
-              ),
-            ],
-          ),
+      try {
+        await context.read<ReporteController>().submeterReporte(
+          reporte as ReporteBase,
         );
-        // Volta para a Home automaticamente
-        Navigator.pop(context);
+
+        debugPrint('--- Solicitação de Reparo de Iluminação salva ---');
+        debugPrint('ID: ${reporte.id}');
+        debugPrint('Problema: ${reporte.tipoProblema}');
+        debugPrint('Poste Nº: ${reporte.numeroPoste ?? "Não informado"}');
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Solicitação de reparo enviada com sucesso!'),
+              backgroundColor: AppCores.accentGreen,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao enviar solicitação: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
       _clearForm();
     }

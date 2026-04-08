@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
+import '../../../autenticacao/controladores/autenticacao_controller.dart';
 //import '../../../../core/tema/app_tema.dart';
 //import '../../../../core/tema/tema_controller.dart';
 
@@ -476,64 +478,59 @@ class _SignupScreenState extends State<SignupScreen> {
       });
 
       try {
-        // Simulação de cadastro
-        // Exibe o diálogo de carregamento
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (context) => AlertDialog(
-            backgroundColor: AppCores.lightGray,
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 3,
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      AppCores.neonBlue,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Criando sua conta...',
-                  style: TextStyle(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.7),
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
+        // Obtém o controlador de autenticação
+        final authController = context.read<AutenticacaoController>();
 
-        await Future.delayed(const Duration(seconds: 2));
+        // Remove máscara dos dados
+        final cpfLimpo = _cpfController.text.replaceAll(RegExp(r'\D'), '');
+        final telefoneLimpo = _phoneController.text.replaceAll(RegExp(r'\D'), '');
+        final cepLimpo = _cepController.text.replaceAll(RegExp(r'\D'), '');
+
+        // Chama o método de cadastro com todos os dados
+        final sucesso = await authController.cadastrarComDados(
+          email: _emailController.text.trim(),
+          senha: _passwordController.text,
+          nome: _nameController.text.trim(),
+          cpf: cpfLimpo.isNotEmpty ? cpfLimpo : null,
+          telefone: telefoneLimpo.isNotEmpty ? telefoneLimpo : null,
+          cep: cepLimpo.isNotEmpty ? cepLimpo : null,
+          endereco: _enderecoController.text.trim().isNotEmpty ? _enderecoController.text.trim() : null,
+        );
 
         if (!mounted) return;
-        Navigator.pop(context);
 
-        // Simulação de possíveis erros
-        if (_emailController.text.contains('exemplo@teste.com')) {
-          throw 'E-mail já cadastrado';
+        if (sucesso) {
+          // Mostra mensagem de sucesso
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Conta criada com sucesso! Bem-vindo!'),
+              backgroundColor: Colors.green,
+              duration: Duration(seconds: 2),
+            ),
+          );
+          
+          // Retorna para a tela de login
+          Navigator.pop(context);
+        } else {
+          // Mostra erro do controlador
+          setState(() => _errorMessage = authController.errorMessage ?? 'Erro ao criar conta');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(_errorMessage ?? 'Erro ao criar conta'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
         }
-
-        setState(() => _errorMessage = null);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Conta criada com sucesso!'),
-            backgroundColor: Colors.green,
-          ),
-        );
-        Navigator.pop(context);
       } catch (e) {
         if (mounted) {
-          setState(() => _errorMessage = e.toString());
+          setState(() => _errorMessage = 'Erro inesperado: ${e.toString()}');
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text('Erro: $e'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
           );
         }
       } finally {

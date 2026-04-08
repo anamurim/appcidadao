@@ -48,11 +48,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   }
 
   Future<void> _submitReport() async {
-    final theme = Theme.of(context);
-
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
       final reporte = ReporteSemaforo(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         endereco: _enderecoSemaforoController.text,
@@ -64,45 +60,32 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
         tipoProblema: _selecionaTipoProblemaSemaforo!,
       );
 
-      await context.read<ReporteController>().submeterReporte(
-        reporte as ReporteBase,
-      );
-
-      debugPrint('Log de Desenvolvimento - Reporte salvo: ${reporte.toMap()}');
-
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            title: Text(
-              'Sucesso',
-              style: TextStyle(color: theme.colorScheme.onSurface),
-            ),
-            content: Text(
-              'Seu relatório de semáforo foi enviado com sucesso.',
-              style: TextStyle(color: theme.colorScheme.onSurface),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'OK',
-                  style: TextStyle(
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
+      try {
+        await context.read<ReporteController>().submeterReporte(
+          reporte as ReporteBase,
         );
-        // Volta para a Home automaticamente
-        Navigator.pop(context);
+
+        debugPrint('Log de Desenvolvimento - Reporte salvo: ${reporte.toMap()}');
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Relatório de semáforo enviado com sucesso!'),
+              backgroundColor: AppCores.accentGreen,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao enviar reporte: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
       _clearForm();
     }

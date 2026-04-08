@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utilitarios/funcoes_auxiliares.dart';
 import '../../../../core/constantes/cores.dart';
+import '../../../../core/debug/firestore_debug_widget.dart';
 import '../../controladores/usuario_controller.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../apresentacao/componentes/lista_funcionalidades_widget.dart';
@@ -86,6 +87,14 @@ class _HomePaginaState extends State<HomePagina> {
               actions: _selectedIndex == 0 ? _buildAppBarActions() : null,
             ),
       body: IndexedStack(index: _selectedIndex, children: paginas),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Debug',
+        onPressed: () => showDialog(
+          context: context,
+          builder: (_) => FirestoreDebugWidget(),
+        ),
+        child: const Icon(Icons.bug_report),
+      ),
       bottomNavigationBar: _buildBottomNav(),
     );
   }
