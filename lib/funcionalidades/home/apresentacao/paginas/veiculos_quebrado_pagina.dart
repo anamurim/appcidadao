@@ -284,6 +284,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
                                       await LocalizacaoService.obterEnderecoAtual();
                                   _enderecoController.text = endereco;
                                 } catch (e) {
+                                  // ignore: use_build_context_synchronously
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(

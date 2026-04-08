@@ -47,44 +47,47 @@ class DefaultFirebaseOptions {
   // ======================================================================
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'SUA_API_KEY_AQUI',
-    appId: 'SEU_APP_ID_AQUI',
-    messagingSenderId: 'SEU_SENDER_ID_AQUI',
-    projectId: 'SEU_PROJECT_ID_AQUI',
-    storageBucket: 'SEU_STORAGE_BUCKET_AQUI',
+    apiKey: 'AIzaSyC93zSUOP6yskfVE-cXnnw3khrfiwIX1w8',
+    appId: '1:482276991152:web:475f2c898c1ab0be93db75',
+    messagingSenderId: '482276991152',
+    projectId: 'appcidadao-e7943',
+    authDomain: 'appcidadao-e7943.firebaseapp.com',
+    storageBucket: 'appcidadao-e7943.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'SUA_API_KEY__AQUI',
-    appId: 'SEU_APP_ID_AQUI',
-    messagingSenderId: 'SEU_SENDER_ID_AQUI',
-    projectId: 'SEU_PROJECT_ID_AQUI',
-    storageBucket: 'SEU_STORAGE_BUCKET_AQUI',
+    apiKey: 'AIzaSyA8crIBFAAMobkd-U4A8ixjpxURDlapLtA',
+    appId: '1:482276991152:android:26121e4221b1238e93db75',
+    messagingSenderId: '482276991152',
+    projectId: 'appcidadao-e7943',
+    storageBucket: 'appcidadao-e7943.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'SUA_API_KEY_AQUI',
-    appId: 'SEU_APP_ID_AQUI',
-    messagingSenderId: 'SEU_SENDER_ID_AQUI',
-    projectId: 'SEU_PROJECT_ID_AQUI',
-    storageBucket: 'SEU_STORAGE_BUCKET_AQUI',
+    apiKey: 'AIzaSyAow6ikecpLESzttfV8c-aJ07cdpcaqTiM',
+    appId: '1:482276991152:ios:54701dd8b6e13a5593db75',
+    messagingSenderId: '482276991152',
+    projectId: 'appcidadao-e7943',
+    storageBucket: 'appcidadao-e7943.firebasestorage.app',
     iosBundleId: 'com.example.appcidadao',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'SUA_API_KEY_AQUI',
-    appId: 'SEU_APP_ID_AQUI',
-    messagingSenderId: 'SEU_SENDER_ID_AQUI',
-    projectId: 'SEU_PROJECT_ID_AQUI',
-    storageBucket: 'SEU_STORAGE_BUCKET_AQUI',
+    apiKey: 'AIzaSyAow6ikecpLESzttfV8c-aJ07cdpcaqTiM',
+    appId: '1:482276991152:ios:54701dd8b6e13a5593db75',
+    messagingSenderId: '482276991152',
+    projectId: 'appcidadao-e7943',
+    storageBucket: 'appcidadao-e7943.firebasestorage.app',
     iosBundleId: 'com.example.appcidadao',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'SUA_API_KEY_AQUI',
-    appId: 'SEU_APP_ID_AQUI',
-    messagingSenderId: 'SEU_SENDER_ID_AQUI',
-    projectId: 'SEU_PROJECT_ID_AQUI',
-    storageBucket: 'SEU_STORAGE_BUCKET_AQUI',
+    apiKey: 'AIzaSyC93zSUOP6yskfVE-cXnnw3khrfiwIX1w8',
+    appId: '1:482276991152:web:a05f5e382fae5d4493db75',
+    messagingSenderId: '482276991152',
+    projectId: 'appcidadao-e7943',
+    authDomain: 'appcidadao-e7943.firebaseapp.com',
+    storageBucket: 'appcidadao-e7943.firebasestorage.app',
   );
+
 }

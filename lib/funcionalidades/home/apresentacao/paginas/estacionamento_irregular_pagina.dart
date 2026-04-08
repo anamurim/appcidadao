@@ -235,6 +235,7 @@ class _TelaEstacionamentoIrregularState
                                   await LocalizacaoService.obterEnderecoAtual();
                               _enderecoEstacionamentoController.text = endereco;
                             } catch (e) {
+                              // ignore: use_build_context_synchronously
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(

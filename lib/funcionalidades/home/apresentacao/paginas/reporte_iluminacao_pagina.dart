@@ -221,6 +221,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
                                       await LocalizacaoService.obterEnderecoAtual();
                                   _enderecoIluminacaoController.text = endereco;
                                 } catch (e) {
+                                  // ignore: use_build_context_synchronously
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
                                       content: Text(
