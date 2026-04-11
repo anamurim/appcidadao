@@ -76,7 +76,7 @@ class _HomePaginaState extends State<HomePagina> {
                   : Text(
                       _selectedIndex == 0
                           ? 'APP CIDADÃO'
-                          : 'Histórico de reportes',
+                          : 'Histórico de Reportes',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 22,
@@ -175,6 +175,12 @@ class _HomePaginaState extends State<HomePagina> {
 
   Widget _buildReporteCard(dynamic reporte) {
     final Map<String, IconData> tipoIcones = {
+      'conta': Icons.account_balance_wallet,
+      'consumo': Icons.show_chart,
+      'pagamentos': Icons.payment,
+      'suporte': Icons.support_agent,
+      'energia': Icons.power_off,
+      'economia': Icons.eco,
       'interferencia': Icons.traffic,
       'semaforo': Icons.traffic_outlined,
       'veiculo': Icons.car_repair,
@@ -189,7 +195,7 @@ class _HomePaginaState extends State<HomePagina> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSurface,
+        color: Theme.of(context).scaffoldBackgroundColor,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),

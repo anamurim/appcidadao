@@ -53,14 +53,12 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
 
     // Filtro por tipo de reporte
     if (_filtroTipo != null) {
-      resultado =
-          resultado.where((r) => r.tipoReporte == _filtroTipo).toList();
+      resultado = resultado.where((r) => r.tipoReporte == _filtroTipo).toList();
     }
 
     // Filtro por status
     if (_filtroStatus != null) {
-      resultado =
-          resultado.where((r) => r.status == _filtroStatus).toList();
+      resultado = resultado.where((r) => r.status == _filtroStatus).toList();
     }
 
     return resultado;
@@ -74,15 +72,16 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppCores.neonBlue),
-          onPressed:
-              widget.onBackToHome ?? () => Navigator.of(context).pop(),
+          onPressed: widget.onBackToHome ?? () => Navigator.of(context).pop(),
         ),
       ),
       body: Consumer<ReporteController>(
         builder: (context, controller, _) {
           if (controller.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppCores.neonBlue),
+            return Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             );
           }
 
@@ -138,8 +137,7 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
                         padding: const EdgeInsets.all(16),
                         itemCount: reportesFiltrados.length,
                         itemBuilder: (context, index) {
-                          return _buildReporteCard(
-                              reportesFiltrados[index]);
+                          return _buildReporteCard(reportesFiltrados[index]);
                         },
                       ),
               ),
@@ -160,17 +158,15 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
         decoration: InputDecoration(
           hintText: 'Buscar reportes...',
           hintStyle: TextStyle(
-            color: Theme.of(context)
-                .colorScheme
-                .onSurface
-                .withValues(alpha: 0.4),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.4),
           ),
           prefixIcon: Icon(
             Icons.search,
-            color: Theme.of(context)
-                .colorScheme
-                .onSurface
-                .withValues(alpha: 0.5),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.5),
           ),
           suffixIcon: _searchController.text.isNotEmpty
               ? IconButton(
@@ -195,10 +191,7 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
 
   Widget _buildFiltrosTipo(List<ReporteBase> todosReportes) {
     // Extrai tipos únicos dos reportes existentes
-    final tiposUnicos = todosReportes
-        .map((r) => r.tipoReporte)
-        .toSet()
-        .toList()
+    final tiposUnicos = todosReportes.map((r) => r.tipoReporte).toSet().toList()
       ..sort();
 
     return SizedBox(
@@ -217,17 +210,18 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
           ),
           const SizedBox(width: 8),
           // Chips para cada tipo
-          ...tiposUnicos.map((tipo) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: FilterChip(
-                  label: Text(tipo),
-                  selected: _filtroTipo == tipo,
-                  onSelected: (selected) {
-                    setState(() =>
-                        _filtroTipo = selected ? tipo : null);
-                  },
-                ),
-              )),
+          ...tiposUnicos.map(
+            (tipo) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: FilterChip(
+                label: Text(tipo),
+                selected: _filtroTipo == tipo,
+                onSelected: (selected) {
+                  setState(() => _filtroTipo = selected ? tipo : null);
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -250,17 +244,18 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
           ),
           const SizedBox(width: 8),
           // Chips para cada status
-          ...ReporteStatus.values.map((status) => Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: FilterChip(
-                  label: Text(_statusToString(status)),
-                  selected: _filtroStatus == status,
-                  onSelected: (selected) {
-                    setState(() =>
-                        _filtroStatus = selected ? status : null);
-                  },
-                ),
-              )),
+          ...ReporteStatus.values.map(
+            (status) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: FilterChip(
+                label: Text(_statusToString(status)),
+                selected: _filtroStatus == status,
+                onSelected: (selected) {
+                  setState(() => _filtroStatus = selected ? status : null);
+                },
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -274,7 +269,9 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
           Icon(
             Icons.search_off,
             size: 64,
-            color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3),
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text(
@@ -306,7 +303,8 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
               children: [
                 Text(
                   reporte.tipoReporte,
-                  style: const TextStyle(
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -331,18 +329,19 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
                 Icon(
                   Icons.location_on,
                   size: 16,
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
                 const SizedBox(width: 4),
                 Expanded(
                   child: Text(
                     reporte.endereco,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.7),
-                        ),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -358,20 +357,18 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
                 Text(
                   _formatDate(reporte.dataCriacao),
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6),
-                      ),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
                 ),
                 Text(
                   'ID: ${reporte.id}',
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.5),
-                      ),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
                 ),
               ],
             ),
@@ -380,12 +377,18 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
             if (reporte.midias.isNotEmpty) ...[
               const SizedBox(height: 12),
               MediaPreviewGrid(
-                midias: reporte.midias.map((m) => MediaItem(
-                  filePath: null,
-                  url: m.url,
-                  type: m.type == MediaType.image ? MediaType.image : MediaType.video,
-                  nomeArquivo: null,
-                )).toList(),
+                midias: reporte.midias
+                    .map(
+                      (m) => MediaItem(
+                        filePath: null,
+                        url: m.url,
+                        type: m.type == MediaType.image
+                            ? MediaType.image
+                            : MediaType.video,
+                        nomeArquivo: null,
+                      ),
+                    )
+                    .toList(),
                 onChanged: (_) {}, // Read-only
                 editavel: false,
               ),
