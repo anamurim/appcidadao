@@ -3,9 +3,10 @@ import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/modelos/reporte_base.dart';
 import '../../../../core/modelos/reporte_status.dart';
-import '../../../../core/widgets/media_preview_grid.dart';
-import '../../../../core/modelos/media_item.dart';
+//import '../../../../core/widgets/media_preview_grid.dart';
+//import '../../../../core/modelos/media_item.dart';
 import '../../controladores/reporte_controller.dart';
+import 'detalhe_reporte_pagina.dart';
 
 class HistoricoReportesPagina extends StatefulWidget {
   final VoidCallback? onBackToHome;
@@ -292,108 +293,81 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
   Widget _buildReporteCard(ReporteBase reporte) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Cabeçalho com tipo e status
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  reporte.tipoReporte,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                _buildStatusChip(reporte.status),
-              ],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetalheReportePagina(reporte: reporte),
             ),
-            const SizedBox(height: 8),
-
-            // Descrição
-            Text(
-              reporte.descricao,
-              style: Theme.of(context).textTheme.bodyMedium,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 8),
-
-            // Endereço
-            Row(
-              children: [
-                Icon(
-                  Icons.location_on,
-                  size: 16,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-                const SizedBox(width: 4),
-                Expanded(
-                  child: Text(
-                    reporte.endereco,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(
-                        context,
-                      ).colorScheme.onSurface.withValues(alpha: 0.7),
+          );
+        },
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    reporte.tipoReporte,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-
-            // Data e ID
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  _formatDate(reporte.dataCriacao),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.6),
-                  ),
-                ),
-                Text(
-                  'ID: ${reporte.id}',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.5),
-                  ),
-                ),
-              ],
-            ),
-
-            // Mídias se existirem
-            if (reporte.midias.isNotEmpty) ...[
+                  _buildStatusChip(
+                    reporte.status,
+                  ), // O método agora está definido abaixo
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                reporte.endereco,
+                style: TextStyle(color: Colors.grey[400], fontSize: 13),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                reporte.descricao,
+                style: const TextStyle(fontSize: 14),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
               const SizedBox(height: 12),
-              MediaPreviewGrid(
-                midias: reporte.midias
-                    .map(
-                      (m) => MediaItem(
-                        filePath: null,
-                        url: m.url,
-                        type: m.type == MediaType.image
-                            ? MediaType.image
-                            : MediaType.video,
-                        nomeArquivo: null,
-                      ),
-                    )
-                    .toList(),
-                onChanged: (_) {}, // Read-only
-                editavel: false,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _formatDate(reporte.dataCriacao),
+                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
+                  ),
+                  if (reporte.midias.isNotEmpty)
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.image_outlined,
+                          size: 16,
+                          color: Colors.grey[500],
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${reporte.midias.length}',
+                          style: TextStyle(
+                            color: Colors.grey[500],
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
               ),
             ],
-          ],
+          ),
         ),
       ),
     );

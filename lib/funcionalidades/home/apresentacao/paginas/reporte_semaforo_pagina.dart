@@ -19,7 +19,8 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   final _formKey = GlobalKey<FormState>();
 
   // Variáveis de estado
-  String? _selecionaTipoProblemaSemaforo;
+  final TextEditingController _tipoProblemaSemaforoController =
+      TextEditingController();
   bool _loadingEndereco = false;
   final TextEditingController _enderecoSemaforoController =
       TextEditingController();
@@ -28,19 +29,20 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   final TextEditingController _descricaoSemaforoController =
       TextEditingController();
 
-  final List<String> _problemTypes = [
+  /*final List<String> _problemTypes = [
     'Apagado',
     'Piscando',
     'Luzes Queimadas',
     'Sincronia Incorreta',
     'Poste Danificado',
     'Outro',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItems = <MediaItem>[];
 
   @override
   void dispose() {
+    _tipoProblemaSemaforoController.dispose();
     _enderecoSemaforoController.dispose();
     _pontoReferenciaSemaforoController.dispose();
     _descricaoSemaforoController.dispose();
@@ -57,7 +59,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
             : null,
         descricao: _descricaoSemaforoController.text,
         midias: List.from(_selectedMediaItems),
-        tipoProblema: _selecionaTipoProblemaSemaforo!,
+        tipoProblema: _tipoProblemaSemaforoController.text,
       );
 
       try {
@@ -65,7 +67,9 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
           reporte as ReporteBase,
         );
 
-        debugPrint('Log de Desenvolvimento - Reporte salvo: ${reporte.toMap()}');
+        debugPrint(
+          'Log de Desenvolvimento - Reporte salvo: ${reporte.toMap()}',
+        );
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -94,7 +98,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoProblemaSemaforo = null;
+      _tipoProblemaSemaforoController.clear();
       _enderecoSemaforoController.clear();
       _pontoReferenciaSemaforoController.clear();
       _descricaoSemaforoController.clear();
@@ -206,23 +210,19 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
               ),
               const SizedBox(height: 16),
 
-              // Tipo de Problema (Dropdown)
-              DropdownButtonFormField<String>(
-                dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+              // Tipo de Problema (TextField))
+              TextFormField(
+                controller: _tipoProblemaSemaforoController,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
-                decoration: _inputStyle('Tipo de Problema', Icons.traffic),
-                initialValue: _selecionaTipoProblemaSemaforo,
-                items: _problemTypes
-                    .map(
-                      (type) =>
-                          DropdownMenuItem(value: type, child: Text(type)),
-                    )
-                    .toList(),
-                onChanged: (val) =>
-                    setState(() => _selecionaTipoProblemaSemaforo = val),
-                validator: (val) => val == null ? 'Selecione uma opção' : null,
+                decoration: _inputStyle(
+                  'Tipo de Problema',
+                  Icons.traffic,
+                ).copyWith(hintText: 'Ex: Apagado, Piscando, etc.'),
+                validator: (val) => val == null || val.isEmpty
+                    ? 'Informe o tipo de problema'
+                    : null,
               ),
               const SizedBox(height: 16),
 

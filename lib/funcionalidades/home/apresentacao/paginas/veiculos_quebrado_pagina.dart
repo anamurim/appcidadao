@@ -20,7 +20,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Controllers e variáveis de estado
-  String? _selecionaTipoVeiculo;
+  final _tipoVeiculoController = TextEditingController();
   bool _loadingEndereco = false;
   final _placaController = TextEditingController();
   final _modeloController = TextEditingController();
@@ -33,19 +33,20 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   final _telefoneController = TextEditingController();
   final _emailController = TextEditingController();
 
-  final List<String> _tiposVeiculo = [
+  /*final List<String> _tiposVeiculo = [
     'Carro',
     'Moto',
     'Caminhão',
     'Ônibus',
     'Outro - Especificar na descrição',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItems = <MediaItem>[];
 
   @override
   void dispose() {
     _placaController.dispose();
+    _tipoVeiculoController.dispose();
     _modeloController.dispose();
     _marcaController.dispose();
     _corController.dispose();
@@ -68,7 +69,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
             : null,
         descricao: _descricaoController.text,
         midias: List.from(_selectedMediaItems),
-        tipoVeiculo: _selecionaTipoVeiculo!,
+        tipoVeiculo: _tipoVeiculoController.text,
         placa: _placaController.text,
         marca: _marcaController.text.isNotEmpty ? _marcaController.text : null,
         modelo: _modeloController.text.isNotEmpty
@@ -123,7 +124,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoVeiculo = null;
+      _tipoVeiculoController.clear();
       _placaController.clear();
       _marcaController.clear();
       _modeloController.clear();
@@ -198,15 +199,16 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               ),
               const SizedBox(height: 15),
 
-              DropdownButtonFormField<String>(
-                dropdownColor: theme.scaffoldBackgroundColor,
+              TextFormField(
+                controller: _tipoVeiculoController,
                 style: TextStyle(color: theme.colorScheme.onSurface),
-                decoration: _inputStyle('Tipo', Icons.car_crash_outlined),
-                items: _tiposVeiculo
-                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                    .toList(),
-                onChanged: (val) => setState(() => _selecionaTipoVeiculo = val),
-                validator: (val) => val == null ? 'Selecione' : null,
+                decoration: _inputStyle(
+                  'Tipo',
+                  Icons.car_crash_outlined,
+                  hint: 'Ex: Carro, Moto, Caminhão',
+                ),
+                validator: (val) =>
+                    val!.isEmpty ? 'Selecione ou digite o tipo' : null,
               ),
               const SizedBox(height: 15),
 

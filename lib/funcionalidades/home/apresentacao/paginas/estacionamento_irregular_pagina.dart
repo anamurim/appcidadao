@@ -22,14 +22,14 @@ class _TelaEstacionamentoIrregularState
   final _formKey = GlobalKey<FormState>();
 
   // Controllers e variáveis de estado
-  String? _selecionaTipoInfracao;
+  final _tipoInfracaoController = TextEditingController();
   bool _loadingEndereco = false;
   final _placaController = TextEditingController();
   final _enderecoEstacionamentoController = TextEditingController();
   final _pontoReferenciaEstacionamentoController = TextEditingController();
   final _descricaoEstacionamentoController = TextEditingController();
 
-  final List<String> _tipoInfracoes = [
+  /*final List<String> _tipoInfracoes = [
     'Fila Dupla',
     'Vaga de Idoso/PNE sem cartão',
     'Guia Rebaixada (Entrada/Saída de veículos)',
@@ -37,13 +37,14 @@ class _TelaEstacionamentoIrregularState
     'Ponto de Ônibus',
     'Estacionar em local proibido (Placa R6a/R6c)',
     'Outro - Especificar na descrição',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItems = <MediaItem>[];
 
   @override
   void dispose() {
     _placaController.dispose();
+    _tipoInfracaoController.dispose();
     _enderecoEstacionamentoController.dispose();
     _pontoReferenciaEstacionamentoController.dispose();
     _descricaoEstacionamentoController.dispose();
@@ -83,7 +84,7 @@ class _TelaEstacionamentoIrregularState
             : null,
         descricao: _descricaoEstacionamentoController.text,
         midias: List.from(_selectedMediaItems),
-        tipoInfracao: _selecionaTipoInfracao!,
+        tipoInfracao: _tipoInfracaoController.text,
         placaVeiculo: _placaController.text.isNotEmpty
             ? _placaController.text
             : null,
@@ -125,7 +126,7 @@ class _TelaEstacionamentoIrregularState
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoInfracao = null;
+      _tipoInfracaoController.clear();
       _placaController.clear();
       _enderecoEstacionamentoController.clear();
       _pontoReferenciaEstacionamentoController.clear();
@@ -154,22 +155,19 @@ class _TelaEstacionamentoIrregularState
               _buildSecaoTitulo("Detalhes da Infração"),
               const SizedBox(height: 15),
 
-              // Dropdown de Infração
-              DropdownButtonFormField<String>(
-                dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+              TextFormField(
+                controller: _tipoInfracaoController,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 decoration: _inputStyle(
-                  'Tipo de Irregularidade',
+                  'Tipo de Irregularidade *',
                   Icons.warning_amber_rounded,
+                  hint: 'Ex: Fila dupla, vaga de idoso...',
                 ),
-                items: _tipoInfracoes
-                    .map((i) => DropdownMenuItem(value: i, child: Text(i)))
-                    .toList(),
-                onChanged: (val) =>
-                    setState(() => _selecionaTipoInfracao = val),
-                validator: (val) => val == null ? 'Selecione a infração' : null,
+                validator: (val) => val == null || val.isEmpty
+                    ? 'Informe o tipo de irregularidade'
+                    : null,
               ),
               const SizedBox(height: 15),
 

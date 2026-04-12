@@ -19,7 +19,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers e variáveis de estado
-  String? _selecionaTipoProblemaIluminacao;
+  final _tipoProblemaIluminacaoController = TextEditingController();
   bool _loadingEndereco = false;
   final _enderecoIluminacaoController = TextEditingController();
   final _numeroPosteController =
@@ -27,19 +27,20 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   final _pontoReferenciaIluminacaoController = TextEditingController();
   final _descricaoIluminacaoController = TextEditingController();
 
-  final List<String> _categoriasIluminacao = [
+  /*final List<String> _categoriasIluminacao = [
     'Lâmpada Apagada à Noite',
     'Lâmpada Acesa de Dia',
     'Lâmpada Oscilando (Piscando)',
     'Poste Danificado/Caído',
     'Luminária Quebrada/Solta',
     'Outro - Especificar na descrição',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItemsIluminacao = <MediaItem>[];
 
   @override
   void dispose() {
+    _tipoProblemaIluminacaoController.dispose();
     _enderecoIluminacaoController.dispose();
     _numeroPosteController.dispose();
     _pontoReferenciaIluminacaoController.dispose();
@@ -81,7 +82,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
             : null,
         descricao: _descricaoIluminacaoController.text,
         midias: List.from(_selectedMediaItemsIluminacao),
-        tipoProblema: _selecionaTipoProblemaIluminacao!,
+        tipoProblema: _tipoProblemaIluminacaoController.text,
         numeroPoste: _numeroPosteController.text.isNotEmpty
             ? _numeroPosteController.text
             : null,
@@ -124,7 +125,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoProblemaIluminacao = null;
+      _tipoProblemaIluminacaoController.clear();
       _enderecoIluminacaoController.clear();
       _numeroPosteController.clear();
       _pontoReferenciaIluminacaoController.clear();
@@ -155,21 +156,19 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
 
               _buildSecaoTitulo("O que está acontecendo?"),
               const SizedBox(height: 15),
-              DropdownButtonFormField<String>(
-                dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+              TextFormField(
+                controller: _tipoProblemaIluminacaoController,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 decoration: _inputStyle(
-                  'Selecione o problema',
-                  Icons.lightbulb,
+                  'Tipo de Problema *',
+                  Icons.lightbulb_outline,
+                  hint: 'Ex: Lâmpada apagada, acesa de dia...',
                 ),
-                items: _categoriasIluminacao
-                    .map((p) => DropdownMenuItem(value: p, child: Text(p)))
-                    .toList(),
-                onChanged: (val) =>
-                    setState(() => _selecionaTipoProblemaIluminacao = val),
-                validator: (val) => val == null ? 'Selecione uma opção' : null,
+                validator: (val) => val == null || val.isEmpty
+                    ? 'Informe o tipo de problema'
+                    : null,
               ),
               const SizedBox(height: 20),
 

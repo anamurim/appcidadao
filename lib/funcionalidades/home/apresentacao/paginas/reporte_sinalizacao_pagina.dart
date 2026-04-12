@@ -19,25 +19,26 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers e variáveis de estado
-  String? _selecionaTipoSinalizacao;
+  final _tipoSinalizacaoController = TextEditingController();
   bool _loadingEndereco = false;
   final _enderecoSinalizacaoController = TextEditingController();
   final _pontoReferenciaSinalizacaoController = TextEditingController();
   final _descricaoSinalizacaoController = TextEditingController();
 
-  final List<String> _categoriasSinalizacao = [
+  /*final List<String> _categoriasSinalizacao = [
     'Placa de Trânsito Danificada',
     'Placa de Identificação de Rua Faltando',
     'Semáforo com Lâmpada Queimada',
     'Faixa de Pedestres Apagada',
     'Pintura de Solo (Pare/Devagar) Inexistente',
     'Outro',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItemsSinalizacao = <MediaItem>[];
 
   @override
   void dispose() {
+    _tipoSinalizacaoController.dispose();
     _enderecoSinalizacaoController.dispose();
     _pontoReferenciaSinalizacaoController.dispose();
     _descricaoSinalizacaoController.dispose();
@@ -79,7 +80,7 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
             : null,
         descricao: _descricaoSinalizacaoController.text,
         midias: List.from(_selectedMediaItemsSinalizacao),
-        tipoSinalizacao: _selecionaTipoSinalizacao!,
+        tipoSinalizacao: _tipoSinalizacaoController.text,
       );
 
       try {
@@ -117,7 +118,7 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoSinalizacao = null;
+      _tipoSinalizacaoController.clear();
       _enderecoSinalizacaoController.clear();
       _pontoReferenciaSinalizacaoController.clear();
       _descricaoSinalizacaoController.clear();
@@ -148,20 +149,17 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
               _buildSecaoTitulo("Informações do problema na sinalização"),
               const SizedBox(height: 15),
 
-              DropdownButtonFormField<String>(
-                dropdownColor: theme.scaffoldBackgroundColor,
+              TextFormField(
+                controller: _tipoSinalizacaoController,
                 style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle(
-                  'Categoria de Sinalização',
+                  'Categoria de Sinalização *',
                   Icons.category,
+                  hint: 'Ex: Placa danificada, Faixa apagada...',
                 ),
-                items: _categoriasSinalizacao
-                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                    .toList(),
-                onChanged: (val) =>
-                    setState(() => _selecionaTipoSinalizacao = val),
-                validator: (val) =>
-                    val == null ? 'Selecione uma categoria' : null,
+                validator: (val) => val == null || val.isEmpty
+                    ? 'Informe a categoria da sinalização'
+                    : null,
               ),
               const SizedBox(height: 20),
 
