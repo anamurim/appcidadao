@@ -18,9 +18,12 @@ class AutenticacaoController extends ChangeNotifier {
   bool _modoOffline = false;
   String? _errorMessage;
 
-  AutenticacaoController({FirebaseAuth? auth, UsuarioRepositorio? usuarioRepositorio})
-      : _auth = auth ?? FirebaseAuth.instance,
-        _usuarioRepositorio = usuarioRepositorio ?? UsuarioRepositorioComFallback() {
+  AutenticacaoController({
+    FirebaseAuth? auth,
+    UsuarioRepositorio? usuarioRepositorio,
+  }) : _auth = auth ?? FirebaseAuth.instance,
+       _usuarioRepositorio =
+           usuarioRepositorio ?? UsuarioRepositorioComFallback() {
     // Escuta mudanças no estado de autenticação do Firebase
     _auth.authStateChanges().listen((User? user) {
       _isLoggedIn = user != null;
@@ -67,8 +70,7 @@ class AutenticacaoController extends ChangeNotifier {
     } catch (e) {
       // Firebase não inicializado ou sem internet
       debugPrint('⚠️ Firebase Auth indisponível: $e');
-      _errorMessage =
-          'Sem conexão com o servidor. Entrando em modo offline.';
+      _errorMessage = 'Sem conexão com o servidor. Entrando em modo offline.';
       _modoOffline = true;
       _isLoggedIn = true; // Permite acesso em modo offline
       _isLoading = false;
@@ -78,8 +80,7 @@ class AutenticacaoController extends ChangeNotifier {
   }
 
   /// Cria nova conta com email e senha via Firebase Auth.
-  Future<bool> cadastrar(String email, String senha,
-      {String? nome}) async {
+  Future<bool> cadastrar(String email, String senha, {String? nome}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -149,7 +150,8 @@ class AutenticacaoController extends ChangeNotifier {
         nome: nome,
         email: email.trim(),
         conta: credencial.user!.uid.substring(0, 7),
-        avatar: 'https://ui-avatars.com/api/?name=${Uri.encodeComponent(nome)}&background=0066FF&color=fff',
+        avatar:
+            'https://ui-avatars.com/api/?name=${Uri.encodeComponent(nome)}&background=0066FF&color=fff',
         telefone: telefone,
         cpf: cpf,
         cep: cep,

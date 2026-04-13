@@ -23,7 +23,7 @@ class UsuarioController extends ChangeNotifier {
   /// Atalhos para dados exibidos frequentemente na UI.
   String get nome => _usuario?.nome ?? 'Usuário';
   String get email => _usuario?.email ?? 'usuario@email.com';
-  String get conta => _usuario?.conta ?? '00000-0';
+  //String get conta => _usuario?.conta ?? '00000-0';
   String get avatar => _usuario?.avatar ?? '';
 
   /// Carrega o usuário atual do repositório.

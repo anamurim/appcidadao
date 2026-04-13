@@ -23,9 +23,9 @@ class UsuarioRepositorioComFallback implements UsuarioRepositorio {
     UsuarioRepositorioFirebase? firebase,
     UsuarioRepositorioLocal? local,
     OnFalhaConexao? onFalhaConexao,
-  })  : _firebase = firebase ?? UsuarioRepositorioFirebase(),
-        _local = local ?? UsuarioRepositorioLocal(),
-        _onFalha = onFalhaConexao;
+  }) : _firebase = firebase ?? UsuarioRepositorioFirebase(),
+       _local = local ?? UsuarioRepositorioLocal(),
+       _onFalha = onFalhaConexao;
 
   Future<T> _executarComFallback<T>(
     Future<T> Function(UsuarioRepositorio repo) operacao,
@@ -39,9 +39,7 @@ class UsuarioRepositorioComFallback implements UsuarioRepositorio {
     } catch (e) {
       debugPrint('⚠️ Firebase falhou, usando repositório local: $e');
       _usandoLocal = true;
-      _onFalha?.call(
-        'Sem conexão com o servidor. Usando dados locais.',
-      );
+      _onFalha?.call('Sem conexão com o servidor. Usando dados locais.');
       return operacao(_local);
     }
   }
@@ -50,9 +48,9 @@ class UsuarioRepositorioComFallback implements UsuarioRepositorio {
   Future<Usuario> getUsuarioAtual() =>
       _executarComFallback((repo) => repo.getUsuarioAtual());
 
-  @override
-  Future<void> atualizarUsuario(Usuario usuario) =>
-      _executarComFallback((repo) => repo.atualizarUsuario(usuario));
+  Future<void> atualizarUsuario(Usuario usuario) {
+    return _executarComFallback((repo) => repo.atualizarUsuario(usuario));
+  }
 
   /// Tenta reconectar ao Firebase.
   void tentarReconectar() {

@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart'; // Importante para o context.watch
 import '../../../../core/constantes/cores.dart';
 import '../../../perfil/tela_perfil.dart';
+import 'package:appcidadao/funcionalidades/home/controladores/usuario_controller.dart';
 
 class CabecalhoHome extends StatelessWidget {
-  final String nome;
-  final String email;
-  final String conta;
-
-  const CabecalhoHome({
-    super.key,
-    required this.nome,
-    required this.email,
-    required this.conta,
-  });
+  const CabecalhoHome({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // O context.watch faz o widget reconstruir sempre que notifyListeners() for chamado no controller
+    final usuarioController = context.watch<UsuarioController>();
+
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -32,14 +28,13 @@ class CabecalhoHome extends StatelessWidget {
           ),
         ],
       ),
-      //Permite o posicionamento livre do ícone
       child: Stack(
         children: [
-          //Informações Principais do Usuário
           Padding(
             padding: const EdgeInsets.all(20),
             child: Row(
               children: [
+                // Avatar do Usuário
                 Container(
                   width: 60,
                   height: 60,
@@ -47,9 +42,9 @@ class CabecalhoHome extends StatelessWidget {
                     shape: BoxShape.circle,
                     color: Colors.white,
                     border: Border.all(color: AppCores.neonBlue, width: 2),
+                    // Se o avatar for uma URL de imagem, você pode usar DecorationImage aqui
                   ),
                   child: Center(
-                    //Para usar o ícone a foto do usuário como botão da configuração manter esse trecho
                     child: IconButton(
                       icon: const Icon(
                         Icons.person,
@@ -60,9 +55,7 @@ class CabecalhoHome extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => TelaPerfil(
-                            onBackToHome: () => Navigator.pop(
-                              context,
-                            ), // Nesse trecho o "voltar" apenas fecha a tela sobreposta
+                            onBackToHome: () => Navigator.pop(context),
                           ),
                         ),
                       ),
@@ -70,12 +63,14 @@ class CabecalhoHome extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 15),
+                // Informações de Texto
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Nome dinâmico
                       Text(
-                        'Olá, $nome',
+                        'Olá, ${usuarioController.nome}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 20,
@@ -83,15 +78,17 @@ class CabecalhoHome extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 4),
+                      // Email dinâmico
                       Text(
-                        email,
+                        usuarioController.email,
                         style: TextStyle(
                           color: Colors.white.withValues(alpha: 0.8),
                           fontSize: 14,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Container(
+                      // Badge da Conta (Descomentei para usar o dado real)
+                      /*Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
                           vertical: 4,
@@ -105,17 +102,27 @@ class CabecalhoHome extends StatelessWidget {
                           ),
                         ),
                         child: Text(
-                          'Conta: $conta',
+                          'Conta: ${usuarioController.conta}',
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
+                      ),*/
                     ],
                   ),
                 ),
+                // Feedback visual de carregamento (opcional)
+                if (usuarioController.isLoading)
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  ),
               ],
             ),
           ),

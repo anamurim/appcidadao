@@ -14,11 +14,15 @@ class UsuarioRepositorioLocal implements UsuarioRepositorio {
   UsuarioRepositorioLocal._interno();
 
   Usuario _usuarioAtual = const Usuario(
-    nome: 'Usuário',
-    email: 'e-mail@gmail.com',
-    conta: '12345-6',
     avatar:
         'https://ui-avatars.com/api/?name=Carlos+Silva&background=0066FF&color=fff',
+    nome: 'Usuário',
+    email: 'e-mail@email.com',
+    conta: '12345-6',
+    cpf: '000.000.000-00',
+    telefone: '(12) 34567-8901',
+    cep: '12345-678',
+    endereco: 'Rua Exemplo, 123',
   );
 
   @override

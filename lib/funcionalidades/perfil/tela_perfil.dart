@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart'; // Adicionado
 import 'package:flutter/services.dart';
 import '../../core/constantes/cores.dart';
@@ -22,8 +24,10 @@ class _TelaPerfilState extends State<TelaPerfil> {
   final _emailController = TextEditingController();
   final _telefoneController = TextEditingController();
   final _cpfController = TextEditingController();
-  final _cepController = TextEditingController(); // Novo
-  final _enderecoController = TextEditingController(); // Novo
+  final _cepController = TextEditingController();
+  final _enderecoController = TextEditingController();
+  final ImagePicker _picker = ImagePicker();
+  String? _avatarLocal;
   //final _passwordController = TextEditingController(); // Senha será alterada em outra tela.
 
   // Máscaras sincronizadas com SignupScreen
@@ -41,7 +45,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
   );
 
   bool _dadosCarregados = false;
-  bool _salvando = false;
+  final bool _salvando = false;
   //bool _obscurePassword = true; // Para o novo campo de senha
 
   @override
@@ -55,8 +59,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
         _telefoneController.text = _phoneMask.maskText(usuario.telefone ?? '');
         _cpfController.text = _cpfMask.maskText(usuario.cpf ?? '');
         _enderecoController.text = usuario.endereco!;
-        // Caso seu modelo de usuário já tenha estes campos:
-        // _cepController.text = _cepMask.maskText(usuario.cep ?? '');
+        _cepController.text = _cepMask.maskText(usuario.cep ?? '');
       }
       _dadosCarregados = true;
     }
@@ -75,35 +78,76 @@ class _TelaPerfilState extends State<TelaPerfil> {
   }
 
   Future<void> _salvarAlteracoes() async {
-    if (!_formKey.currentState!.validate()) return;
+    if (_formKey.currentState!.validate()) {
+      final usuarioController = context.read<UsuarioController>();
+      final usuarioAtual = usuarioController.usuario;
 
-    setState(() => _salvando = true);
+      if (usuarioAtual != null) {
+        final usuarioEditado = usuarioAtual.copyWith(
+          avatar: _avatarLocal ?? usuarioController.avatar,
+          nome: _nomeController.text,
+          email: _emailController.text,
+          telefone: _telefoneController.text,
+          cpf: _cpfController.text,
+          cep: _cepController.text,
+          endereco: _enderecoController.text,
+        );
 
-    final usuarioAtual = context.read<UsuarioController>().usuario;
-    if (usuarioAtual == null) return;
+        await usuarioController.atualizarUsuario(usuarioEditado);
 
-    // Atualizado para incluir os novos campos no salvamento
-    final usuarioAtualizado = usuarioAtual.copyWith(
-      nome: _nomeController.text.trim(),
-      email: _emailController.text.trim(),
-      telefone: _phoneMask.getUnmaskedText(),
-      cpf: _cpfMask.getUnmaskedText(),
-      // Adicione cep e senha se o seu método copyWith/Modelo suportar:
-      // cep: _cepMask.getUnmaskedText(),
-      // senha: _passwordController.text,
-    );
-
-    await context.read<UsuarioController>().atualizarUsuario(usuarioAtualizado);
-
-    if (mounted) {
-      setState(() => _salvando = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Dados salvos com sucesso!'),
-          backgroundColor: Colors.green,
-        ),
-      );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Perfil atualizado com sucesso!')),
+          );
+        }
+      }
     }
+  }
+
+  Future<void> _escolherImagem(ImageSource source) async {
+    try {
+      final XFile? image = await _picker.pickImage(
+        source: source,
+        maxWidth: 512,
+        maxHeight: 512,
+        imageQuality: 75,
+      );
+
+      if (image != null) {
+        setState(() {
+          _avatarLocal = image.path; // Caminho temporário para mostrar na tela
+        });
+      }
+    } catch (e) {
+      debugPrint("Erro ao escolher imagem: $e");
+    }
+  }
+
+  void _mostrarOpcoesFoto() {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: const Icon(Icons.camera_alt),
+            title: const Text('Câmera'),
+            onTap: () {
+              Navigator.pop(context);
+              _escolherImagem(ImageSource.camera);
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.photo_library),
+            title: const Text('Galeria'),
+            onTap: () {
+              Navigator.pop(context);
+              _escolherImagem(ImageSource.gallery);
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -128,7 +172,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                     key: _formKey,
                     child: Column(
                       children: [
-                        // Avatar e Nome (Mantidos da TelaPerfil original)
+                        // Avatar e Nome
                         _buildHeader(usuario),
 
                         const SizedBox(height: 30),
@@ -148,6 +192,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
                               'E-mail',
                               Icons.email_outlined,
                               _emailController,
+                              enabled: false,
                               keyboardType: TextInputType.emailAddress,
                               validator: (valida) {
                                 if (valida == null || valida.isEmpty) {
@@ -160,13 +205,16 @@ class _TelaPerfilState extends State<TelaPerfil> {
                                 }
                                 return null;
                               },
+                              helperText: 'O E-mail não pode ser alterado.',
                             ),
                             _campo(
                               'CPF',
                               Icons.badge_outlined,
                               _cpfController,
+                              enabled: false, // Para bloquear a edição
                               keyboardType: TextInputType.number,
                               inputFormatters: [_cpfMask],
+                              helperText: 'O CPF não pode ser alterado.',
                             ),
                             _campo(
                               'Telefone',
@@ -230,14 +278,26 @@ class _TelaPerfilState extends State<TelaPerfil> {
     return Column(
       children: [
         CircleAvatar(
-          radius: 60,
-          backgroundImage: (usuario != null && usuario.avatar.isNotEmpty)
-              ? NetworkImage(usuario.avatar)
-              : null,
-          backgroundColor: Colors.grey[300],
-          child: (usuario == null || usuario.avatar.isEmpty)
-              ? const Icon(Icons.person, size: 60, color: Colors.grey)
-              : null,
+          radius: 50,
+          // Prioriza a imagem local recém-escolhida, depois a remota
+          backgroundImage: _avatarLocal != null
+              ? FileImage(File(_avatarLocal!)) as ImageProvider
+              : NetworkImage(usuario.avatar),
+        ),
+        Positioned(
+          bottom: 0,
+          right: 0,
+          child: GestureDetector(
+            onTap: _mostrarOpcoesFoto,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: AppCores.neonBlue,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.edit, color: Colors.white, size: 20),
+            ),
+          ),
         ),
         const SizedBox(height: 12),
         // Aplicando as chaves nos ifs de retorno de texto para seguir o linter
@@ -324,6 +384,7 @@ class _TelaPerfilState extends State<TelaPerfil> {
     List<TextInputFormatter>? inputFormatters,
     bool isPassword = false,
     bool obscureText = false,
+    bool enabled = true, // Adicionado este parâmetro com padrão true
     VoidCallback? toggleVisibility,
     String? helperText,
   }) {
@@ -331,14 +392,19 @@ class _TelaPerfilState extends State<TelaPerfil> {
       padding: const EdgeInsets.only(bottom: 16),
       child: TextFormField(
         controller: controller,
+        enabled: enabled,
         keyboardType: keyboardType,
         validator: validator,
         inputFormatters: inputFormatters,
         obscureText: obscureText,
+        style: TextStyle(color: enabled ? Colors.black87 : Colors.grey[600]),
         decoration: InputDecoration(
           labelText: label,
           helperText: helperText,
-          prefixIcon: Icon(icon, color: AppCores.neonBlue),
+          prefixIcon: Icon(
+            icon,
+            color: enabled ? AppCores.neonBlue : Colors.grey,
+          ),
           suffixIcon: isPassword
               ? IconButton(
                   icon: Icon(
@@ -348,6 +414,10 @@ class _TelaPerfilState extends State<TelaPerfil> {
                 )
               : null,
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          disabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: Colors.grey[300]!),
+          ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: const BorderSide(color: AppCores.neonBlue, width: 2),

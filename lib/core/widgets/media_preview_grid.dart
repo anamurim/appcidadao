@@ -39,7 +39,7 @@ class MediaPreviewGrid extends StatelessWidget {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: midias.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        separatorBuilder: (_, _) => const SizedBox(width: 10),
         itemBuilder: (ctx, index) => _buildThumbnail(context, index),
       ),
     );
@@ -74,8 +74,7 @@ class MediaPreviewGrid extends StatelessWidget {
                 ? Image.file(
                     File(item.filePath!),
                     fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) =>
-                        _buildPlaceholderIcon(isImage),
+                    errorBuilder: (_, _, _) => _buildPlaceholderIcon(isImage),
                   )
                 : _buildPlaceholderIcon(isImage),
           ),
@@ -85,8 +84,7 @@ class MediaPreviewGrid extends StatelessWidget {
             bottom: 4,
             left: 4,
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: Colors.black54,
                 borderRadius: BorderRadius.circular(6),
@@ -102,10 +100,7 @@ class MediaPreviewGrid extends StatelessWidget {
                   const SizedBox(width: 3),
                   Text(
                     isImage ? 'IMG' : 'VID',
-                    style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 10,
-                    ),
+                    style: const TextStyle(color: Colors.white70, fontSize: 10),
                   ),
                 ],
               ),
@@ -122,11 +117,7 @@ class MediaPreviewGrid extends StatelessWidget {
                 color: Colors.black38,
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: const Icon(
-                Icons.zoom_in,
-                color: Colors.white70,
-                size: 14,
-              ),
+              child: const Icon(Icons.zoom_in, color: Colors.white70, size: 14),
             ),
           ),
 
@@ -149,18 +140,15 @@ class MediaPreviewGrid extends StatelessWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: theme.colorScheme.onSurface
-                            .withValues(alpha: 0.3),
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.3,
+                        ),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
                     ],
                   ),
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: 14,
-                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 14),
                 ),
               ),
             ),
