@@ -4,7 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 
 import 'core/rotas/app_rotas.dart';
-import 'core/servicos/conectividade_service.dart';
+//import 'core/servicos/conectividade_service.dart';
 import 'core/tema/app_tema.dart';
 import 'core/tema/tema_controller.dart';
 import 'firebase_options.dart';
@@ -12,14 +12,19 @@ import 'funcionalidades/autenticacao/controladores/autenticacao_controller.dart'
 import 'funcionalidades/home/controladores/usuario_controller.dart';
 import 'funcionalidades/home/controladores/reporte_controller.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
 
-  // Inicializa monitoramento de conectividade
-  await ConectividadeService().inicializar();
+  try {
+    // Esta verificação impede o erro [core/duplicate-app]
+    if (Firebase.apps.isEmpty) {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
+  } catch (e) {
+    debugPrint("Erro ao inicializar Firebase: $e");
+  }
 
   runApp(const AppCidadao());
 }
@@ -52,10 +57,7 @@ class AppCidadao extends StatelessWidget {
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
             ],
-            supportedLocales: const [
-              Locale('pt', 'BR'),
-              Locale('en', 'US'),
-            ],
+            supportedLocales: const [Locale('pt', 'BR'), Locale('en', 'US')],
             locale: const Locale('pt', 'BR'),
           );
         },

@@ -10,7 +10,13 @@ class AjustesTema extends StatefulWidget {
 }
 
 class _AjustesTemaState extends State<AjustesTema> {
-  ThemeMode _temaSelecionado = ThemeMode.system;
+  late ThemeMode _temaSelecionado;
+
+  @override
+  void initState() {
+    super.initState();
+    _temaSelecionado = TemaController.instance.value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +26,6 @@ class _AjustesTemaState extends State<AjustesTema> {
           'Tema do Aplicativo',
           style: TextStyle(color: Colors.white),
         ),
-        //backgroundColor: AppCores.deepBlue,
         iconTheme: const IconThemeData(color: AppCores.neonBlue),
         elevation: 0,
       ),
@@ -63,15 +68,15 @@ class _AjustesTemaState extends State<AjustesTema> {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
-                padding: EdgeInsets.all(16),
+                padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.info_outline,
                       color: AppCores.neonBlue,
                       size: 20,
                     ),
-                    SizedBox(width: 12),
+                    const SizedBox(width: 12),
                     Expanded(
                       child: Text(
                         'O modo escuro ajuda a economizar bateria em telas OLED e reduz o cansaço visual.',
@@ -111,19 +116,16 @@ class _AjustesTemaState extends State<AjustesTema> {
           width: isSelected ? 2 : 1,
         ),
       ),
-      // ignore: deprecated_member_use
       child: RadioListTile<ThemeMode>(
         activeColor: AppCores.neonBlue,
         value: valor,
-        // ignore: deprecated_member_use
         groupValue: _temaSelecionado,
-        // ignore: deprecated_member_use
         onChanged: (ThemeMode? novoValor) {
           if (novoValor != null) {
             setState(() {
               _temaSelecionado = novoValor;
             });
-            // CHAMA A LÓGICA REAL:
+            // Chama a lógica do controller
             TemaController.instance.mudarTema(novoValor);
           }
         },
