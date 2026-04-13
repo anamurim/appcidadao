@@ -4,8 +4,8 @@ import '../../../core/modelos/reporte_status.dart';
 import '../../../core/repositorios/reporte_repositorio.dart';
 import '../../../core/repositorios/reporte_repositorio_com_fallback.dart';
 import '../../../core/servicos/sincronizador_reporte_service.dart';
-import 'dart:convert'; // Para usar jsonEncode/jsonDecode
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'dart:convert'; // Para usar jsonEncode/jsonDecode
+//import 'package:shared_preferences/shared_preferences.dart';
 
 /// Controlador de reportes urbanos.
 ///
@@ -20,7 +20,7 @@ class ReporteController extends ChangeNotifier {
   ReporteController({ReporteRepositorio? repositorio})
     : _repositorio = repositorio ?? ReporteRepositorioComFallback() {
     _inicializar();
-    _carregarDadosDoDisco();
+    //_carregarDadosDoDisco();
   }
 
   List<ReporteBase> _reportes = [];
@@ -57,7 +57,7 @@ class ReporteController extends ChangeNotifier {
     await carregarReportes();
   }
 
-  // --- NOVO: Salvar no dispositivo ---
+  /*// --- NOVO: Salvar no dispositivo ---
   Future<void> _salvarNoDisco() async {
     final prefs = await SharedPreferences.getInstance();
     // Converte a lista de objetos para uma String JSON
@@ -75,7 +75,7 @@ class ReporteController extends ChangeNotifier {
       // _reportes = decoded.map((item) => ReporteBase.fromMap(item)).toList();
       notifyListeners();
     }
-  }
+  }*/
 
   /// Carrega todos os reportes do repositório.
   Future<void> carregarReportes() async {
