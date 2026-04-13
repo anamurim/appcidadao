@@ -4,6 +4,8 @@ import '../../../core/modelos/reporte_status.dart';
 import '../../../core/repositorios/reporte_repositorio.dart';
 import '../../../core/repositorios/reporte_repositorio_com_fallback.dart';
 import '../../../core/servicos/sincronizador_reporte_service.dart';
+import 'dart:convert'; // Para usar jsonEncode/jsonDecode
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Controlador de reportes urbanos.
 ///
@@ -16,8 +18,9 @@ class ReporteController extends ChangeNotifier {
       SincronizadorReporteService();
 
   ReporteController({ReporteRepositorio? repositorio})
-      : _repositorio = repositorio ?? ReporteRepositorioComFallback() {
+    : _repositorio = repositorio ?? ReporteRepositorioComFallback() {
     _inicializar();
+    _carregarDadosDoDisco();
   }
 
   List<ReporteBase> _reportes = [];
@@ -54,6 +57,26 @@ class ReporteController extends ChangeNotifier {
     await carregarReportes();
   }
 
+  // --- NOVO: Salvar no dispositivo ---
+  Future<void> _salvarNoDisco() async {
+    final prefs = await SharedPreferences.getInstance();
+    // Converte a lista de objetos para uma String JSON
+    final String dados = jsonEncode(_reportes.map((r) => r.toMap()).toList());
+    await prefs.setString('historico_reportes', dados);
+  }
+
+  // --- NOVO: Carregar do dispositivo ---
+  Future<void> _carregarDadosDoDisco() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? dados = prefs.getString('historico_reportes');
+    if (dados != null) {
+      final List decoded = jsonDecode(dados);
+      // Aqui você deve converter o Map de volta para seu modelo de Reporte
+      // _reportes = decoded.map((item) => ReporteBase.fromMap(item)).toList();
+      notifyListeners();
+    }
+  }
+
   /// Carrega todos os reportes do repositório.
   Future<void> carregarReportes() async {
     _isLoading = true;
@@ -85,9 +108,7 @@ class ReporteController extends ChangeNotifier {
       return true;
     } catch (e) {
       // Se falhar, salva localmente como pendente
-      debugPrint(
-        '⚠️ Falha ao enviar reporte: $e. Salvando localmente...',
-      );
+      debugPrint('⚠️ Falha ao enviar reporte: $e. Salvando localmente...');
 
       try {
         await _sincronizador.salvarReporteLocal(reporte);

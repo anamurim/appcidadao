@@ -134,12 +134,91 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
               Expanded(
                 child: reportesFiltrados.isEmpty
                     ? _buildEmptyState()
-                    : ListView.builder(
-                        padding: const EdgeInsets.all(16),
-                        itemCount: reportesFiltrados.length,
-                        itemBuilder: (context, index) {
-                          return _buildReporteCard(reportesFiltrados[index]);
-                        },
+                    : // ── Lista de reportes ──
+                      Expanded(
+                        child: reportesFiltrados.isEmpty
+                            ? _buildEmptyState()
+                            : ListView.builder(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                itemCount: reportesFiltrados.length,
+                                itemBuilder: (context, index) {
+                                  final reporte = reportesFiltrados[index];
+                                  return Card(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.1),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                      ),
+                                    ),
+                                    child: ListTile(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 8,
+                                          ),
+                                      // Título principal (Tipo do Reporte)
+                                      title: Text(
+                                        reporte.tipoReporte,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      // Subtítulo (Endereço e Data)
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            reporte.endereco,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            _formatDate(reporte.dataCriacao),
+                                            style: const TextStyle(
+                                              color: Colors.white38,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // Badge de Status à direita
+                                      trailing: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          _buildStatusChip(reporte.status),
+                                          const Icon(
+                                            Icons.chevron_right,
+                                            color: AppCores.neonBlue,
+                                          ),
+                                        ],
+                                      ),
+                                      // Ação de clicar no item todo (igual ao seu código de livros)
+                                      onTap: () => _abrirDetalhesReporte(
+                                        context,
+                                        reporte,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
                       ),
               ),
             ],
@@ -290,88 +369,115 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
     );
   }
 
-  Widget _buildReporteCard(ReporteBase reporte) {
+  /*Widget _buildReporteCard(ReporteBase reporte) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DetalheReportePagina(reporte: reporte),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Cabeçalho com tipo e status
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  reporte.tipoReporte,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                _buildStatusChip(reporte.status),
+              ],
             ),
-          );
-        },
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    reporte.tipoReporte,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
+            const SizedBox(height: 8),
+
+            // Descrição
+            Text(
+              reporte.descricao,
+              style: Theme.of(context).textTheme.bodyMedium,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+
+            // Endereço
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on,
+                  size: 16,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    reporte.endereco,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  _buildStatusChip(
-                    reporte.status,
-                  ), // O método agora está definido abaixo
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                reporte.endereco,
-                style: TextStyle(color: Colors.grey[400], fontSize: 13),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                reporte.descricao,
-                style: const TextStyle(fontSize: 14),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+
+            // Data e ID
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _formatDate(reporte.dataCriacao),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ),
+                Text(
+                  'ID: ${reporte.id}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
+                ),
+              ],
+            ),
+
+            // Mídias se existirem
+            if (reporte.midias.isNotEmpty) ...[
               const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    _formatDate(reporte.dataCriacao),
-                    style: TextStyle(color: Colors.grey[500], fontSize: 12),
-                  ),
-                  if (reporte.midias.isNotEmpty)
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.image_outlined,
-                          size: 16,
-                          color: Colors.grey[500],
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${reporte.midias.length}',
-                          style: TextStyle(
-                            color: Colors.grey[500],
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                ],
+              MediaPreviewGrid(
+                midias: reporte.midias
+                    .map(
+                      (m) => MediaItem(
+                        filePath: null,
+                        url: m.url,
+                        type: m.type == MediaType.image
+                            ? MediaType.image
+                            : MediaType.video,
+                        nomeArquivo: null,
+                      ),
+                    )
+                    .toList(),
+                onChanged: (_) {}, // Read-only
+                editavel: false,
               ),
             ],
-          ),
+          ],
         ),
       ),
     );
-  }
+  }*/
 
   Widget _buildStatusChip(ReporteStatus status) {
     Color backgroundColor;
@@ -445,5 +551,58 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
     } else {
       return '${date.day}/${date.month}/${date.year}';
     }
+  }
+
+  /*void _exibirDetalhesModal(BuildContext context, ReporteBase reporte) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor:
+          Colors.transparent, // Para manter o estilo da página de detalhes
+      builder: (context) => FractionallySizedBox(
+        heightFactor: 0.9, // Define que o modal ocupará 90% da tela
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          child: DetalheReportePagina(reporte: reporte),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: AppCores.neonBlue, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(color: Colors.white38, fontSize: 12),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }*/
+
+  void _abrirDetalhesReporte(BuildContext context, ReporteBase reporte) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetalheReportePagina(reporte: reporte),
+      ),
+    );
   }
 }

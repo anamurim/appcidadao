@@ -4,19 +4,27 @@ import '../../../perfil/dominio/entidades/usuario.dart';
 class DadosHome {
   // Dados do usuário (modelo tipado)
   static final Usuario usuario = const Usuario(
-    nome: 'Usuário',
-    email: 'e-mail@gmail.com',
-    conta: '12345-6',
     avatar:
         'https://ui-avatars.com/api/?name=Carlos+Silva&background=0066FF&color=fff',
+    nome: 'Usuário',
+    email: 'e-mail@gmail.com',
+    //conta: '12345-6',
+    cpf: '000.000.000-00',
+    telefone: '123456789',
+    cep: '12345-678',
+    endereco: 'Rua Exemplo, 123',
   );
 
   // Compatibilidade: mantém acesso via Map para widgets existentes
   static Map<String, dynamic> get userData => {
+    'avatar': usuario.avatar,
     'name': usuario.nome,
     'email': usuario.email,
-    'account': usuario.conta,
-    'avatar': usuario.avatar,
+    //'account': usuario.conta,
+    'cpf': usuario.cpf,
+    'telefone': usuario.telefone,
+    'cep': usuario.cep,
+    'endereco': usuario.endereco,
   };
 
   //Lista de funcionalidades principais
