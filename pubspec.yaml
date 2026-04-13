@@ -47,6 +47,25 @@ dependencies:
   printing: ^5.11.1 # Para compartilhar/baixar o arquivo
   path_provider: ^2.1.2 # Para gerenciar caminhos de arquivos
 
+  # Recomendação 7: Monitoramento de conectividade
+  connectivity_plus: ^6.1.4
+
+  # Recomendação 9: Notificações push
+  firebase_messaging: ^15.2.0
+
+  # Recomendação 10: Mapa interativo (OpenStreetMap, sem API key)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+
+  # Recomendação 13: Cache local persistente
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # Recomendação 14: Internacionalização
+  flutter_localizations:
+    sdk: flutter
+  intl: ^0.20.2
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -75,6 +94,7 @@ dev_dependencies:
   
 flutter:
   uses-material-design: true
+  generate: true  # Habilita geração de código l10n
 
   assets:
     - assets/images/avatar.jpg

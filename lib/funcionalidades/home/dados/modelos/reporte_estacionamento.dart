@@ -1,6 +1,6 @@
-import '../../../reportes/dominio/entidades/reporte_base.dart';
-import '../../../reportes/dominio/entidades/reporte_status.dart';
-import '../../../../funcionalidades/reportes/dominio/entidades/media_item.dart';
+import '../../../../core/modelos/reporte_base.dart';
+import '../../../../core/modelos/reporte_status.dart';
+import '../../../../core/modelos/media_item.dart';
 
 /// Reporte de estacionamento irregular / infração de trânsito.
 ///

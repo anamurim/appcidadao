@@ -29,5 +29,5 @@ lib/
 ├── funcionalidades/
 │   ├── home/             # Tela principal e lista de funcionalidades.
 │   ├── ajustes/          # Configurações do perfil e app.
-│   └── [modulos]/        # Telas de reporte específicas (Dart files).
+│   └── 
 └── main.dart             # Ponto de entrada do aplicativo.

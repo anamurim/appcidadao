@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
-import '../../../perfil/dados/repositorios/reporte_repositorio_local.dart';
-import '../../../reportes/dominio/entidades/reporte_base.dart';
-import '../../dados/modelos/reporte_interferencia.dart';
+import '../../../../core/modelos/reporte_base.dart';
+import '../../../../core/modelos/reporte_status.dart';
+//import '../../../../core/widgets/media_preview_grid.dart';
+//import '../../../../core/modelos/media_item.dart';
+import '../../controladores/reporte_controller.dart';
+import 'detalhe_reporte_pagina.dart';
 
 class HistoricoReportesPagina extends StatefulWidget {
   final VoidCallback? onBackToHome;
@@ -15,12 +19,55 @@ class HistoricoReportesPagina extends StatefulWidget {
 }
 
 class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
-  final _repositorio = ReporteRepositorioLocal();
+  final _searchController = TextEditingController();
+  String? _filtroTipo;
+  ReporteStatus? _filtroStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ReporteController>().carregarReportes();
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  /// Filtra os reportes com base na busca e filtros ativos.
+  List<ReporteBase> _filtrarReportes(List<ReporteBase> reportes) {
+    var resultado = reportes;
+
+    // Filtro por texto (busca)
+    final query = _searchController.text.toLowerCase().trim();
+    if (query.isNotEmpty) {
+      resultado = resultado.where((r) {
+        return r.endereco.toLowerCase().contains(query) ||
+            r.descricao.toLowerCase().contains(query) ||
+            r.tipoReporte.toLowerCase().contains(query) ||
+            r.id.contains(query);
+      }).toList();
+    }
+
+    // Filtro por tipo de reporte
+    if (_filtroTipo != null) {
+      resultado = resultado.where((r) => r.tipoReporte == _filtroTipo).toList();
+    }
+
+    // Filtro por status
+    if (_filtroStatus != null) {
+      resultado = resultado.where((r) => r.status == _filtroStatus).toList();
+    }
+
+    return resultado;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: AppCores.techGray,
       appBar: AppBar(
         title: const Text('Histórico de Reportes'),
         elevation: 0,
@@ -28,33 +75,268 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
           icon: const Icon(Icons.arrow_back, color: AppCores.neonBlue),
           onPressed: widget.onBackToHome ?? () => Navigator.of(context).pop(),
         ),
-        //backgroundColor: AppCores.deepBlue,
       ),
-      body: FutureBuilder<List<ReporteBase>>(
-        // Utiliza o método exato do seu repositório
-        future: _repositorio.listarReportes(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppCores.neonBlue),
+      body: Consumer<ReporteController>(
+        builder: (context, controller, _) {
+          if (controller.isLoading) {
+            return Center(
+              child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
             );
           }
 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return _buildEmptyState();
+          if (controller.errorMessage != null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: Colors.redAccent,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'Erro ao carregar reportes',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    controller.errorMessage!,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: () => controller.carregarReportes(),
+                    child: const Text('Tentar Novamente'),
+                  ),
+                ],
+              ),
+            );
           }
 
-          final reportes = snapshot.data!;
+          final reportesFiltrados = _filtrarReportes(controller.reportes);
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: reportes.length,
-            itemBuilder: (context, index) {
-              final reporte = reportes[index];
-              return _buildReporteCard(reporte);
-            },
+          return Column(
+            children: [
+              // ── Barra de busca ──
+              _buildSearchBar(),
+
+              // ── Filtros por tipo ──
+              _buildFiltrosTipo(controller.reportes),
+
+              // ── Filtros por status ──
+              _buildFiltrosStatus(),
+
+              // ── Lista de reportes ──
+              Expanded(
+                child: reportesFiltrados.isEmpty
+                    ? _buildEmptyState()
+                    : // ── Lista de reportes ──
+                      Expanded(
+                        child: reportesFiltrados.isEmpty
+                            ? _buildEmptyState()
+                            : ListView.builder(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                ),
+                                itemCount: reportesFiltrados.length,
+                                itemBuilder: (context, index) {
+                                  final reporte = reportesFiltrados[index];
+                                  return Card(
+                                    margin: const EdgeInsets.only(bottom: 12),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withValues(alpha: 0.1),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
+                                      side: BorderSide(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                      ),
+                                    ),
+                                    child: ListTile(
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                            horizontal: 16,
+                                            vertical: 8,
+                                          ),
+                                      // Título principal (Tipo do Reporte)
+                                      title: Text(
+                                        reporte.tipoReporte,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
+                                        ),
+                                      ),
+                                      // Subtítulo (Endereço e Data)
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            reporte.endereco,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Text(
+                                            _formatDate(reporte.dataCriacao),
+                                            style: const TextStyle(
+                                              color: Colors.white38,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      // Badge de Status à direita
+                                      trailing: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          _buildStatusChip(reporte.status),
+                                          const Icon(
+                                            Icons.chevron_right,
+                                            color: AppCores.neonBlue,
+                                          ),
+                                        ],
+                                      ),
+                                      // Ação de clicar no item todo (igual ao seu código de livros)
+                                      onTap: () => _abrirDetalhesReporte(
+                                        context,
+                                        reporte,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+              ),
+            ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildSearchBar() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+      child: TextField(
+        controller: _searchController,
+        onChanged: (_) => setState(() {}),
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+        decoration: InputDecoration(
+          hintText: 'Buscar reportes...',
+          hintStyle: TextStyle(
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.4),
+          ),
+          prefixIcon: Icon(
+            Icons.search,
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.5),
+          ),
+          suffixIcon: _searchController.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear, size: 20),
+                  onPressed: () {
+                    _searchController.clear();
+                    setState(() {});
+                  },
+                )
+              : null,
+          filled: true,
+          fillColor: AppCores.lightGray.withValues(alpha: 0.2),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(vertical: 12),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFiltrosTipo(List<ReporteBase> todosReportes) {
+    // Extrai tipos únicos dos reportes existentes
+    final tiposUnicos = todosReportes.map((r) => r.tipoReporte).toSet().toList()
+      ..sort();
+
+    return SizedBox(
+      height: 50,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          // Chip "Todos"
+          FilterChip(
+            label: const Text('Todos'),
+            selected: _filtroTipo == null,
+            onSelected: (selected) {
+              setState(() => _filtroTipo = selected ? null : _filtroTipo);
+            },
+          ),
+          const SizedBox(width: 8),
+          // Chips para cada tipo
+          ...tiposUnicos.map(
+            (tipo) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: FilterChip(
+                label: Text(tipo),
+                selected: _filtroTipo == tipo,
+                onSelected: (selected) {
+                  setState(() => _filtroTipo = selected ? tipo : null);
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFiltrosStatus() {
+    return SizedBox(
+      height: 50,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        children: [
+          // Chip "Todos"
+          FilterChip(
+            label: const Text('Todos'),
+            selected: _filtroStatus == null,
+            onSelected: (selected) {
+              setState(() => _filtroStatus = selected ? null : _filtroStatus);
+            },
+          ),
+          const SizedBox(width: 8),
+          // Chips para cada status
+          ...ReporteStatus.values.map(
+            (status) => Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: FilterChip(
+                label: Text(_statusToString(status)),
+                selected: _filtroStatus == status,
+                onSelected: (selected) {
+                  setState(() => _filtroStatus = selected ? status : null);
+                },
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -65,191 +347,261 @@ class _HistoricoReportesPaginaState extends State<HistoricoReportesPagina> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.history_outlined,
+            Icons.search_off,
             size: 64,
             color: Theme.of(
               context,
-            ).colorScheme.onSurface.withValues(alpha: 0.2),
+            ).colorScheme.onSurface.withValues(alpha: 0.3),
           ),
           const SizedBox(height: 16),
           Text(
-            'Nenhum reporte enviado até o momento.',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontSize: 16,
-            ),
+            'Nenhum reporte encontrado',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Tente ajustar os filtros ou criar um novo reporte',
+            style: Theme.of(context).textTheme.bodyMedium,
+            textAlign: TextAlign.center,
           ),
         ],
       ),
     );
   }
 
-  Widget _buildReporteCard(ReporteBase reporte) {
-    // Verifica se é um reporte de interferência para extrair dados específicos
-    final String titulo = (reporte is ReporteInterferencia)
-        ? reporte.tipoInterferencia
-        : "Reporte Geral";
-
+  /*Widget _buildReporteCard(ReporteBase reporte) {
     return Card(
-      color: Theme.of(context).colorScheme.surface,
       margin: const EdgeInsets.only(bottom: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-        leading: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: AppCores.neonBlue.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: const Icon(
-            Icons.assignment_outlined,
-            color: AppCores.neonBlue,
-          ),
-        ),
-        title: Text(
-          titulo,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        subtitle: Column(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 4),
-            Text(
-              'Status: ${reporte.status.name.toUpperCase()}',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontSize: 12,
-              ),
+            // Cabeçalho com tipo e status
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  reporte.tipoReporte,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                _buildStatusChip(reporte.status),
+              ],
             ),
-            Text(
-              'ID: ${reporte.id}',
-              style: TextStyle(
-                color: Theme.of(
-                  context,
-                ).colorScheme.onSurface.withValues(alpha: 0.5),
-                fontSize: 10,
-              ),
-            ),
-          ],
-        ),
-        trailing: Icon(
-          Icons.chevron_right,
-          color: Theme.of(context).colorScheme.onSurface,
-        ),
-        onTap: () => _exibirDetalhes(reporte, titulo),
-      ),
-    );
-  }
+            const SizedBox(height: 8),
 
-  void _exibirDetalhes(ReporteBase reporte, String titulo) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppCores.deepBlue,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.6,
-        maxChildSize: 0.9,
-        expand: false,
-        builder: (_, scrollController) => SingleChildScrollView(
-          controller: scrollController,
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
+            // Descrição
+            Text(
+              reporte.descricao,
+              style: Theme.of(context).textTheme.bodyMedium,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+
+            // Endereço
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on,
+                  size: 16,
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    reporte.endereco,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+
+            // Data e ID
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  _formatDate(reporte.dataCriacao),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: Theme.of(
                       context,
-                    ).colorScheme.onSurface.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(2),
+                    ).colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ),
-              ),
-              Text(
-                titulo,
-                style: const TextStyle(
-                  color: AppCores.neonBlue,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                Text(
+                  'ID: ${reporte.id}',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.5),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 20),
-
-              if (reporte is ReporteInterferencia) ...[
-                _itemDetalhe('Endereço', reporte.endereco),
-                _itemDetalhe(
-                  'Referência',
-                  reporte.pontoReferencia ?? 'Não informado',
-                ),
-                _itemDetalhe('Descrição', reporte.descricao),
-                if (reporte.nomeContato != null)
-                  _itemDetalhe('Contato', reporte.nomeContato!),
               ],
+            ),
 
-              _itemDetalhe(
-                'Status do Protocolo',
-                reporte.status.name.toUpperCase(),
-              ),
-              const SizedBox(height: 30),
-
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppCores.electricBlue,
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text(
-                    'VOLTAR',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+            // Mídias se existirem
+            if (reporte.midias.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              MediaPreviewGrid(
+                midias: reporte.midias
+                    .map(
+                      (m) => MediaItem(
+                        filePath: null,
+                        url: m.url,
+                        type: m.type == MediaType.image
+                            ? MediaType.image
+                            : MediaType.video,
+                        nomeArquivo: null,
+                      ),
+                    )
+                    .toList(),
+                onChanged: (_) {}, // Read-only
+                editavel: false,
               ),
             ],
-          ),
+          ],
+        ),
+      ),
+    );
+  }*/
+
+  Widget _buildStatusChip(ReporteStatus status) {
+    Color backgroundColor;
+    Color textColor;
+
+    switch (status) {
+      case ReporteStatus.pendente:
+        backgroundColor = Colors.orange.withValues(alpha: 0.2);
+        textColor = Colors.orange;
+        break;
+      case ReporteStatus.enviado:
+        backgroundColor = Colors.yellow.withValues(alpha: 0.2);
+        textColor = Colors.yellow[800]!;
+        break;
+      case ReporteStatus.emAnalise:
+        backgroundColor = Colors.blue.withValues(alpha: 0.2);
+        textColor = Colors.blue;
+        break;
+      case ReporteStatus.rejeitado:
+        backgroundColor = Colors.red.withValues(alpha: 0.2);
+        textColor = Colors.red;
+        break;
+      case ReporteStatus.resolvido:
+        backgroundColor = Colors.green.withValues(alpha: 0.2);
+        textColor = Colors.green;
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        _statusToString(status),
+        style: TextStyle(
+          color: textColor,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
   }
 
-  Widget _itemDetalhe(String rotulo, String valor) {
+  String _statusToString(ReporteStatus status) {
+    switch (status) {
+      case ReporteStatus.pendente:
+        return 'Pendente';
+      case ReporteStatus.enviado:
+        return 'Enviado';
+      case ReporteStatus.emAnalise:
+        return 'Em Análise';
+      case ReporteStatus.rejeitado:
+        return 'Rejeitado';
+      case ReporteStatus.resolvido:
+        return 'Resolvido';
+    }
+  }
+
+  String _formatDate(DateTime date) {
+    final now = DateTime.now();
+    final difference = now.difference(date);
+
+    if (difference.inDays == 0) {
+      return 'Hoje ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    } else if (difference.inDays == 1) {
+      return 'Ontem ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    } else if (difference.inDays < 7) {
+      return '${difference.inDays} dias atrás';
+    } else {
+      return '${date.day}/${date.month}/${date.year}';
+    }
+  }
+
+  /*void _exibirDetalhesModal(BuildContext context, ReporteBase reporte) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor:
+          Colors.transparent, // Para manter o estilo da página de detalhes
+      builder: (context) => FractionallySizedBox(
+        heightFactor: 0.9, // Define que o modal ocupará 90% da tela
+        child: ClipRRect(
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+          child: DetalheReportePagina(reporte: reporte),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInfoItem(IconData icon, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            rotulo,
-            style: const TextStyle(
-              color: Colors.white54,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+          Icon(icon, color: AppCores.neonBlue, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: const TextStyle(color: Colors.white38, fontSize: 12),
+                ),
+                Text(
+                  value,
+                  style: const TextStyle(color: Colors.white, fontSize: 16),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            valor,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
         ],
+      ),
+    );
+  }*/
+
+  void _abrirDetalhesReporte(BuildContext context, ReporteBase reporte) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => DetalheReportePagina(reporte: reporte),
       ),
     );
   }

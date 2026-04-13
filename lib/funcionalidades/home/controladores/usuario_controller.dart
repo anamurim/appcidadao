@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../../core/modelos/usuario.dart';
 import '../../../core/repositorios/usuario_repositorio.dart';
-import '../../../core/repositorios/usuario_repositorio_local.dart';
+import '../../../core/repositorios/usuario_repositorio_com_fallback.dart';
 
 /// Controlador do perfil do usuário.
 ///
@@ -11,7 +11,7 @@ class UsuarioController extends ChangeNotifier {
   final UsuarioRepositorio _repositorio;
 
   UsuarioController({UsuarioRepositorio? repositorio})
-    : _repositorio = repositorio ?? UsuarioRepositorioLocal();
+    : _repositorio = repositorio ?? UsuarioRepositorioComFallback();
 
   Usuario? _usuario;
   bool _isLoading = false;
@@ -23,7 +23,7 @@ class UsuarioController extends ChangeNotifier {
   /// Atalhos para dados exibidos frequentemente na UI.
   String get nome => _usuario?.nome ?? 'Usuário';
   String get email => _usuario?.email ?? 'usuario@email.com';
-  String get conta => _usuario?.conta ?? '00000-0';
+  //String get conta => _usuario?.conta ?? '00000-0';
   String get avatar => _usuario?.avatar ?? '';
 
   /// Carrega o usuário atual do repositório.

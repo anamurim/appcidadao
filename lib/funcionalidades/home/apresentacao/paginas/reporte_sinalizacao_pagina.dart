@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
+import '../../../../core/modelos/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_sinalizacao.dart';
 import '../../../../core/modelos/reporte_base.dart';
@@ -19,25 +19,26 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers e variáveis de estado
-  String? _selecionaTipoSinalizacao;
+  final _tipoSinalizacaoController = TextEditingController();
   bool _loadingEndereco = false;
   final _enderecoSinalizacaoController = TextEditingController();
   final _pontoReferenciaSinalizacaoController = TextEditingController();
   final _descricaoSinalizacaoController = TextEditingController();
 
-  final List<String> _categoriasSinalizacao = [
+  /*final List<String> _categoriasSinalizacao = [
     'Placa de Trânsito Danificada',
     'Placa de Identificação de Rua Faltando',
     'Semáforo com Lâmpada Queimada',
     'Faixa de Pedestres Apagada',
     'Pintura de Solo (Pare/Devagar) Inexistente',
     'Outro',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItemsSinalizacao = <MediaItem>[];
 
   @override
   void dispose() {
+    _tipoSinalizacaoController.dispose();
     _enderecoSinalizacaoController.dispose();
     _pontoReferenciaSinalizacaoController.dispose();
     _descricaoSinalizacaoController.dispose();
@@ -70,11 +71,7 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
   }
 
   Future<void> _submitReport() async {
-    final theme = Theme.of(context); // Captura o tema atual
-
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
       final reporte = ReporteSinalizacao(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         endereco: _enderecoSinalizacaoController.text,
@@ -83,48 +80,36 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
             : null,
         descricao: _descricaoSinalizacaoController.text,
         midias: List.from(_selectedMediaItemsSinalizacao),
-        tipoSinalizacao: _selecionaTipoSinalizacao!,
+        tipoSinalizacao: _tipoSinalizacaoController.text,
       );
 
-      await context.read<ReporteController>().submeterReporte(
-        reporte as ReporteBase,
-      );
-      debugPrint('--- Reporte de Sinalização salvo ---');
-      debugPrint('ID: ${reporte.id}');
-      debugPrint('Tipo: ${reporte.tipoSinalizacao}');
-
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            title: Text(
-              'Reporte Enviado',
-              style: TextStyle(color: theme.colorScheme.onSurface),
-            ),
-            content: Text(
-              'Obrigado! Sua colaboração ajuda a tornar o trânsito mais seguro para todos.',
-              style: TextStyle(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'FECHAR',
-                  style: TextStyle(color: theme.colorScheme.onSurface),
-                ),
-              ),
-            ],
-          ),
+      try {
+        await context.read<ReporteController>().submeterReporte(
+          reporte as ReporteBase,
         );
-        // Volta para a Home automaticamente
-        Navigator.pop(context);
+        debugPrint('--- Reporte de Sinalização salvo ---');
+        debugPrint('ID: ${reporte.id}');
+        debugPrint('Tipo: ${reporte.tipoSinalizacao}');
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Reporte enviado com sucesso!'),
+              backgroundColor: AppCores.accentGreen,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao enviar reporte: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
       _clearForm();
     }
@@ -133,7 +118,7 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoSinalizacao = null;
+      _tipoSinalizacaoController.clear();
       _enderecoSinalizacaoController.clear();
       _pontoReferenciaSinalizacaoController.clear();
       _descricaoSinalizacaoController.clear();
@@ -164,20 +149,17 @@ class _TelaReporteSinalizacaoState extends State<TelaReporteSinalizacao> {
               _buildSecaoTitulo("Informações do problema na sinalização"),
               const SizedBox(height: 15),
 
-              DropdownButtonFormField<String>(
-                dropdownColor: theme.scaffoldBackgroundColor,
+              TextFormField(
+                controller: _tipoSinalizacaoController,
                 style: TextStyle(color: theme.colorScheme.onSurface),
                 decoration: _inputStyle(
-                  'Categoria de Sinalização',
+                  'Categoria de Sinalização *',
                   Icons.category,
+                  hint: 'Ex: Placa danificada, Faixa apagada...',
                 ),
-                items: _categoriasSinalizacao
-                    .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                    .toList(),
-                onChanged: (val) =>
-                    setState(() => _selecionaTipoSinalizacao = val),
-                validator: (val) =>
-                    val == null ? 'Selecione uma categoria' : null,
+                validator: (val) => val == null || val.isEmpty
+                    ? 'Informe a categoria da sinalização'
+                    : null,
               ),
               const SizedBox(height: 20),
 

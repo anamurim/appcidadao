@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
+import '../../../../core/modelos/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_interferencia.dart';
 import '../../../../core/modelos/reporte_base.dart';
@@ -20,7 +20,8 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Controllers e variáveis de estado
-  String? _selecionaTipoInterferencia;
+  final TextEditingController _tipoInterferenciaController =
+      TextEditingController();
   bool _loadingEndereco = false;
   final TextEditingController _enderecoInterferenciaController =
       TextEditingController();
@@ -33,7 +34,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
   final TextEditingController _emailContatoPhoneInterferenciaController =
       TextEditingController();
 
-  final List<String> _tipoInterferencia = [
+  /*final List<String> _tipoInterferencia = [
     'Buraco na Via',
     'Lixo/Entulho Descartado',
     'Árvore Caída/Galhos',
@@ -41,12 +42,13 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
     'Obstrução de Via',
     'Bueiro Aberto/Quebrado',
     'Outro',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItemsInterferencia = <MediaItem>[];
 
   @override
   void dispose() {
+    _tipoInterferenciaController.dispose();
     _enderecoInterferenciaController.dispose();
     _pontoReferenciaInterferenciaController.dispose();
     _descricaoInterferenciaController.dispose();
@@ -65,7 +67,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
             : null,
         descricao: _descricaoInterferenciaController.text,
         midias: List.from(_selectedMediaItemsInterferencia),
-        tipoInterferencia: _selecionaTipoInterferencia!,
+        tipoInterferencia: _tipoInterferenciaController.text,
         nomeContato: _nomeContatoInterferenciaController.text.isNotEmpty
             ? _nomeContatoInterferenciaController.text
             : null,
@@ -74,18 +76,30 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
             : null,
       );
 
-      await context.read<ReporteController>().submeterReporte(
-        reporte as ReporteBase,
-      );
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Relato enviado com sucesso!'),
-            backgroundColor: AppCores.accentGreen,
-          ),
+      try {
+        await context.read<ReporteController>().submeterReporte(
+          reporte as ReporteBase,
         );
-        // Volta para a Home automaticamente
-        Navigator.pop(context);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Relato enviado com sucesso!'),
+              backgroundColor: AppCores.accentGreen,
+            ),
+          );
+          // Volta para a Home automaticamente
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao enviar relato: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
       _clearForm();
     }
@@ -94,7 +108,7 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoInterferencia = null;
+      _tipoInterferenciaController.clear();
       _enderecoInterferenciaController.clear();
       _pontoReferenciaInterferenciaController.clear();
       _descricaoInterferenciaController.clear();
@@ -181,23 +195,17 @@ class _TelaReportarInterferenciaState extends State<TelaReportarInterferencia> {
                 _buildSecaoTitulo("Informações da interferência"),
                 const SizedBox(height: 10),
 
-                DropdownButtonFormField<String>(
-                  dropdownColor: theme.scaffoldBackgroundColor,
+                TextFormField(
+                  controller: _tipoInterferenciaController,
                   style: TextStyle(color: theme.colorScheme.onSurface),
                   decoration: _inputStyle(
                     'Tipo de Interferência *',
                     Icons.merge_type,
+                    hint: 'Ex: Buraco, Lixo, etc.',
                   ),
-                  initialValue: _selecionaTipoInterferencia,
-                  items: _tipoInterferencia
-                      .map(
-                        (type) =>
-                            DropdownMenuItem(value: type, child: Text(type)),
-                      )
-                      .toList(),
-                  onChanged: (val) =>
-                      setState(() => _selecionaTipoInterferencia = val),
-                  validator: (val) => val == null ? 'Selecione um tipo' : null,
+                  validator: (val) => val == null || val.isEmpty
+                      ? 'Informe o tipo de interferência'
+                      : null,
                 ),
                 const SizedBox(height: 16),
 

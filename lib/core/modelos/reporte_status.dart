@@ -3,6 +3,7 @@ enum ReporteStatus {
   pendente,
   enviado,
   emAnalise,
+  rejeitado,
   resolvido;
 
   /// Retorna um rótulo amigável para exibição na UI.
@@ -14,6 +15,8 @@ enum ReporteStatus {
         return 'Enviado';
       case ReporteStatus.emAnalise:
         return 'Em Análise';
+      case ReporteStatus.rejeitado:
+        return 'Rejeitado';
       case ReporteStatus.resolvido:
         return 'Resolvido';
     }

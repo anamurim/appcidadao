@@ -43,3 +43,23 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# ======================================================================
+# SEGURANÇA: Arquivos sensíveis — NUNCA COMMITAR CHAVES REAIS
+# ======================================================================
+# Firebase configuration files
+firebase_options.dart
+google-services.json
+GoogleService-Info.plist
+ios/Runner/GoogleService-Info.plist
+android/app/google-services.json
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# Secrets e credenciais
+**/secrets.dart
+**/local.properties
+firebase.json

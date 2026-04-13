@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/utilitarios/funcoes_auxiliares.dart';
 import '../../../../core/constantes/cores.dart';
+import '../../../../core/debug/firestore_debug_widget.dart';
 import '../../controladores/usuario_controller.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../apresentacao/componentes/lista_funcionalidades_widget.dart';
@@ -9,6 +10,7 @@ import '../../apresentacao/componentes/lista_notificacoes_widget.dart';
 import '../../apresentacao/componentes/cabecalho_home_widget.dart';
 import '../../apresentacao/componentes/resumo_conta_widget.dart';
 import '../../../ajustes/apresentacao/paginas/ajustes_pagina.dart';
+import 'detalhe_reporte_pagina.dart';
 
 class HomePagina extends StatefulWidget {
   const HomePagina({super.key});
@@ -25,8 +27,9 @@ class _HomePaginaState extends State<HomePagina> {
   @override
   void initState() {
     super.initState();
-    // Carrega os reportes quando a tela é aberta
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Busca os dados reais assim que a tela é montada
+      context.read<UsuarioController>().carregarUsuario();
       context.read<ReporteController>().carregarReportes();
     });
   }
@@ -75,7 +78,7 @@ class _HomePaginaState extends State<HomePagina> {
                   : Text(
                       _selectedIndex == 0
                           ? 'APP CIDADÃO'
-                          : 'Histórico de reportes',
+                          : 'Histórico de Reportes',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 22,
@@ -86,35 +89,35 @@ class _HomePaginaState extends State<HomePagina> {
               actions: _selectedIndex == 0 ? _buildAppBarActions() : null,
             ),
       body: IndexedStack(index: _selectedIndex, children: paginas),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Debug',
+        onPressed: () => showDialog(
+          context: context,
+          builder: (_) => FirestoreDebugWidget(),
+        ),
+        child: const Icon(Icons.bug_report),
+      ),
       bottomNavigationBar: _buildBottomNav(),
     );
   }
 
   Widget _buildHomePageContent() {
-    return Consumer<UsuarioController>(
-      builder: (context, usuarioCtrl, _) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
-              CabecalhoHome(
-                nome: usuarioCtrl.nome,
-                email: usuarioCtrl.email,
-                conta: usuarioCtrl.conta,
-              ),
-              const SizedBox(height: 24),
-              ListaFuncionalidades(searchController: _searchController),
-              const SizedBox(height: 24),
-              const NotificacoesLista(compacta: true),
-              const SizedBox(height: 24),
-              const ResumoContaWidget(),
-              const SizedBox(height: 24),
-            ],
-          ),
-        );
-      },
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 24),
+          const CabecalhoHome(),
+          const SizedBox(height: 24),
+          ListaFuncionalidades(searchController: _searchController),
+          const SizedBox(height: 24),
+          const NotificacoesLista(compacta: true),
+          const SizedBox(height: 24),
+          const ResumoContaWidget(),
+          const SizedBox(height: 24),
+        ],
+      ),
     );
   }
 
@@ -166,52 +169,58 @@ class _HomePaginaState extends State<HomePagina> {
 
   Widget _buildReporteCard(dynamic reporte) {
     final Map<String, IconData> tipoIcones = {
-      'interferencia': Icons.traffic,
-      'semaforo': Icons.traffic_outlined,
-      'veiculo': Icons.car_repair,
-      'estacionamento': Icons.local_parking,
-      'sinalizacao': Icons.signpost,
-      'iluminacao': Icons.lightbulb_outline,
+      'Conta': Icons.account_balance_wallet,
+      'Consumo': Icons.show_chart,
+      'Pagamentos': Icons.payment,
+      'Suporte': Icons.support_agent,
+      'Energia': Icons.power_off,
+      'Economia': Icons.eco,
+      'Interferencia': Icons.traffic,
+      'Semaforo': Icons.traffic_outlined,
+      'Veiculo': Icons.car_repair,
+      'Estacionamento': Icons.local_parking,
+      'Sinalizacao': Icons.signpost,
+      'Iluminacao': Icons.lightbulb_outline,
     };
 
     final icon = tipoIcones[reporte.tipoReporte] ?? Icons.report;
 
-    return Container(
+    return Card(
       margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.onSurface,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.2),
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        leading: CircleAvatar(
+          backgroundColor: Theme.of(
+            context,
+          ).colorScheme.primary.withValues(alpha: 0.1),
+          child: Icon(icon, color: Theme.of(context).colorScheme.primary),
         ),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: Theme.of(context).colorScheme.primary, size: 30),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  reporte.endereco,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Text(
-                  reporte.status.rotulo,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
+        title: Text(
+          reporte.endereco,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
+        subtitle: Text(
+          "Status: ${reporte.status.rotulo}",
+          style: TextStyle(color: Theme.of(context).colorScheme.primary),
+        ),
+        trailing: const Icon(
+          Icons.arrow_forward_ios,
+          size: 16,
+          color: Colors.grey,
+        ),
+        // Ação de clicar para ver detalhes (inspirado no listalivro.dart)
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => DetalheReportePagina(reporte: reporte),
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }

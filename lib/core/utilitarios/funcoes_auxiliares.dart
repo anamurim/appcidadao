@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import '../constantes/cores.dart';
+import 'package:provider/provider.dart';
+import '../../core/rotas/app_rotas.dart';
+import '../../funcionalidades/autenticacao/apresentacao/paginas/tela_login.dart';
+import '../../funcionalidades/autenticacao/controladores/autenticacao_controller.dart';
 
 class FuncoesAuxiliares {
   // Função genérica de Logout
@@ -26,9 +30,12 @@ class FuncoesAuxiliares {
           ),
           ElevatedButton(
             onPressed: () {
-              Navigator.pop(context);
-              // Volta para a tela de login removendo o histórico
-              Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
+              Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+                MaterialPageRoute(
+                  builder: (context) => const TechLoginScreen(),
+                ),
+                (route) => false,
+              );
             },
             style: ElevatedButton.styleFrom(backgroundColor: AppCores.neonBlue),
             child: const Text('SAIR', style: TextStyle(color: Colors.white)),

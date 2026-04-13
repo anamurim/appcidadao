@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
+import '../../../../core/modelos/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_iluminacao.dart';
 import '../../../../core/modelos/reporte_base.dart';
@@ -19,7 +19,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers e variáveis de estado
-  String? _selecionaTipoProblemaIluminacao;
+  final _tipoProblemaIluminacaoController = TextEditingController();
   bool _loadingEndereco = false;
   final _enderecoIluminacaoController = TextEditingController();
   final _numeroPosteController =
@@ -27,19 +27,20 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   final _pontoReferenciaIluminacaoController = TextEditingController();
   final _descricaoIluminacaoController = TextEditingController();
 
-  final List<String> _categoriasIluminacao = [
+  /*final List<String> _categoriasIluminacao = [
     'Lâmpada Apagada à Noite',
     'Lâmpada Acesa de Dia',
     'Lâmpada Oscilando (Piscando)',
     'Poste Danificado/Caído',
     'Luminária Quebrada/Solta',
     'Outro - Especificar na descrição',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItemsIluminacao = <MediaItem>[];
 
   @override
   void dispose() {
+    _tipoProblemaIluminacaoController.dispose();
     _enderecoIluminacaoController.dispose();
     _numeroPosteController.dispose();
     _pontoReferenciaIluminacaoController.dispose();
@@ -72,11 +73,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   }
 
   Future<void> _submitReport() async {
-    final theme = Theme.of(context);
-
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
       final reporte = ReporteIluminacao(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         endereco: _enderecoIluminacaoController.text,
@@ -85,53 +82,41 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
             : null,
         descricao: _descricaoIluminacaoController.text,
         midias: List.from(_selectedMediaItemsIluminacao),
-        tipoProblema: _selecionaTipoProblemaIluminacao!,
+        tipoProblema: _tipoProblemaIluminacaoController.text,
         numeroPoste: _numeroPosteController.text.isNotEmpty
             ? _numeroPosteController.text
             : null,
       );
 
-      await context.read<ReporteController>().submeterReporte(
-        reporte as ReporteBase,
-      );
-
-      debugPrint('--- Solicitação de Reparo de Iluminação salva ---');
-      debugPrint('ID: ${reporte.id}');
-      debugPrint('Problema: ${reporte.tipoProblema}');
-      debugPrint('Poste Nº: ${reporte.numeroPoste ?? "Não informado"}');
-
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            title: Text(
-              'Solicitação Registrada',
-              style: TextStyle(color: theme.colorScheme.onSurface),
-            ),
-            content: Text(
-              'Recebemos seu reporte. O prazo para manutenção é de até 72 horas úteis.',
-              style: TextStyle(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  Navigator.pop(context);
-                },
-                child: const Text(
-                  'ENTENDIDO',
-                  style: TextStyle(color: AppCores.accentGreen),
-                ),
-              ),
-            ],
-          ),
+      try {
+        await context.read<ReporteController>().submeterReporte(
+          reporte as ReporteBase,
         );
-        // Volta para a Home automaticamente
-        Navigator.pop(context);
+
+        debugPrint('--- Solicitação de Reparo de Iluminação salva ---');
+        debugPrint('ID: ${reporte.id}');
+        debugPrint('Problema: ${reporte.tipoProblema}');
+        debugPrint('Poste Nº: ${reporte.numeroPoste ?? "Não informado"}');
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Solicitação de reparo enviada com sucesso!'),
+              backgroundColor: AppCores.accentGreen,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao enviar solicitação: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
       _clearForm();
     }
@@ -140,7 +125,7 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoProblemaIluminacao = null;
+      _tipoProblemaIluminacaoController.clear();
       _enderecoIluminacaoController.clear();
       _numeroPosteController.clear();
       _pontoReferenciaIluminacaoController.clear();
@@ -171,21 +156,19 @@ class _TelaReporteIluminacaoState extends State<TelaReporteIluminacao> {
 
               _buildSecaoTitulo("O que está acontecendo?"),
               const SizedBox(height: 15),
-              DropdownButtonFormField<String>(
-                dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+              TextFormField(
+                controller: _tipoProblemaIluminacaoController,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 decoration: _inputStyle(
-                  'Selecione o problema',
-                  Icons.lightbulb,
+                  'Tipo de Problema *',
+                  Icons.lightbulb_outline,
+                  hint: 'Ex: Lâmpada apagada, acesa de dia...',
                 ),
-                items: _categoriasIluminacao
-                    .map((p) => DropdownMenuItem(value: p, child: Text(p)))
-                    .toList(),
-                onChanged: (val) =>
-                    setState(() => _selecionaTipoProblemaIluminacao = val),
-                validator: (val) => val == null ? 'Selecione uma opção' : null,
+                validator: (val) => val == null || val.isEmpty
+                    ? 'Informe o tipo de problema'
+                    : null,
               ),
               const SizedBox(height: 20),
 

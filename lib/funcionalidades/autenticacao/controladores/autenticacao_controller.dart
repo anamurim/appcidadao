@@ -1,5 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import '../../../core/modelos/usuario.dart';
+import '../../../core/repositorios/usuario_repositorio.dart';
+import '../../../core/repositorios/usuario_repositorio_com_fallback.dart';
 
 /// Controlador de autenticação com Firebase Auth.
 ///
@@ -8,14 +11,19 @@ import 'package:flutter/foundation.dart';
 /// mas permite acesso em modo offline (simulado).
 class AutenticacaoController extends ChangeNotifier {
   final FirebaseAuth _auth;
+  final UsuarioRepositorio _usuarioRepositorio;
 
   bool _isLoading = false;
   bool _isLoggedIn = false;
   bool _modoOffline = false;
   String? _errorMessage;
 
-  AutenticacaoController({FirebaseAuth? auth})
-      : _auth = auth ?? FirebaseAuth.instance {
+  AutenticacaoController({
+    FirebaseAuth? auth,
+    UsuarioRepositorio? usuarioRepositorio,
+  }) : _auth = auth ?? FirebaseAuth.instance,
+       _usuarioRepositorio =
+           usuarioRepositorio ?? UsuarioRepositorioComFallback() {
     // Escuta mudanças no estado de autenticação do Firebase
     _auth.authStateChanges().listen((User? user) {
       _isLoggedIn = user != null;
@@ -62,8 +70,7 @@ class AutenticacaoController extends ChangeNotifier {
     } catch (e) {
       // Firebase não inicializado ou sem internet
       debugPrint('⚠️ Firebase Auth indisponível: $e');
-      _errorMessage =
-          'Sem conexão com o servidor. Entrando em modo offline.';
+      _errorMessage = 'Sem conexão com o servidor. Entrando em modo offline.';
       _modoOffline = true;
       _isLoggedIn = true; // Permite acesso em modo offline
       _isLoading = false;
@@ -73,8 +80,7 @@ class AutenticacaoController extends ChangeNotifier {
   }
 
   /// Cria nova conta com email e senha via Firebase Auth.
-  Future<bool> cadastrar(String email, String senha,
-      {String? nome}) async {
+  Future<bool> cadastrar(String email, String senha, {String? nome}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -104,6 +110,69 @@ class AutenticacaoController extends ChangeNotifier {
       debugPrint('⚠️ Firebase Auth indisponível para cadastro: $e');
       _errorMessage =
           'Sem conexão com o servidor. Não é possível criar conta offline.';
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Cria nova conta com dados completos do usuário.
+  ///
+  /// Este método cria a conta no Firebase Auth e salva os dados completos
+  /// do perfil no Firestore.
+  Future<bool> cadastrarComDados({
+    required String email,
+    required String senha,
+    required String nome,
+    String? telefone,
+    String? cpf,
+    String? cep,
+    String? endereco,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      // 1. Cria a conta no Firebase Auth
+      final credencial = await _auth.createUserWithEmailAndPassword(
+        email: email.trim(),
+        password: senha,
+      );
+
+      // 2. Atualiza o displayName
+      if (nome.isNotEmpty) {
+        await credencial.user?.updateDisplayName(nome);
+      }
+
+      // 3. Salva os dados completos no Firestore
+      final novoUsuario = Usuario(
+        nome: nome,
+        email: email.trim(),
+        conta: credencial.user!.uid.substring(0, 7),
+        avatar:
+            'https://ui-avatars.com/api/?name=${Uri.encodeComponent(nome)}&background=0066FF&color=fff',
+        telefone: telefone,
+        cpf: cpf,
+        cep: cep,
+        endereco: endereco,
+      );
+
+      await _usuarioRepositorio.atualizarUsuario(novoUsuario);
+
+      _isLoggedIn = true;
+      _modoOffline = false;
+      _isLoading = false;
+      notifyListeners();
+      return true;
+    } on FirebaseAuthException catch (e) {
+      _errorMessage = _traduzirErroAuth(e.code);
+      _isLoading = false;
+      notifyListeners();
+      return false;
+    } catch (e) {
+      debugPrint('⚠️ Erro durante cadastro com dados: $e');
+      _errorMessage = 'Erro ao salvar dados: ${e.toString()}';
       _isLoading = false;
       notifyListeners();
       return false;

@@ -4,10 +4,10 @@ import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
 import '../../../../core/utilitarios/localizacao_service.dart';
+import '../../../../core/modelos/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_estacionamento.dart';
 import '../../../../core/modelos/reporte_base.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
 
 class TelaEstacionamentoIrregular extends StatefulWidget {
   const TelaEstacionamentoIrregular({super.key});
@@ -22,14 +22,14 @@ class _TelaEstacionamentoIrregularState
   final _formKey = GlobalKey<FormState>();
 
   // Controllers e variáveis de estado
-  String? _selecionaTipoInfracao;
+  final _tipoInfracaoController = TextEditingController();
   bool _loadingEndereco = false;
   final _placaController = TextEditingController();
   final _enderecoEstacionamentoController = TextEditingController();
   final _pontoReferenciaEstacionamentoController = TextEditingController();
   final _descricaoEstacionamentoController = TextEditingController();
 
-  final List<String> _tipoInfracoes = [
+  /*final List<String> _tipoInfracoes = [
     'Fila Dupla',
     'Vaga de Idoso/PNE sem cartão',
     'Guia Rebaixada (Entrada/Saída de veículos)',
@@ -37,13 +37,14 @@ class _TelaEstacionamentoIrregularState
     'Ponto de Ônibus',
     'Estacionar em local proibido (Placa R6a/R6c)',
     'Outro - Especificar na descrição',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItems = <MediaItem>[];
 
   @override
   void dispose() {
     _placaController.dispose();
+    _tipoInfracaoController.dispose();
     _enderecoEstacionamentoController.dispose();
     _pontoReferenciaEstacionamentoController.dispose();
     _descricaoEstacionamentoController.dispose();
@@ -73,11 +74,7 @@ class _TelaEstacionamentoIrregularState
   }
 
   Future<void> _submitReport() async {
-    final theme = Theme.of(context);
-
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
       final reporte = ReporteEstacionamento(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         endereco: _enderecoEstacionamentoController.text,
@@ -87,52 +84,40 @@ class _TelaEstacionamentoIrregularState
             : null,
         descricao: _descricaoEstacionamentoController.text,
         midias: List.from(_selectedMediaItems),
-        tipoInfracao: _selecionaTipoInfracao!,
+        tipoInfracao: _tipoInfracaoController.text,
         placaVeiculo: _placaController.text.isNotEmpty
             ? _placaController.text
             : null,
       );
 
-      await context.read<ReporteController>().submeterReporte(
-        reporte as ReporteBase,
-      );
-
-      debugPrint('--- Relatório de Estacionamento Irregular salvo ---');
-      debugPrint('ID: ${reporte.id}');
-      debugPrint('Infração: ${reporte.tipoInfracao}');
-
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            title: Text(
-              'Denúncia Enviada',
-              style: TextStyle(color: theme.colorScheme.onSurface),
-            ),
-            content: Text(
-              'As autoridades de trânsito foram notificadas sobre a irregularidade.',
-              style: TextStyle(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-              ),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: theme.colorScheme.primary),
-                ),
-              ),
-            ],
-          ),
+      try {
+        await context.read<ReporteController>().submeterReporte(
+          reporte as ReporteBase,
         );
-        // Volta para a Home automaticamente
-        Navigator.pop(context);
+
+        debugPrint('--- Relatório de Estacionamento Irregular salvo ---');
+        debugPrint('ID: ${reporte.id}');
+        debugPrint('Infração: ${reporte.tipoInfracao}');
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Denúncia enviada com sucesso!'),
+              backgroundColor: AppCores.accentGreen,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao enviar denúncia: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
       _clearForm();
     }
@@ -141,7 +126,7 @@ class _TelaEstacionamentoIrregularState
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoInfracao = null;
+      _tipoInfracaoController.clear();
       _placaController.clear();
       _enderecoEstacionamentoController.clear();
       _pontoReferenciaEstacionamentoController.clear();
@@ -170,22 +155,19 @@ class _TelaEstacionamentoIrregularState
               _buildSecaoTitulo("Detalhes da Infração"),
               const SizedBox(height: 15),
 
-              // Dropdown de Infração
-              DropdownButtonFormField<String>(
-                dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+              TextFormField(
+                controller: _tipoInfracaoController,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
                 decoration: _inputStyle(
-                  'Tipo de Irregularidade',
+                  'Tipo de Irregularidade *',
                   Icons.warning_amber_rounded,
+                  hint: 'Ex: Fila dupla, vaga de idoso...',
                 ),
-                items: _tipoInfracoes
-                    .map((i) => DropdownMenuItem(value: i, child: Text(i)))
-                    .toList(),
-                onChanged: (val) =>
-                    setState(() => _selecionaTipoInfracao = val),
-                validator: (val) => val == null ? 'Selecione a infração' : null,
+                validator: (val) => val == null || val.isEmpty
+                    ? 'Informe o tipo de irregularidade'
+                    : null,
               ),
               const SizedBox(height: 15),
 

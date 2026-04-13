@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
+import '../../../../core/modelos/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_semaforo.dart';
 import '../../../../core/modelos/reporte_base.dart';
@@ -19,7 +19,8 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   final _formKey = GlobalKey<FormState>();
 
   // Variáveis de estado
-  String? _selecionaTipoProblemaSemaforo;
+  final TextEditingController _tipoProblemaSemaforoController =
+      TextEditingController();
   bool _loadingEndereco = false;
   final TextEditingController _enderecoSemaforoController =
       TextEditingController();
@@ -28,19 +29,20 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   final TextEditingController _descricaoSemaforoController =
       TextEditingController();
 
-  final List<String> _problemTypes = [
+  /*final List<String> _problemTypes = [
     'Apagado',
     'Piscando',
     'Luzes Queimadas',
     'Sincronia Incorreta',
     'Poste Danificado',
     'Outro',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItems = <MediaItem>[];
 
   @override
   void dispose() {
+    _tipoProblemaSemaforoController.dispose();
     _enderecoSemaforoController.dispose();
     _pontoReferenciaSemaforoController.dispose();
     _descricaoSemaforoController.dispose();
@@ -48,11 +50,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   }
 
   Future<void> _submitReport() async {
-    final theme = Theme.of(context);
-
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
       final reporte = ReporteSemaforo(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         endereco: _enderecoSemaforoController.text,
@@ -61,48 +59,37 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
             : null,
         descricao: _descricaoSemaforoController.text,
         midias: List.from(_selectedMediaItems),
-        tipoProblema: _selecionaTipoProblemaSemaforo!,
+        tipoProblema: _tipoProblemaSemaforoController.text,
       );
 
-      await context.read<ReporteController>().submeterReporte(
-        reporte as ReporteBase,
-      );
-
-      debugPrint('Log de Desenvolvimento - Reporte salvo: ${reporte.toMap()}');
-
-      if (mounted) {
-        showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (ctx) => AlertDialog(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            title: Text(
-              'Sucesso',
-              style: TextStyle(color: theme.colorScheme.onSurface),
-            ),
-            content: Text(
-              'Seu relatório de semáforo foi enviado com sucesso.',
-              style: TextStyle(color: theme.colorScheme.onSurface),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(ctx);
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'OK',
-                  style: TextStyle(
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-            ],
-          ),
+      try {
+        await context.read<ReporteController>().submeterReporte(
+          reporte as ReporteBase,
         );
-        // Volta para a Home automaticamente
-        Navigator.pop(context);
+
+        debugPrint(
+          'Log de Desenvolvimento - Reporte salvo: ${reporte.toMap()}',
+        );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Relatório de semáforo enviado com sucesso!'),
+              backgroundColor: AppCores.accentGreen,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao enviar reporte: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
       _clearForm();
     }
@@ -111,7 +98,7 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoProblemaSemaforo = null;
+      _tipoProblemaSemaforoController.clear();
       _enderecoSemaforoController.clear();
       _pontoReferenciaSemaforoController.clear();
       _descricaoSemaforoController.clear();
@@ -224,23 +211,19 @@ class _TelaReportarSemaforoState extends State<TelaReportarSemaforo> {
               ),
               const SizedBox(height: 16),
 
-              // Tipo de Problema (Dropdown)
-              DropdownButtonFormField<String>(
-                dropdownColor: Theme.of(context).scaffoldBackgroundColor,
+              // Tipo de Problema (TextField))
+              TextFormField(
+                controller: _tipoProblemaSemaforoController,
                 style: TextStyle(
                   color: Theme.of(context).colorScheme.onSurface,
                 ),
-                decoration: _inputStyle('Tipo de Problema', Icons.traffic),
-                initialValue: _selecionaTipoProblemaSemaforo,
-                items: _problemTypes
-                    .map(
-                      (type) =>
-                          DropdownMenuItem(value: type, child: Text(type)),
-                    )
-                    .toList(),
-                onChanged: (val) =>
-                    setState(() => _selecionaTipoProblemaSemaforo = val),
-                validator: (val) => val == null ? 'Selecione uma opção' : null,
+                decoration: _inputStyle(
+                  'Tipo de Problema',
+                  Icons.traffic,
+                ).copyWith(hintText: 'Ex: Apagado, Piscando, etc.'),
+                validator: (val) => val == null || val.isEmpty
+                    ? 'Informe o tipo de problema'
+                    : null,
               ),
               const SizedBox(height: 16),
 

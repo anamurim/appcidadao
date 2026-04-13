@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../../core/constantes/cores.dart';
 import '../../../../core/widgets/seletor_midia_widget.dart';
-import '../../../reportes/dominio/entidades/media_item.dart';
+import '../../../../core/modelos/media_item.dart';
 import '../../controladores/reporte_controller.dart';
 import '../../dados/modelos/reporte_veiculo.dart';
 import '../../../../core/modelos/reporte_base.dart';
@@ -20,7 +20,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   // Controllers e variáveis de estado
-  String? _selecionaTipoVeiculo;
+  final _tipoVeiculoController = TextEditingController();
   bool _loadingEndereco = false;
   final _placaController = TextEditingController();
   final _modeloController = TextEditingController();
@@ -33,19 +33,20 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   final _telefoneController = TextEditingController();
   final _emailController = TextEditingController();
 
-  final List<String> _tiposVeiculo = [
+  /*final List<String> _tiposVeiculo = [
     'Carro',
     'Moto',
     'Caminhão',
     'Ônibus',
     'Outro - Especificar na descrição',
-  ];
+  ];*/
 
   final List<MediaItem> _selectedMediaItems = <MediaItem>[];
 
   @override
   void dispose() {
     _placaController.dispose();
+    _tipoVeiculoController.dispose();
     _modeloController.dispose();
     _marcaController.dispose();
     _corController.dispose();
@@ -60,8 +61,6 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
 
   Future<void> _submitReport() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
       final reporte = ReporteVeiculo(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         endereco: _enderecoController.text,
@@ -70,7 +69,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
             : null,
         descricao: _descricaoController.text,
         midias: List.from(_selectedMediaItems),
-        tipoVeiculo: _selecionaTipoVeiculo!,
+        tipoVeiculo: _tipoVeiculoController.text,
         placa: _placaController.text,
         marca: _marcaController.text.isNotEmpty ? _marcaController.text : null,
         modelo: _modeloController.text.isNotEmpty
@@ -86,50 +85,35 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
         email: _emailController.text.isNotEmpty ? _emailController.text : null,
       );
 
-      await context.read<ReporteController>().submeterReporte(
-        reporte as ReporteBase,
-      );
-      // Logs de depuração
-      debugPrint('--- Relatório de Veículo salvo ---');
-      debugPrint('ID: ${reporte.id}');
-      debugPrint('Placa: ${reporte.placa}');
-      debugPrint('Tipo: ${reporte.tipoVeiculo}');
-
-      if (mounted) {
-        //Remove qualquer SnackBar que esteja aberta no momento
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-
-        //Exibe a SnackBar de sucesso
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.white),
-                SizedBox(width: 12),
-                Text(
-                  'O reporte do veículo foi enviado!',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            backgroundColor: AppCores.accentGreen,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            duration: const Duration(seconds: 3),
-            action: SnackBarAction(
-              label: 'OK',
-              textColor: Colors.white,
-              onPressed: () {},
-            ),
-          ),
+      try {
+        await context.read<ReporteController>().submeterReporte(
+          reporte as ReporteBase,
         );
-        // Volta para a Home automaticamente
-        Navigator.pop(context);
+        // Logs de depuração
+        debugPrint('--- Relatório de Veículo salvo ---');
+        debugPrint('ID: ${reporte.id}');
+        debugPrint('Placa: ${reporte.placa}');
+        debugPrint('Tipo: ${reporte.tipoVeiculo}');
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Reporte do veículo enviado com sucesso!'),
+              backgroundColor: AppCores.accentGreen,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erro ao enviar reporte: ${e.toString()}'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
+            ),
+          );
+        }
       }
 
       //Limpa o formulário
@@ -140,7 +124,7 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
   void _clearForm() {
     setState(() {
       _formKey.currentState!.reset();
-      _selecionaTipoVeiculo = null;
+      _tipoVeiculoController.clear();
       _placaController.clear();
       _marcaController.clear();
       _modeloController.clear();
@@ -215,15 +199,16 @@ class _TelaVeiculoQuebradoState extends State<TelaVeiculoQuebrado> {
               ),
               const SizedBox(height: 15),
 
-              DropdownButtonFormField<String>(
-                dropdownColor: theme.scaffoldBackgroundColor,
+              TextFormField(
+                controller: _tipoVeiculoController,
                 style: TextStyle(color: theme.colorScheme.onSurface),
-                decoration: _inputStyle('Tipo', Icons.car_crash_outlined),
-                items: _tiposVeiculo
-                    .map((t) => DropdownMenuItem(value: t, child: Text(t)))
-                    .toList(),
-                onChanged: (val) => setState(() => _selecionaTipoVeiculo = val),
-                validator: (val) => val == null ? 'Selecione' : null,
+                decoration: _inputStyle(
+                  'Tipo',
+                  Icons.car_crash_outlined,
+                  hint: 'Ex: Carro, Moto, Caminhão',
+                ),
+                validator: (val) =>
+                    val!.isEmpty ? 'Selecione ou digite o tipo' : null,
               ),
               const SizedBox(height: 15),
 

@@ -8,9 +8,9 @@ import '../../../ajustes/apresentacao/paginas/ajuste_tema_pagina.dart';
 import '../../../ajustes/apresentacao/paginas/suporte_pagina.dart';
 
 class AjustesPagina extends StatelessWidget {
-  final VoidCallback onBackToHome;
+  final VoidCallback? onBackToHome;
 
-  const AjustesPagina({super.key, required this.onBackToHome});
+  const AjustesPagina({super.key, this.onBackToHome});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class AjustesPagina extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppCores.neonBlue),
-          onPressed: onBackToHome,
+          onPressed: onBackToHome ?? () => Navigator.of(context).pop(),
         ),
       ),
       body: Container(
